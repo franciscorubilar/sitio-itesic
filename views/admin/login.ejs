@@ -1,0 +1,3 @@
+<%- include('../partials/header') %>
+<section class="section center auth-card"><span class="eyebrow">Admin</span><h1>Ingreso administrador</h1><% if (error) { %><p class="error"><%= error %></p><% } %><form class="form narrow" method="post" action="/admin/login"><input name="email" type="email" value="admin@itesicws.cl" required><input name="password" type="password" placeholder="Contraseña" required><button class="btn primary" type="submit">Ingresar</button></form></section>
+<%- include('../partials/footer') %>

@@ -1,0 +1,43 @@
+<%- include('../partials/header') %>
+<section class="admin-shell admin-modern">
+  <aside class="admin-sidebar">
+    <div class="admin-sidebar-head"><span class="brand-mark">IT</span><div><b>Panel ITESICWS</b><small>Administración</small></div></div>
+    <a href="/admin">Dashboard</a>
+    <a href="/admin/products">Productos</a>
+    <a class="active" href="/admin/leads">Leads</a>
+    <a href="/admin/settings">Configuración</a>
+  </aside>
+  <div class="admin-content">
+    <div class="admin-page-head">
+      <div><span class="eyebrow">Solicitudes</span><h1>Leads</h1><p>Contactos recibidos desde el formulario del sitio. Puedes cambiar estado y dejar notas internas.</p></div>
+      <a class="btn ghost" href="/admin/settings"><span>Configurar correos</span></a>
+    </div>
+    <div class="lead-list modern-leads">
+      <% leads.forEach(l=>{ %>
+        <article class="lead-card">
+          <div class="lead-head">
+            <div><h3><%= l.name %></h3><span><%= l.interest %></span></div>
+            <span class="status-pill"><%= l.status %></span>
+          </div>
+          <div class="lead-meta">
+            <span><b>Email</b><%= l.email %></span>
+            <span><b>Teléfono</b><%= l.phone || '-' %></span>
+            <span><b>Empresa</b><%= l.company || '-' %></span>
+          </div>
+          <p><%= l.message %></p>
+          <form class="lead-form" method="post" action="/admin/leads/<%= l.id %>">
+            <select name="status">
+              <% ['NEW','CONTACTED','IN_PROGRESS','CLOSED'].forEach(s=>{ %>
+                <option value="<%= s %>" <%= l.status===s?'selected':'' %>><%= s %></option>
+              <% }) %>
+            </select>
+            <textarea name="notes" placeholder="Notas internas"><%= l.notes || '' %></textarea>
+            <button class="btn primary" type="submit"><span>Actualizar</span></button>
+          </form>
+        </article>
+      <% }) %>
+      <% if (!leads.length) { %><p class="notice">Todavía no hay leads registrados.</p><% } %>
+    </div>
+  </div>
+</section>
+<%- include('../partials/footer') %>

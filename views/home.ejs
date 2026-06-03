@@ -1,0 +1,241 @@
+<%- include('partials/header') %>
+
+<section class="hero hero-crm">
+  <div class="hero-bg-media" aria-hidden="true">
+    <span class="shape-line one"></span>
+    <span class="shape-line two"></span>
+    <span class="shape-dot a"></span>
+    <span class="shape-dot b"></span>
+  </div>
+  <div class="hero-container">
+
+    <%/* IZQUIERDA — Propuesta de valor ITESICWS */%>
+    <div class="hero-left reveal">
+      <div class="hero-badge">
+        <span class="badge-dot"></span>
+        <span class="badge-text">ITESICWS · Software & IA para empresas</span>
+      </div>
+
+      <h1 class="hero-title" data-split-title><%= settings.heroTitle %></h1>
+      <p class="hero-subtitle"><%= settings.heroSubtitle %></p>
+
+      <div class="hero-actions">
+        <button type="button" class="btn primary"
+          onclick="document.querySelector('#hero-form-name').focus()">
+          <span>Escríbenos ahora</span>
+        </button>
+        <a class="btn ghost" href="#servicios"><span>Ver qué hacemos →</span></a>
+      </div>
+
+      <div class="hero-trust">
+        <div class="trust-item">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          <span>+40 sistemas implementados</span>
+        </div>
+        <div class="trust-item">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          <span>Industria · Logística · Retail · Minería</span>
+        </div>
+        <div class="trust-item">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          <span>Respuesta en menos de 24 hrs</span>
+        </div>
+      </div>
+    </div>
+
+    <%/* DERECHA — Formulario compacto */%>
+    <div class="hero-right reveal delay">
+      <div class="compact-contact-card">
+        <div class="card-header-strip">
+          <span class="card-pulse"></span>
+          <span class="card-header-label">Disponibles para nuevos proyectos</span>
+        </div>
+        <h3>¿Tienes un proceso que ordenar?</h3>
+        <p class="card-subtitle">Cuéntanos por acá — sin compromiso, te respondemos hoy.</p>
+
+        <form class="compact-card-form" method="post" action="/leads">
+          <div class="form-row">
+            <input id="hero-form-name" name="name" required placeholder="Tu nombre *" autocomplete="name" />
+            <input name="company" placeholder="Empresa" autocomplete="organization" />
+          </div>
+
+          <div class="form-row">
+            <input name="email" type="email" required placeholder="Email *" autocomplete="email" />
+            <input name="phone" placeholder="Teléfono" autocomplete="tel" />
+          </div>
+
+          <select name="interest" required>
+            <option value="" disabled selected>¿Qué necesitas? *</option>
+            <option value="ERP / Gestión operacional">ERP / Gestión operacional</option>
+            <option value="Reportes y Power BI">Reportes y Power BI</option>
+            <option value="Integración de sistemas">Integración de sistemas</option>
+            <option value="Consultoría IA">Consultoría IA</option>
+            <option value="Software a medida">Software a medida</option>
+            <option value="Formularios y flujos">Formularios y flujos</option>
+            <% products.slice(0,5).forEach(p => { %>
+              <option value="<%= productTitle(p) %>"><%= productTitle(p) %></option>
+            <% }) %>
+          </select>
+
+          <textarea name="message" required placeholder="Cuéntanos en simple qué está lento, desordenado o repetitivo... *" rows="3"></textarea>
+
+          <button class="btn primary btn-submit-hero" type="submit">
+            Enviar solicitud →
+          </button>
+        </form>
+        <span class="form-footer-info">🔒 Sin spam. Solo te contactamos si nos escribes.</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section class="counter-band reveal">
+  <div><b data-count="7">0</b><span>procesos que ya entendemos</span></div>
+  <div><b data-count="11">0</b><span>sistemas y módulos base</span></div>
+  <div><b data-count="99">0</b><span>foco en ordenar la operación</span></div>
+</section>
+
+<section class="section human-intro reveal">
+  <div>
+    <span class="eyebrow">Quiénes somos</span>
+    <h2>Somos un equipo chico, técnico y bien metido en la operación.</h2>
+  </div>
+  <div>
+    <p>Nos llaman cuando una empresa tiene planillas por todos lados, reportes que toman demasiado tiempo, sistemas que no conversan entre sí o procesos que dependen de perseguir información por correo.</p>
+    <p>No partimos vendiendo humo. Partimos preguntando cómo trabajan hoy, qué les duele y qué sería una mejora real para el equipo.</p>
+  </div>
+</section>
+
+<section id="servicios" class="section service-showcase reveal">
+  <div class="section-head">
+    <div>
+      <span class="eyebrow">Qué hacemos</span>
+      <h2>Armamos sistemas para que el trabajo diario sea más claro.</h2>
+    </div>
+    <a href="/productos" class="btn ghost">Ver ejemplos</a>
+  </div>
+  <div class="service-grid">
+    <article class="service-large">
+      <img src="/images/img-perseus-erp.svg" alt="PERSEUS ERP">
+      <span>ERP Industrial</span>
+      <h3>Producción, stock, despacho y trazabilidad sin depender de planillas eternas.</h3>
+      <a href="/productos/perseus-erp">Ver este tipo de sistema</a>
+    </article>
+    <% [
+      ['Conectamos sistemas','Para que no tengas que copiar datos de un lado a otro.'],
+      ['Creamos tableros claros','Power BI y reportes que muestran lo importante sin adornos.'],
+      ['Automatizamos tareas repetidas','IA, documentos y flujos para bajar carga manual.'],
+      ['Ordenamos permisos y trazabilidad','Quién hizo qué, cuándo y con qué respaldo.']
+    ].forEach((item, i)=>{ %>
+      <article class="service-tile" style="--i:<%= i %>">
+        <span><%= String(i + 1).padStart(2, '0') %></span>
+        <h3><%= item[0] %></h3>
+        <p><%= item[1] %></p>
+      </article>
+    <% }) %>
+  </div>
+</section>
+
+<section class="section product-feature reveal">
+  <div>
+    <span class="eyebrow">Qué tenemos</span>
+    <h2>Ideas ya avanzadas para partir más rápido</h2>
+    <p>Tenemos bases para procesos comunes: buses, calibraciones, balances, monitoreo operacional, producción, formularios, BI e IA. Las adaptamos a tu forma de trabajar.</p>
+  </div>
+  <div class="product-carousel" aria-label="Soluciones destacadas">
+    <div class="product-track">
+      <% products.concat(products).slice(0,16).forEach(p => { %>
+        <a class="product-card mini" href="/productos/<%= p.slug %>">
+          <img src="<%= p.image %>" alt="<%= p.name %>">
+          <span><%= p.name %></span>
+          <h3><%= productTitle(p) %></h3>
+        </a>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+<section class="rated-section reveal">
+  <div class="rated-copy">
+    <span class="eyebrow">Por qué importa</span>
+    <h2>Porque nadie quiere perder la mañana buscando un dato.</h2>
+    <p>Cuando el sistema está bien armado, la información aparece donde corresponde: estados, responsables, evidencias, reportes y alertas en un solo flujo.</p>
+    <a class="btn primary" href="#contacto">Hablemos</a>
+  </div>
+  <div class="rated-visual" data-parallax-stage>
+    <img class="rated-main" src="/images/mockup-floating-card.svg" alt="Métricas de operación">
+    <div class="quote-card">
+      <b>"Que el dato esté donde debe estar"</b>
+      <span>Ese suele ser el primer gran alivio.</span>
+    </div>
+  </div>
+</section>
+
+<section class="section app-split reveal">
+  <div class="app-art" data-parallax-stage>
+    <img class="app-dashboard" src="/images/mockup-suite-dashboard.svg" alt="Dashboard empresarial">
+    <img class="app-phone" src="/images/mockup-phone.svg" alt="Vista móvil de procesos">
+  </div>
+  <div>
+    <span class="eyebrow">Datos + IA</span>
+    <h2>IA cuando sirve, no porque esté de moda.</h2>
+    <p>La usamos para tareas concretas: buscar en documentos, resumir, clasificar, responder preguntas internas o acelerar reportes.</p>
+    <ul class="check-list">
+      <li>Asistentes RAG con documentos internos.</li>
+      <li>Automatización documental y reportes.</li>
+      <li>Integración con sistemas, correos, APIs y Power BI.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="integration-section reveal">
+  <div class="center">
+    <span class="eyebrow">Integraciones</span>
+    <h2>Nos conectamos con lo que ya usas</h2>
+  </div>
+  <div class="integration-marquee">
+    <div class="integration-track">
+      <% ['PostgreSQL','SQL Server','Power BI','PI Vision','PI Web API','SOAP','REST API','Excel','Correo','WhatsApp','Docker','Node.js','Prisma','IA RAG'].concat(['PostgreSQL','SQL Server','Power BI','PI Vision','PI Web API','SOAP','REST API','Excel','Correo','WhatsApp','Docker','Node.js','Prisma','IA RAG']).forEach(name => { %>
+        <span><%= name %></span>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+<section class="section process reveal">
+  <div class="center">
+    <span class="eyebrow">Método</span>
+    <h2>De una conversación honesta a un sistema andando</h2>
+    <p>Primero entendemos. Después diseñamos. Luego construimos algo que el equipo pueda usar sin sufrir.</p>
+  </div>
+  <div class="process-grid">
+    <article><b>01</b><h3>Conversamos</h3><p>Entendemos cómo trabajan hoy, sin disfrazar el problema.</p></article>
+    <article><b>02</b><h3>Ordenamos</h3><p>Definimos pantallas, permisos, datos, reportes y prioridades.</p></article>
+    <article><b>03</b><h3>Construimos</h3><p>Entregamos por etapas y ajustamos con quienes lo usan.</p></article>
+  </div>
+</section>
+
+<section id="contacto" class="section contact reveal">
+  <div>
+    <span class="eyebrow">Contacto</span>
+    <h2>Cuéntanos qué necesitas ordenar</h2>
+    <p>No necesitas tener una especificación lista. Con que nos digas qué está lento, desordenado o repetitivo, podemos partir.</p>
+  </div>
+  <form class="form" method="post" action="/leads">
+    <input name="name" required placeholder="Nombre" />
+    <input name="company" placeholder="Empresa" />
+    <input name="role" placeholder="Cargo" />
+    <input name="email" type="email" required placeholder="Email" />
+    <input name="phone" placeholder="Teléfono / WhatsApp" />
+    <select name="interest">
+      <% products.slice(0,9).forEach(p => { %><option><%= productTitle(p) %></option><% }) %>
+      <option>Consultoría IA</option>
+      <option>Software a medida</option>
+    </select>
+    <textarea name="message" required placeholder="Cuéntanos en simple qué necesitas"></textarea>
+    <button class="btn primary" type="submit">Enviar solicitud</button>
+  </form>
+</section>
+
+<%- include('partials/footer') %>

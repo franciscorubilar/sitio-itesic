@@ -1,0 +1,137 @@
+<%- include('partials/header') %>
+
+<section class="solution-hero">
+  <div class="solution-hero-bg" aria-hidden="true"></div>
+  <div class="solution-copy reveal">
+    <span class="eyebrow"><%= product.name %> · <%= product.category %></span>
+    <h1 data-split-title><%= productTitle(product) %></h1>
+    <p><%= product.description %></p>
+    <div class="actions">
+      <a class="btn primary" href="/#contacto"><span><%= product.cta %></span></a>
+      <a class="btn ghost" href="#modulos"><span>Ver módulos</span></a>
+    </div>
+    <div class="solution-stats">
+      <div><b data-count="<%= Math.max(product.modules.length, 1) %>">0</b><span>módulos</span></div>
+      <div><b data-count="<%= Math.max(product.benefits.length, 1) %>">0</b><span>beneficios</span></div>
+      <div><b data-count="<%= Math.max(product.industries.length, 1) %>">0</b><span>áreas</span></div>
+    </div>
+  </div>
+  <div class="solution-visual reveal delay" data-parallax-stage>
+    <img class="solution-main-img" src="<%= product.image %>" alt="<%= product.name %>">
+    <div class="solution-float top">
+      <b>Operación trazable</b>
+      <span>Estados, usuarios, reportes y evidencia conectada.</span>
+    </div>
+    <div class="solution-float bottom">
+      <b>Implementación por etapas</b>
+      <span>Priorizamos lo crítico y escalamos según impacto.</span>
+    </div>
+  </div>
+</section>
+
+<section class="section solution-summary reveal">
+  <article class="summary-card dark">
+    <span class="eyebrow">Problema que resuelve</span>
+    <h2>Menos operación manual, más control visible.</h2>
+    <p><%= product.problem %></p>
+  </article>
+  <article class="summary-card">
+    <span class="eyebrow">Industrias y áreas</span>
+    <h2>Diseñado para equipos reales</h2>
+    <div class="chips">
+      <% product.industries.forEach(i => { %><span><%= i %></span><% }) %>
+    </div>
+  </article>
+  <article class="summary-card accent">
+    <span class="eyebrow">Adaptación</span>
+    <h2>Tu proceso primero</h2>
+    <p>Levantamos reglas de negocio, datos, permisos, reportes e integraciones para ajustar la solución a tu operación.</p>
+  </article>
+</section>
+
+<section class="section reveal">
+  <div class="section-head">
+    <div>
+      <span class="eyebrow">Beneficios</span>
+      <h2>Qué gana tu operación</h2>
+    </div>
+    <a class="btn ghost" href="/#contacto"><span>Solicitar demo</span></a>
+  </div>
+  <div class="solution-benefits">
+    <% product.benefits.forEach((b, i) => { %>
+      <article style="--i:<%= i %>">
+        <span><%= String(i + 1).padStart(2, '0') %></span>
+        <h3><%= b %></h3>
+        <p>Permite ordenar información, reducir seguimiento manual y entregar visibilidad confiable a usuarios, jefaturas y equipos de soporte.</p>
+      </article>
+    <% }) %>
+  </div>
+</section>
+
+<section id="modulos" class="section solution-modules reveal">
+  <div class="center">
+    <span class="eyebrow">Módulos y capacidades</span>
+    <h2>Funcionalidades principales</h2>
+    <p>La solución puede implementarse completa o por etapas, según prioridad operacional, usuarios, datos e integraciones.</p>
+  </div>
+  <div class="solution-module-grid">
+    <% product.modules.forEach((m, i) => { %>
+      <article>
+        <b><%= String(i + 1).padStart(2, '0') %></b>
+        <h3><%= m %></h3>
+      </article>
+    <% }) %>
+  </div>
+</section>
+
+<section class="solution-implementation reveal">
+  <div>
+    <span class="eyebrow">Implementación</span>
+    <h2>Un camino claro para pasar del proceso actual a una plataforma operativa.</h2>
+    <p>Trabajamos con tu equipo para entender el flujo real, diseñar la solución, integrar datos y acompañar la adopción.</p>
+  </div>
+  <div class="implementation-steps">
+    <% [
+      ['Levantamiento','Usuarios, reglas, datos, dolores e indicadores.'],
+      ['Diseño funcional','Pantallas, permisos, estados, módulos y reportes.'],
+      ['Integración','Bases de datos, APIs, documentos, BI o sistemas internos.'],
+      ['Puesta en marcha','Pruebas, capacitación, ajustes y soporte evolutivo.']
+    ].forEach((step, i)=>{ %>
+      <article>
+        <b><%= String(i + 1).padStart(2, '0') %></b>
+        <h3><%= step[0] %></h3>
+        <p><%= step[1] %></p>
+      </article>
+    <% }) %>
+  </div>
+</section>
+
+<% if (product.faqs && product.faqs.length) { %>
+  <section class="section solution-faq reveal">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">Preguntas frecuentes</span>
+        <h2>Dudas comunes sobre <%= product.name %></h2>
+      </div>
+    </div>
+    <div class="faq">
+      <% product.faqs.forEach(f => { %>
+        <details>
+          <summary><%= f.question %></summary>
+          <p><%= f.answer %></p>
+        </details>
+      <% }) %>
+    </div>
+  </section>
+<% } %>
+
+<section class="solution-cta reveal">
+  <div>
+    <span class="eyebrow">Conversemos</span>
+    <h2>Veamos cómo adaptar esto a tu operación.</h2>
+    <p>Podemos revisar procesos, módulos, usuarios, reportabilidad e integraciones para definir un alcance claro.</p>
+  </div>
+  <a class="btn primary" href="/#contacto"><span>Solicitar conversación</span></a>
+</section>
+
+<%- include('partials/footer') %>

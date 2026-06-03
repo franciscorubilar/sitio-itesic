@@ -1,0 +1,31 @@
+<%- include('../partials/header') %>
+<section class="admin-shell admin-modern">
+  <aside class="admin-sidebar">
+    <div class="admin-sidebar-head"><span class="brand-mark">IT</span><div><b>Panel ITESICWS</b><small>Administración</small></div></div>
+    <a class="active" href="/admin">Dashboard</a>
+    <a href="/admin/products">Productos</a>
+    <a href="/admin/leads">Leads</a>
+    <a href="/admin/settings">Configuración</a>
+    <form method="post" action="/admin/logout"><button type="submit">Cerrar sesión</button></form>
+  </aside>
+  <div class="admin-content">
+    <div class="admin-page-head">
+      <div><span class="eyebrow">Resumen</span><h1>Dashboard</h1><p>Vista rápida de productos publicados y solicitudes recibidas desde el sitio.</p></div>
+      <a class="btn primary" href="/admin/settings"><span>Configurar leads</span></a>
+    </div>
+    <div class="stats">
+      <div><b><%= productCount %></b><span>Productos</span></div>
+      <div><b><%= leadCount %></b><span>Leads</span></div>
+    </div>
+    <section class="settings-card admin-section-card">
+      <div class="settings-card-head"><div><h2>Últimos leads</h2><p>Solicitudes recientes registradas en el formulario.</p></div><a class="btn ghost" href="/admin/leads"><span>Ver todos</span></a></div>
+      <div class="table">
+        <% latestLeads.forEach(l=>{ %>
+          <div class="row admin-row"><b><%= l.name %></b><span><%= l.email %></span><span><%= l.interest %></span></div>
+        <% }) %>
+        <% if (!latestLeads.length) { %><p class="notice">Todavía no hay leads registrados.</p><% } %>
+      </div>
+    </section>
+  </div>
+</section>
+<%- include('../partials/footer') %>

@@ -1,0 +1,49 @@
+services:
+  postgres:
+    image: postgres:16-bookworm
+    container_name: itesicws-postgres-prisma
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: itesicws
+      POSTGRES_USER: itesicws
+      POSTGRES_PASSWORD: itesicws123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data_prisma:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U itesicws -d itesicws"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  web:
+    build: .
+    container_name: itesicws-web-prisma
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "3001:3000"
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DATABASE_URL: postgresql://itesicws:itesicws123@postgres:5432/itesicws?schema=public
+      SESSION_SECRET: cambia-este-secret-en-produccion
+      APP_URL: http://localhost:3000
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
+      SMTP_FROM: ${SMTP_FROM:-ITESICWS <no-reply@itesicws.cl>}
+      SMTP_SECURE: ${SMTP_SECURE:-false}
+      MAILER_SERVICE: ${MAILER_SERVICE:-}
+      MAILER_SECURE: ${MAILER_SECURE:-false}
+      MAILER_PORT: ${MAILER_PORT:-587}
+      MAILER_AUTH_USER: ${MAILER_AUTH_USER:-}
+      MAILER_AUTH_PASS: ${MAILER_AUTH_PASS:-}
+      MAILER_DEFAULT_FROM: ${MAILER_DEFAULT_FROM:-}
+
+volumes:
+  postgres_data_prisma:

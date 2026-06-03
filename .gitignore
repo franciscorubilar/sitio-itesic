@@ -1,0 +1,36 @@
+# Dependencias de Node
+node_modules/
+.npm-cache/
+
+# Archivos de configuración local y secretos
+.env
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Archivos del sistema operativo
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Subidas de usuarios en producción/desarrollo
+public/uploads/*
+!public/uploads/.gitkeep
+
+# IDEs y editores
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.gemini/
+antigravity-ide/

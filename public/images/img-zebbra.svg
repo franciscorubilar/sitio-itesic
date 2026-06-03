@@ -1,0 +1,155 @@
+<svg width="1180" height="720" viewBox="0 0 1180 720" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer Window Frame -->
+  <rect width="1180" height="720" rx="20" fill="#F3F5F9"/>
+  <rect x="1" y="1" width="1178" height="718" rx="19" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="2"/>
+  
+  <!-- Browser Header Bar -->
+  <rect x="2" y="2" width="1176" height="52" rx="18" fill="#FFFFFF"/>
+  <rect x="2" y="53" width="1176" height="1" fill="#E2E8F0"/>
+  
+  <!-- Window Controls -->
+  <circle cx="28" cy="26" r="6" fill="#EF4444"/>
+  <circle cx="48" cy="26" r="6" fill="#F59E0B"/>
+  <circle cx="68" cy="26" r="6" fill="#10B981"/>
+  
+  <!-- Address Bar -->
+  <rect x="100" y="12" width="600" height="28" rx="14" fill="#F1F5F9"/>
+  <text x="120" y="30" fill="#64748B" font-family="Inter, sans-serif" font-size="12" font-weight="500">app.itesic.cl/sistemas/zebbra</text>
+  
+  <!-- User/Status -->
+  <rect x="1010" y="12" width="140" height="28" rx="14" fill="#F1F5F9"/>
+  <circle cx="1024" cy="26" r="7" fill="#64748B"/>
+  <text x="1040" y="30" fill="#475569" font-family="Inter, sans-serif" font-size="11" font-weight="700">F. Rubilar</text>
+
+  <!-- Sidebar Container -->
+  <rect x="2" y="54" width="220" height="664" fill="#FFFFFF"/>
+  <rect x="221" y="54" width="1" height="664" fill="#E2E8F0"/>
+
+  <!-- Logo -->
+  <rect x="24" y="80" width="36" height="36" rx="8" fill="#588B35"/>
+  <text x="32" y="104" fill="#FFFFFF" font-family="Sora, sans-serif" font-size="18" font-weight="900">Ze</text>
+  <text x="72" y="96" fill="#0F172A" font-family="Sora, sans-serif" font-size="15" font-weight="800">Zebbra</text>
+  <text x="72" y="112" fill="#64748B" font-family="Inter, sans-serif" font-size="10" font-weight="600">Área de Trabajo</text>
+
+  <!-- Sidebar Menu Items -->
+  
+    <rect x="12" y="146" width="196" height="34" rx="8" fill="#588B3512"/>
+    <circle cx="34" cy="160" r="4" fill="#588B35"/>
+    <text x="48" y="164" fill="#588B35" font-family="Inter, sans-serif" font-size="13" font-weight="700">Dashboard</text>
+    
+    
+    <circle cx="34" cy="202" r="4" fill="#94A3B8"/>
+    <text x="48" y="206" fill="#475569" font-family="Inter, sans-serif" font-size="13" font-weight="600">Visor</text>
+    
+    
+    <circle cx="34" cy="244" r="4" fill="#94A3B8"/>
+    <text x="48" y="248" fill="#475569" font-family="Inter, sans-serif" font-size="13" font-weight="600">Reporte SMA</text>
+    
+    
+    <circle cx="34" cy="286" r="4" fill="#94A3B8"/>
+    <text x="48" y="290" fill="#475569" font-family="Inter, sans-serif" font-size="13" font-weight="600">Reporte DGA</text>
+    
+    
+    <circle cx="34" cy="328" r="4" fill="#94A3B8"/>
+    <text x="48" y="332" fill="#475569" font-family="Inter, sans-serif" font-size="13" font-weight="600">Usuarios</text>
+    
+    
+    <circle cx="34" cy="370" r="4" fill="#94A3B8"/>
+    <text x="48" y="374" fill="#475569" font-family="Inter, sans-serif" font-size="13" font-weight="600">Caracteristicas</text>
+    
+
+  <!-- Main Content Area -->
+  <g transform="translate(242, 74)">
+    
+  <!-- Top Title Bar -->
+  <text x="20" y="40" fill="#0F172A" font-family="Sora, sans-serif" font-size="22" font-weight="800">SITR Medioambiental — Plataforma Zebbra</text>
+  <text x="20" y="60" fill="#64748B" font-family="Inter, sans-serif" font-size="13" font-weight="500">Reportes de cumplimiento ambiental SMA/DGA y disponibilidad de fuentes</text>
+
+  <!-- Main container -->
+  <g transform="translate(20, 90)">
+    <rect x="0" y="0" width="860" height="500" rx="14" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.5"/>
+    
+    <!-- Inner Header like CMPC -->
+    <rect x="20" y="24" width="820" height="74" rx="8" fill="#588B35"/>
+    <text x="40" y="52" fill="#FFFFFF" font-family="Sora, sans-serif" font-size="16" font-weight="800">SITR Medioambiental - CMPC Maderas</text>
+    <text x="40" y="76" fill="#E8F4E2" font-family="Inter, sans-serif" font-size="12" font-weight="500">Consolida indicadores ambientales de la planta, estado de fuentes y comportamiento reciente.</text>
+
+    <!-- Metric Cards -->
+    <g transform="translate(20, 120)">
+      <!-- Card 1 -->
+      <rect x="0" y="0" width="180" height="74" rx="8" fill="#F8FAFC" stroke="#E2E8F0"/>
+      <text x="14" y="22" fill="#64748B" font-family="Inter, sans-serif" font-size="10" font-weight="700" text-transform="uppercase">VARIABLES MONITOREADAS</text>
+      <text x="14" y="54" fill="#588B35" font-family="Sora, sans-serif" font-size="24" font-weight="800">24</text>
+
+      <!-- Card 2 -->
+      <rect x="200" y="0" width="180" height="74" rx="8" fill="#F8FAFC" stroke="#E2E8F0"/>
+      <text x="214" y="22" fill="#64748B" font-family="Inter, sans-serif" font-size="10" font-weight="700" text-transform="uppercase">FUENTES ACTIVAS</text>
+      <text x="214" y="54" fill="#588B35" font-family="Sora, sans-serif" font-size="24" font-weight="800">8</text>
+
+      <!-- Card 3 -->
+      <rect x="400" y="0" width="180" height="74" rx="8" fill="#F8FAFC" stroke="#E2E8F0"/>
+      <text x="414" y="22" fill="#64748B" font-family="Inter, sans-serif" font-size="10" font-weight="700" text-transform="uppercase">ALERTAS ACTIVAS</text>
+      <text x="414" y="54" fill="#D97706" font-family="Sora, sans-serif" font-size="24" font-weight="800">3</text>
+
+      <!-- Card 4 -->
+      <rect x="600" y="0" width="220" height="74" rx="8" fill="#F8FAFC" stroke="#E2E8F0"/>
+      <text x="614" y="22" fill="#64748B" font-family="Inter, sans-serif" font-size="10" font-weight="700" text-transform="uppercase">DISPONIBILIDAD</text>
+      <text x="614" y="54" fill="#588B35" font-family="Sora, sans-serif" font-size="24" font-weight="800">98%</text>
+    </g>
+
+    <!-- Split layouts: Chart & Status Table -->
+    <!-- Left Chart Box -->
+    <g transform="translate(20, 214)">
+      <rect x="0" y="0" width="450" height="260" rx="10" fill="#FFFFFF" stroke="#E2E8F0"/>
+      <text x="20" y="28" fill="#0F172A" font-family="Sora, sans-serif" font-size="13" font-weight="800">Comportamiento Diario</text>
+      
+      <!-- Bar Chart -->
+      <g transform="translate(40, 190)">
+        <!-- Axes -->
+        <line x1="0" y1="0" x2="360" y2="0" stroke="#CBD5E1" stroke-width="2"/>
+        
+        <!-- Bars -->
+        <rect x="20" y="-120" width="30" height="120" fill="#588B35" rx="4"/>
+        <rect x="70" y="-90" width="30" height="90" fill="#588B35" rx="4"/>
+        <rect x="120" y="-140" width="30" height="140" fill="#588B35" rx="4"/>
+        <rect x="170" y="-110" width="30" height="110" fill="#588B35" rx="4"/>
+        <rect x="220" y="-130" width="30" height="130" fill="#588B35" rx="4"/>
+        <rect x="270" y="-150" width="30" height="150" fill="#588B35" rx="4"/>
+        <rect x="320" y="-120" width="30" height="120" fill="#588B35" rx="4"/>
+      </g>
+    </g>
+
+    <!-- Right Status Table -->
+    <g transform="translate(490, 214)">
+      <rect x="0" y="0" width="350" height="260" rx="10" fill="#FFFFFF" stroke="#E2E8F0"/>
+      <text x="20" y="28" fill="#0F172A" font-family="Sora, sans-serif" font-size="13" font-weight="800">Operación y Fuentes</text>
+      
+      <g transform="translate(20, 50)">
+        <!-- Row 1 -->
+        <text x="0" y="20" fill="#0F172A" font-family="Inter, sans-serif" font-size="12" font-weight="700">Fuente MP-1</text>
+        <rect x="220" y="4" width="90" height="22" rx="11" fill="#E8F4E2"/>
+        <text x="265" y="19" fill="#588B35" font-family="Inter, sans-serif" font-size="11" font-weight="800" text-anchor="middle">Operativo</text>
+        <line x1="0" y1="36" x2="310" y2="36" stroke="#F1F5F9"/>
+
+        <!-- Row 2 -->
+        <text x="0" y="60" fill="#0F172A" font-family="Inter, sans-serif" font-size="12" font-weight="700">Sensor SO2</text>
+        <rect x="220" y="44" width="90" height="22" rx="11" fill="#E8F4E2"/>
+        <text x="265" y="59" fill="#588B35" font-family="Inter, sans-serif" font-size="11" font-weight="800" text-anchor="middle">Operativo</text>
+        <line x1="0" y1="76" x2="310" y2="76" stroke="#F1F5F9"/>
+
+        <!-- Row 3 -->
+        <text x="0" y="100" fill="#0F172A" font-family="Inter, sans-serif" font-size="12" font-weight="700">Medidor NOx</text>
+        <rect x="220" y="84" width="90" height="22" rx="11" fill="#FEF3C7"/>
+        <text x="265" y="99" fill="#D97706" font-family="Inter, sans-serif" font-size="11" font-weight="800" text-anchor="middle">Revisión</text>
+        <line x1="0" y1="116" x2="310" y2="116" stroke="#F1F5F9"/>
+
+        <!-- Row 4 -->
+        <text x="0" y="140" fill="#0F172A" font-family="Inter, sans-serif" font-size="12" font-weight="700">Emisiones CO2</text>
+        <rect x="220" y="124" width="90" height="22" rx="11" fill="#E8F4E2"/>
+        <text x="265" y="139" fill="#588B35" font-family="Inter, sans-serif" font-size="11" font-weight="800" text-anchor="middle">Operativo</text>
+      </g>
+    </g>
+  </g>
+
+  </g>
+</svg>

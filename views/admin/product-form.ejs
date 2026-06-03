@@ -1,0 +1,220 @@
+<%- include('../partials/header') %>
+
+<section class="admin-shell admin-modern">
+  <aside class="admin-sidebar">
+    <div class="admin-sidebar-head"><span class="brand-mark">IT</span><div><b>Panel ITESICWS</b><small>Administración</small></div></div>
+    <a href="/admin">Dashboard</a>
+    <a class="active" href="/admin/products">Productos</a>
+    <a href="/admin/leads">Leads</a>
+    <a href="/admin/settings">Configuración</a>
+  </aside>
+  
+  <div class="admin-content">
+    <div class="admin-page-head">
+      <div>
+        <span class="eyebrow">Catálogo</span>
+        <h1><%= product ? 'Editar producto' : 'Nuevo producto' %></h1>
+        <p>Administra los detalles de la solución, textos comerciales, módulos e imagen.</p>
+      </div>
+      <a class="btn ghost" href="/admin/products"><span>← Volver a productos</span></a>
+    </div>
+
+    <section class="settings-card">
+      <form class="form admin-form form-grid" method="post" action="<%= product ? '/admin/products/' + product.id : '/admin/products' %>">
+        
+        <div class="form-section-title">Información Principal</div>
+        
+        <div class="form-row-grid">
+          <div>
+            <label class="form-label" for="name">Nombre de la solución *</label>
+            <input id="name" name="name" required placeholder="Ej. Perseus ERP" value="<%= product?.name || '' %>">
+          </div>
+          <div>
+            <label class="form-label" for="slug">Slug (URL) <small>(Dejar vacío para autogenerar)</small></label>
+            <input id="slug" name="slug" placeholder="Ej. perseus-erp" value="<%= product?.slug || '' %>">
+          </div>
+        </div>
+
+        <div class="form-row-grid">
+          <div>
+            <label class="form-label" for="category">Categoría</label>
+            <input id="category" name="category" placeholder="Ej. Gestión Industrial" value="<%= product?.category || 'General' %>">
+          </div>
+          <div>
+            <label class="form-label" for="cta">Texto del Botón CTA</label>
+            <input id="cta" name="cta" placeholder="Ej. Solicitar demo" value="<%= product?.cta || 'Solicitar demo' %>">
+          </div>
+        </div>
+
+        <div>
+          <label class="form-label" for="summary">Resumen Comercial (Corto)</label>
+          <input id="summary" name="summary" placeholder="Ej. Trazabilidad de producción de extremo a extremo sin papeles" value="<%= product?.summary || '' %>">
+        </div>
+
+        <div>
+          <label class="form-label" for="description">Descripción Detallada</label>
+          <textarea id="description" name="description" placeholder="Describe qué hace la solución, a quién le sirve..." rows="5"><%= product?.description || '' %></textarea>
+        </div>
+
+        <div>
+          <label class="form-label" for="problem">Problema que resuelve</label>
+          <textarea id="problem" name="problem" placeholder="Ej. Pérdida de control de stock y planillas de papel..." rows="4"><%= product?.problem || '' %></textarea>
+        </div>
+
+        <div class="form-section-title">Imagen de la Solución</div>
+        
+        <div class="image-upload-wrapper">
+          <input type="hidden" id="product-image-url" name="image" value="<%= product?.image || '/images/product-ai.svg' %>">
+          
+          <div class="image-preview-container">
+            <img id="image-preview" src="<%= product?.image || '/images/product-ai.svg' %>" alt="Vista previa">
+          </div>
+          
+          <div class="image-dropzone" id="image-dropzone">
+            <span class="dropzone-icon">📁</span>
+            <div class="dropzone-text">Arrastra una imagen aquí o <span>haz clic para buscar</span></div>
+            <input type="file" id="image-file-input" accept="image/*" style="display: none;">
+            <div class="upload-progress-bar" id="upload-progress" style="display: none;">
+              <div class="progress-fill"></div>
+            </div>
+            <small class="dropzone-tip">Formatos recomendados: PNG, JPG, SVG. Máx. 5MB</small>
+          </div>
+        </div>
+
+        <div class="form-section-title">Listados y Contenidos (Uno por línea)</div>
+        
+        <div class="form-row-grid three-cols">
+          <div>
+            <label class="form-label" for="benefits">Beneficios operacionales</label>
+            <textarea id="benefits" name="benefits" placeholder="Ej. 100% libre de papel&#10;Reportes automáticos" rows="6"><%= product?.benefits?.join('\n') || '' %></textarea>
+          </div>
+          <div>
+            <label class="form-label" for="modules">Módulos principales</label>
+            <textarea id="modules" name="modules" placeholder="Ej. Control de stock&#10;Planificación" rows="6"><%= product?.modules?.join('\n') || '' %></textarea>
+          </div>
+          <div>
+            <label class="form-label" for="industries">Industrias / Áreas recomendadas</label>
+            <textarea id="industries" name="industries" placeholder="Ej. Agroindustria&#10;Manufactura" rows="6"><%= product?.industries?.join('\n') || '' %></textarea>
+          </div>
+        </div>
+
+        <div class="form-section-title">Publicación y Prioridad</div>
+
+        <div class="form-row-grid inline-options">
+          <div>
+            <label class="form-label" for="sortOrder">Orden de Clasificación</label>
+            <input id="sortOrder" name="sortOrder" type="number" style="max-width: 140px;" value="<%= product?.sortOrder || 0 %>">
+          </div>
+          <div class="checkbox-group">
+            <label class="checkbox-line">
+              <input type="checkbox" name="published" <%= product?.published || !product ? 'checked' : '' %>>
+              <span>Publicado en la web</span>
+            </label>
+            <label class="checkbox-line">
+              <input type="checkbox" name="featured" <%= product?.featured ? 'checked' : '' %>>
+              <span>Destacado en Home</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-actions-bar">
+          <button class="btn primary" type="submit"><span>Guardar cambios</span></button>
+          <a class="btn ghost" href="/admin/products"><span>Cancelar</span></a>
+        </div>
+      </form>
+    </section>
+  </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const dropzone = document.getElementById('image-dropzone');
+  const fileInput = document.getElementById('image-file-input');
+  const preview = document.getElementById('image-preview');
+  const hiddenInput = document.getElementById('product-image-url');
+  const progress = document.getElementById('upload-progress');
+  const progressFill = progress.querySelector('.progress-fill');
+  const dropzoneText = dropzone.querySelector('.dropzone-text');
+
+  // Trigger file browser click
+  dropzone.addEventListener('click', () => fileInput.click());
+
+  // Prevent default drag behaviors
+  ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+    dropzone.addEventListener(eventName, preventDefaults, false);
+    document.body.addEventListener(eventName, preventDefaults, false);
+  });
+
+  // Highlight dropzone when item is dragged over it
+  ['dragenter', 'dragover'].forEach(eventName => {
+    dropzone.addEventListener(eventName, () => dropzone.classList.add('highlight-drag'), false);
+  });
+
+  ['dragleave', 'drop'].forEach(eventName => {
+    dropzone.addEventListener(eventName, () => dropzone.classList.remove('highlight-drag'), false);
+  });
+
+  // Handle dropped files
+  dropzone.addEventListener('drop', handleDrop, false);
+
+  // Handle file select
+  fileInput.addEventListener('change', handleFileSelect, false);
+
+  function preventDefaults(e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
+  function handleDrop(e) {
+    const dt = e.dataTransfer;
+    const files = dt.files;
+    if (files.length) uploadFile(files[0]);
+  }
+
+  function handleFileSelect(e) {
+    const files = e.target.files;
+    if (files.length) uploadFile(files[0]);
+  }
+
+  function uploadFile(file) {
+    if (!file.type.startsWith('image/')) {
+      alert('Por favor selecciona un archivo de imagen válido.');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('imageFile', file);
+
+    progress.style.display = 'block';
+    progressFill.style.width = '0%';
+    dropzoneText.innerHTML = 'Subiendo imagen...';
+
+    fetch('/admin/upload-image', {
+      method: 'POST',
+      body: formData
+    })
+    .then(response => {
+      if (!response.ok) throw new Error('Error al subir la imagen');
+      return response.json();
+    })
+    .then(data => {
+      progressFill.style.width = '100%';
+      setTimeout(() => {
+        progress.style.display = 'none';
+        dropzoneText.innerHTML = '¡Subida con éxito! Arrasta otra o <span>haz clic</span>';
+      }, 500);
+
+      // Update preview and hidden input
+      preview.src = data.imageUrl;
+      hiddenInput.value = data.imageUrl;
+    })
+    .catch(err => {
+      console.error(err);
+      progress.style.display = 'none';
+      dropzoneText.innerHTML = '<span style="color:#d93838">Error al subir. Haz clic para reintentar</span>';
+    });
+  }
+});
+</script>
+
+<%- include('../partials/footer') %>

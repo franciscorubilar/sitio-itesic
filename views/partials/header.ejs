@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title><%= settings.siteName %> - Software empresarial e IA</title>
+  <meta name="description" content="Software empresarial, consultoría IA, automatización, Power BI y plataformas operacionales." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sora:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-main-row">
+      <a class="brand" href="/"><span class="brand-mark">IT</span><span><b>ITESICWS</b><small>Software empresarial e IA</small></span></a>
+      <nav>
+        <a href="/" class="<%= path==='/'?'active':'' %>">Inicio</a>
+        <a href="/productos" class="<%= path.startsWith('/productos')?'active':'' %>">Productos</a>
+        <a href="/consultoria-ia" class="<%= path==='/consultoria-ia'?'active':'' %>">Consultoría IA</a>
+        <a href="/#servicios">Servicios</a>
+        <a href="/#contacto">Contacto</a>
+        <% if (user) { %><a href="/admin">Admin</a><% } %>
+      </nav>
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="Cambiar tema">◐</button>
+    </div>
+  </header>
+  <main>

@@ -1,0 +1,123 @@
+<svg width="1180" height="720" viewBox="0 0 1180 720" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer Window Frame -->
+  <rect width="1180" height="720" rx="20" fill="#F3F5F9"/>
+  <rect x="1" y="1" width="1178" height="718" rx="19" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="2"/>
+  
+  <!-- Browser Header Bar -->
+  <rect x="2" y="2" width="1176" height="52" rx="18" fill="#FFFFFF"/>
+  <rect x="2" y="53" width="1176" height="1" fill="#E2E8F0"/>
+  
+  <!-- Window Controls -->
+  <circle cx="28" cy="26" r="6" fill="#EF4444"/>
+  <circle cx="48" cy="26" r="6" fill="#F59E0B"/>
+  <circle cx="68" cy="26" r="6" fill="#10B981"/>
+  
+  <!-- Address Bar -->
+  <rect x="100" y="12" width="600" height="28" rx="14" fill="#F1F5F9"/>
+  <text x="120" y="30" fill="#64748B" font-family="Inter, sans-serif" font-size="12" font-weight="500">app.itesic.cl/sistemas/bi-/-power-bi</text>
+  
+  <!-- User/Status -->
+  <rect x="1010" y="12" width="140" height="28" rx="14" fill="#F1F5F9"/>
+  <circle cx="1024" cy="26" r="7" fill="#64748B"/>
+  <text x="1040" y="30" fill="#475569" font-family="Inter, sans-serif" font-size="11" font-weight="700">F. Rubilar</text>
+
+  <!-- Sidebar Container -->
+  <rect x="2" y="54" width="220" height="664" fill="#FFFFFF"/>
+  <rect x="221" y="54" width="1" height="664" fill="#E2E8F0"/>
+
+  <!-- Logo -->
+  <rect x="24" y="80" width="36" height="36" rx="8" fill="#F2C94C"/>
+  <text x="32" y="104" fill="#FFFFFF" font-family="Sora, sans-serif" font-size="18" font-weight="900">Po</text>
+  <text x="72" y="96" fill="#0F172A" font-family="Sora, sans-serif" font-size="15" font-weight="800">Power BI</text>
+  <text x="72" y="112" fill="#64748B" font-family="Inter, sans-serif" font-size="10" font-weight="600">Área de Trabajo</text>
+
+  <!-- Sidebar Menu Items -->
+  
+    <rect x="12" y="146" width="196" height="34" rx="8" fill="#F2C94C12"/>
+    <circle cx="34" cy="160" r="4" fill="#F2C94C"/>
+    <text x="48" y="164" fill="#F2C94C" font-family="Inter, sans-serif" font-size="13" font-weight="700">Dashboards</text>
+    
+    
+    <circle cx="34" cy="202" r="4" fill="#94A3B8"/>
+    <text x="48" y="206" fill="#475569" font-family="Inter, sans-serif" font-size="13" font-weight="600">Modelos</text>
+    
+    
+    <circle cx="34" cy="244" r="4" fill="#94A3B8"/>
+    <text x="48" y="248" fill="#475569" font-family="Inter, sans-serif" font-size="13" font-weight="600">ETL pipelines</text>
+    
+    
+    <circle cx="34" cy="286" r="4" fill="#94A3B8"/>
+    <text x="48" y="290" fill="#475569" font-family="Inter, sans-serif" font-size="13" font-weight="600">Alertas</text>
+    
+    
+    <circle cx="34" cy="328" r="4" fill="#94A3B8"/>
+    <text x="48" y="332" fill="#475569" font-family="Inter, sans-serif" font-size="13" font-weight="600">Usuarios</text>
+    
+
+  <!-- Main Content Area -->
+  <g transform="translate(242, 74)">
+    
+  <!-- Top Title Bar -->
+  <text x="20" y="40" fill="#0F172A" font-family="Sora, sans-serif" font-size="22" font-weight="800">Business Intelligence / Power BI</text>
+  <text x="20" y="60" fill="#64748B" font-family="Inter, sans-serif" font-size="13" font-weight="500">Estructuración de datos operacionales y tableros interactivos para toma de decisiones</text>
+
+  <!-- Power BI Layout -->
+  <g transform="translate(20, 90)">
+    <rect x="0" y="0" width="860" height="500" rx="14" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.5"/>
+    <text x="24" y="36" fill="#0F172A" font-family="Sora, sans-serif" font-size="16" font-weight="800">Dashboard Ejecutivo - Indicadores Claves</text>
+
+    <!-- Visual charts -->
+    <!-- Column Chart -->
+    <g transform="translate(30, 80)">
+      <rect x="0" y="0" width="380" height="230" rx="10" fill="#F8FAFC" stroke="#E2E8F0"/>
+      <text x="20" y="28" fill="#475569" font-family="Inter, sans-serif" font-size="12" font-weight="800">Desempeño Mensual Ventas</text>
+      <!-- Draw bars -->
+      <rect x="40" y="90" width="24" height="100" fill="#2F6BFF" rx="3"/>
+      <rect x="80" y="110" width="24" height="80" fill="#2F6BFF" rx="3"/>
+      <rect x="120" y="70" width="24" height="120" fill="#2F6BFF" rx="3"/>
+      <rect x="160" y="60" width="24" height="130" fill="#2F6BFF" rx="3"/>
+      <rect x="200" y="80" width="24" height="110" fill="#16B7A3" rx="3"/>
+      <rect x="240" y="50" width="24" height="140" fill="#16B7A3" rx="3"/>
+      <rect x="280" y="30" width="24" height="160" fill="#16B7A3" rx="3"/>
+      <line x1="30" y1="190" x2="330" y2="190" stroke="#CBD5E1" stroke-width="1"/>
+    </g>
+
+    <!-- Pie Chart -->
+    <g transform="translate(440, 80)">
+      <rect x="0" y="0" width="380" height="230" rx="10" fill="#F8FAFC" stroke="#E2E8F0"/>
+      <text x="20" y="28" fill="#475569" font-family="Inter, sans-serif" font-size="12" font-weight="800">Participación por División</text>
+      <!-- Draw pie sections -->
+      <circle cx="160" cy="130" r="60" fill="#E2E8F0"/>
+      <path d="M160 130 L160 70 A60 60 0 0 1 220 130 Z" fill="#2F6BFF"/>
+      <path d="M160 130 L220 130 A60 60 0 0 1 160 190 Z" fill="#16B7A3"/>
+      <path d="M160 130 L160 190 A60 60 0 1 1 160 70 Z" fill="#FFD166"/>
+      
+      <!-- Legends -->
+      <rect x="250" y="70" width="12" height="12" rx="3" fill="#2F6BFF"/>
+      <text x="270" y="81" fill="#475569" font-family="Inter, sans-serif" font-size="11" font-weight="700">Div. Logística</text>
+
+      <rect x="250" y="100" width="12" height="12" rx="3" fill="#16B7A3"/>
+      <text x="270" y="111" fill="#475569" font-family="Inter, sans-serif" font-size="11" font-weight="700">Div. Maderas</text>
+
+      <rect x="250" y="130" width="12" height="12" rx="3" fill="#FFD166"/>
+      <text x="270" y="141" fill="#475569" font-family="Inter, sans-serif" font-size="11" font-weight="700">Div. Relaves</text>
+    </g>
+
+    <!-- Table Details -->
+    <g transform="translate(30, 330)">
+      <rect x="0" y="0" width="790" height="140" rx="10" fill="#FFFFFF" stroke="#E2E8F0"/>
+      <!-- Small data rows -->
+      <rect x="20" y="20" width="750" height="30" rx="4" fill="#F8FAFC"/>
+      <text x="36" y="40" fill="#0F172A" font-family="Inter, sans-serif" font-size="12" font-weight="800">Total Despachado: 140,250 Ton</text>
+      <text x="300" y="40" fill="#475569" font-family="Inter, sans-serif" font-size="12" font-weight="600">Meta: 135,000 Ton</text>
+      <text x="560" y="40" fill="#10B981" font-family="Inter, sans-serif" font-size="12" font-weight="800">✓ Meta Cumplida (+3.8%)</text>
+      
+      <rect x="20" y="60" width="750" height="30" rx="4" fill="#FFFFFF"/>
+      <text x="36" y="80" fill="#0F172A" font-family="Inter, sans-serif" font-size="12" font-weight="800">Eficiencia Energética: 96.2%</text>
+      <text x="300" y="80" fill="#475569" font-family="Inter, sans-serif" font-size="12" font-weight="600">Meta: 95.0%</text>
+      <text x="560" y="80" fill="#10B981" font-family="Inter, sans-serif" font-size="12" font-weight="800">✓ Meta Cumplida (+1.2%)</text>
+    </g>
+  </g>
+
+  </g>
+</svg>

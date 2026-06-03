@@ -1,0 +1,96 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  IN_PROGRESS
+  CLOSED
+}
+
+enum DeliveryMode {
+  DATABASE_ONLY
+  EMAIL
+  WHATSAPP
+  EMAIL_AND_WHATSAPP
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  category    String
+  summary     String
+  description String   @db.Text
+  problem     String   @db.Text
+  benefits    String[] @default([])
+  modules     String[] @default([])
+  industries  String[] @default([])
+  image       String
+  cta         String   @default("Solicitar demo")
+  published   Boolean  @default(true)
+  featured    Boolean  @default(false)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  faqs ProductFAQ[]
+}
+
+model ProductFAQ {
+  id        String  @id @default(cuid())
+  question  String
+  answer    String  @db.Text
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
+
+model Lead {
+  id        String     @id @default(cuid())
+  name      String
+  company   String?
+  role      String?
+  email     String
+  phone     String?
+  interest  String
+  message   String    @db.Text
+  status    LeadStatus @default(NEW)
+  notes     String?   @db.Text
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model SiteSetting {
+  id                  String       @id @default("main")
+  siteName            String       @default("ITESICWS")
+  contactEmail        String       @default("frubilar@itesic.cl")
+  whatsappNumber      String       @default("56912345678")
+  leadDeliveryMode    DeliveryMode @default(DATABASE_ONLY)
+  whatsappMessage     String       @default("Hola ITESICWS, quiero conversar sobre una solución digital o consultoría IA.")
+  smtpHost            String?
+  smtpPort            Int          @default(587)
+  smtpUser            String?
+  smtpPass            String?
+  smtpFrom            String?
+  smtpSecure          Boolean      @default(false)
+  heroTitle           String       @default("Desarrollamos software. Construimos inteligencia.")
+  heroSubtitle        String       @default("Creamos aplicaciones empresariales, plataformas operacionales, soluciones de integración y consultoría en inteligencia artificial para transformar procesos críticos en sistemas inteligentes, trazables y escalables.")
+  createdAt           DateTime     @default(now())
+  updatedAt           DateTime     @updatedAt
+}

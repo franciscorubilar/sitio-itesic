@@ -1,0 +1,17 @@
+<%- include('partials/header') %>
+<section class="section center">
+  <span class="eyebrow">Solicitud recibida</span>
+  <h1>Gracias, <%= lead.name %></h1>
+  <p>Tu solicitud quedó guardada correctamente. Te contactaremos pronto.</p>
+  <div class="actions center-actions">
+    <% if (whatsapp) { %><a class="btn primary" target="_blank" href="<%= whatsapp %>"><span>Abrir WhatsApp</span></a><% } %>
+    <a class="btn ghost" href="/productos"><span>Ver soluciones</span></a>
+  </div>
+  <% if (emailResult && emailResult.sent) { %>
+    <p class="notice">El aviso por correo fue enviado correctamente al equipo ITESICWS.</p>
+  <% } %>
+  <% if (emailResult && !emailResult.sent) { %>
+    <p class="notice">El lead quedó guardado, pero el correo no se envió: <%= emailResult.reason %></p>
+  <% } %>
+</section>
+<%- include('partials/footer') %>

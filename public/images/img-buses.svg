@@ -1,0 +1,238 @@
+<svg width="1180" height="720" viewBox="0 0 1180 720" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer Window Frame -->
+  <rect width="1180" height="720" rx="20" fill="#F3F5F9"/>
+  <rect x="1" y="1" width="1178" height="718" rx="19" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="2"/>
+  
+  <!-- Browser Header Bar -->
+  <rect x="2" y="2" width="1176" height="52" rx="18" fill="#FFFFFF"/>
+  <rect x="2" y="53" width="1176" height="1" fill="#E2E8F0"/>
+  
+  <!-- Window Controls -->
+  <circle cx="28" cy="26" r="6" fill="#EF4444"/>
+  <circle cx="48" cy="26" r="6" fill="#F59E0B"/>
+  <circle cx="68" cy="26" r="6" fill="#10B981"/>
+  
+  <!-- Address Bar -->
+  <rect x="100" y="12" width="600" height="28" rx="14" fill="#F1F5F9"/>
+  <text x="120" y="30" fill="#64748B" font-family="Inter, sans-serif" font-size="12" font-weight="500">app.itesic.cl/sistemas/venta-buses</text>
+  
+  <!-- User/Status -->
+  <rect x="1010" y="12" width="140" height="28" rx="14" fill="#F1F5F9"/>
+  <circle cx="1024" cy="26" r="7" fill="#64748B"/>
+  <text x="1040" y="30" fill="#475569" font-family="Inter, sans-serif" font-size="11" font-weight="700">F. Rubilar</text>
+
+  <!-- Sidebar Container -->
+  <rect x="2" y="54" width="220" height="664" fill="#FFFFFF"/>
+  <rect x="221" y="54" width="1" height="664" fill="#E2E8F0"/>
+
+  <!-- Logo -->
+  <rect x="24" y="80" width="36" height="36" rx="8" fill="#2F6BFF"/>
+  <text x="32" y="104" fill="#FFFFFF" font-family="Sora, sans-serif" font-size="18" font-weight="900">Bu</text>
+  <text x="72" y="96" fill="#0F172A" font-family="Sora, sans-serif" font-size="15" font-weight="800">Buses</text>
+  <text x="72" y="112" fill="#64748B" font-family="Inter, sans-serif" font-size="10" font-weight="600">Área de Trabajo</text>
+
+  <!-- Sidebar Menu Items -->
+  
+    <rect x="12" y="146" width="196" height="34" rx="8" fill="#2F6BFF12"/>
+    <circle cx="34" cy="160" r="4" fill="#2F6BFF"/>
+    <text x="48" y="164" fill="#2F6BFF" font-family="Inter, sans-serif" font-size="13" font-weight="700">Venta Pasajes</text>
+    
+    
+    <circle cx="34" cy="202" r="4" fill="#94A3B8"/>
+    <text x="48" y="206" fill="#475569" font-family="Inter, sans-serif" font-size="13" font-weight="600">Servicios</text>
+    
+    
+    <circle cx="34" cy="244" r="4" fill="#94A3B8"/>
+    <text x="48" y="248" fill="#475569" font-family="Inter, sans-serif" font-size="13" font-weight="600">Viajes</text>
+    
+    
+    <circle cx="34" cy="286" r="4" fill="#94A3B8"/>
+    <text x="48" y="290" fill="#475569" font-family="Inter, sans-serif" font-size="13" font-weight="600">Buses</text>
+    
+    
+    <circle cx="34" cy="328" r="4" fill="#94A3B8"/>
+    <text x="48" y="332" fill="#475569" font-family="Inter, sans-serif" font-size="13" font-weight="600">Caja</text>
+    
+
+  <!-- Main Content Area -->
+  <g transform="translate(242, 74)">
+    
+  <!-- Top Title Bar -->
+  <text x="20" y="40" fill="#0F172A" font-family="Sora, sans-serif" font-size="22" font-weight="800">Venta de Pasajes y Asientos de Buses</text>
+  <text x="20" y="60" fill="#64748B" font-family="Inter, sans-serif" font-size="13" font-weight="500">Punto de venta y mapeo interactivo de asientos para boletería</text>
+
+  <!-- Buses layout -->
+  <g transform="translate(20, 90)">
+    <rect x="0" y="0" width="860" height="500" rx="14" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.5"/>
+    <text x="24" y="36" fill="#0F172A" font-family="Sora, sans-serif" font-size="16" font-weight="800">Servicio Laja - Concepción (14:30 hrs)</text>
+    
+    <!-- Left search results / passenger inputs -->
+    <g transform="translate(24, 70)">
+      <text x="0" y="15" fill="#475569" font-family="Inter, sans-serif" font-size="11" font-weight="700">Nombre Pasajero</text>
+      <rect x="0" y="22" width="300" height="32" rx="6" fill="#FFFFFF" stroke="#CBD5E1"/>
+      <text x="10" y="42" fill="#0F172A" font-family="Inter, sans-serif" font-size="12" font-weight="600">Juan Pérez González</text>
+
+      <text x="0" y="80" fill="#475569" font-family="Inter, sans-serif" font-size="11" font-weight="700">RUT / Identificación</text>
+      <rect x="0" y="87" width="300" height="32" rx="6" fill="#FFFFFF" stroke="#CBD5E1"/>
+      <text x="10" y="107" fill="#0F172A" font-family="Inter, sans-serif" font-size="12" font-weight="600">12.345.678-K</text>
+
+      <!-- Details -->
+      <rect x="0" y="150" width="300" height="120" rx="10" fill="#F8FAFC" stroke="#E2E8F0"/>
+      <text x="16" y="30" fill="#475569" font-family="Inter, sans-serif" font-size="12" font-weight="700">Resumen Pasaje</text>
+      <text x="16" y="54" fill="#64748B" font-family="Inter, sans-serif" font-size="12" font-weight="500">Viaje: Laja → Concepción</text>
+      <text x="16" y="74" fill="#64748B" font-family="Inter, sans-serif" font-size="12" font-weight="500">Asiento Seleccionado: #14 (Piso 1)</text>
+      <text x="16" y="98" fill="#0F172A" font-family="Sora, sans-serif" font-size="15" font-weight="800">Total: $6,500</text>
+
+      <!-- Buttons -->
+      <rect x="0" y="290" width="300" height="40" rx="20" fill="#2F6BFF"/>
+      <text x="150" y="315" fill="#FFFFFF" font-family="Inter, sans-serif" font-size="13" font-weight="800" text-anchor="middle">Emitir Boleto (Imprimir) →</text>
+    </g>
+
+    <!-- Right Bus seat map -->
+    <g transform="translate(420, 70)">
+      <rect x="0" y="0" width="400" height="400" rx="14" fill="#F8FAFC" stroke="#E2E8F0"/>
+      <text x="20" y="28" fill="#0F172A" font-family="Sora, sans-serif" font-size="13" font-weight="800">Distribución de Asientos (Piso 1)</text>
+      
+      <!-- Seat Grid -->
+      
+        <!-- Left seats -->
+        <rect x="40" y="60" width="32" height="32" rx="6" fill="#E2E8F0" stroke="#CBD5E1" stroke-width="1.5"/>
+        <text x="56" y="80" fill="#94A3B8" font-family="Inter, sans-serif" font-size="11" font-weight="800" text-anchor="middle">1</text>
+        
+        <rect x="80" y="60" width="32" height="32" rx="6" fill="#E2E8F0" stroke="#CBD5E1" stroke-width="1.5"/>
+        <text x="96" y="80" fill="#94A3B8" font-family="Inter, sans-serif" font-size="11" font-weight="800" text-anchor="middle">2</text>
+
+        <!-- Aisle -->
+        <line x1="140" y1="60" x2="140" y2="92" stroke="#E2E8F0" stroke-width="1"/>
+
+        <!-- Right seats (symmetric for representation) -->
+        <rect x="170" y="60" width="32" height="32" rx="6" fill="#FFFFFF" stroke="#2F6BFF" stroke-width="1.5"/>
+        <text x="186" y="80" fill="#2F6BFF" font-family="Inter, sans-serif" font-size="11" font-weight="800" text-anchor="middle">17</text>
+
+        <rect x="210" y="60" width="32" height="32" rx="6" fill="#E2E8F0" stroke="#CBD5E1" stroke-width="1.5"/>
+        <text x="226" y="80" fill="#94A3B8" font-family="Inter, sans-serif" font-size="11" font-weight="800" text-anchor="middle">18</text>
+        
+        <!-- Left seats -->
+        <rect x="40" y="102" width="32" height="32" rx="6" fill="#E2E8F0" stroke="#CBD5E1" stroke-width="1.5"/>
+        <text x="56" y="122" fill="#94A3B8" font-family="Inter, sans-serif" font-size="11" font-weight="800" text-anchor="middle">3</text>
+        
+        <rect x="80" y="102" width="32" height="32" rx="6" fill="#FFFFFF" stroke="#2F6BFF" stroke-width="1.5"/>
+        <text x="96" y="122" fill="#2F6BFF" font-family="Inter, sans-serif" font-size="11" font-weight="800" text-anchor="middle">4</text>
+
+        <!-- Aisle -->
+        <line x1="140" y1="102" x2="140" y2="134" stroke="#E2E8F0" stroke-width="1"/>
+
+        <!-- Right seats (symmetric for representation) -->
+        <rect x="170" y="102" width="32" height="32" rx="6" fill="#FFFFFF" stroke="#2F6BFF" stroke-width="1.5"/>
+        <text x="186" y="122" fill="#2F6BFF" font-family="Inter, sans-serif" font-size="11" font-weight="800" text-anchor="middle">19</text>
+
+        <rect x="210" y="102" width="32" height="32" rx="6" fill="#E2E8F0" stroke="#CBD5E1" stroke-width="1.5"/>
+        <text x="226" y="122" fill="#94A3B8" font-family="Inter, sans-serif" font-size="11" font-weight="800" text-anchor="middle">20</text>
+        
+        <!-- Left seats -->
+        <rect x="40" y="144" width="32" height="32" rx="6" fill="#FFFFFF" stroke="#2F6BFF" stroke-width="1.5"/>
+        <text x="56" y="164" fill="#2F6BFF" font-family="Inter, sans-serif" font-size="11" font-weight="800" text-anchor="middle">5</text>
+        
+        <rect x="80" y="144" width="32" height="32" rx="6" fill="#FFFFFF" stroke="#2F6BFF" stroke-width="1.5"/>
+        <text x="96" y="164" fill="#2F6BFF" font-family="Inter, sans-serif" font-size="11" font-weight="800" text-anchor="middle">6</text>
+
+        <!-- Aisle -->
+        <line x1="140" y1="144" x2="140" y2="176" stroke="#E2E8F0" stroke-width="1"/>
+
+        <!-- Right seats (symmetric for representation) -->
+        <rect x="170" y="144" width="32" height="32" rx="6" fill="#FFFFFF" stroke="#2F6BFF" stroke-width="1.5"/>
+        <text x="186" y="164" fill="#2F6BFF" font-family="Inter, sans-serif" font-size="11" font-weight="800" text-anchor="middle">21</text>
+
+        <rect x="210" y="144" width="32" height="32" rx="6" fill="#E2E8F0" stroke="#CBD5E1" stroke-width="1.5"/>
+        <text x="226" y="164" fill="#94A3B8" font-family="Inter, sans-serif" font-size="11" font-weight="800" text-anchor="middle">22</text>
+        
+        <!-- Left seats -->
+        <rect x="40" y="186" width="32" height="32" rx="6" fill="#E2E8F0" stroke="#CBD5E1" stroke-width="1.5"/>
+        <text x="56" y="206" fill="#94A3B8" font-family="Inter, sans-serif" font-size="11" font-weight="800" text-anchor="middle">7</text>
+        
+        <rect x="80" y="186" width="32" height="32" rx="6" fill="#E2E8F0" stroke="#CBD5E1" stroke-width="1.5"/>
+        <text x="96" y="206" fill="#94A3B8" font-family="Inter, sans-serif" font-size="11" font-weight="800" text-anchor="middle">8</text>
+
+        <!-- Aisle -->
+        <line x1="140" y1="186" x2="140" y2="218" stroke="#E2E8F0" stroke-width="1"/>
+
+        <!-- Right seats (symmetric for representation) -->
+        <rect x="170" y="186" width="32" height="32" rx="6" fill="#FFFFFF" stroke="#2F6BFF" stroke-width="1.5"/>
+        <text x="186" y="206" fill="#2F6BFF" font-family="Inter, sans-serif" font-size="11" font-weight="800" text-anchor="middle">23</text>
+
+        <rect x="210" y="186" width="32" height="32" rx="6" fill="#E2E8F0" stroke="#CBD5E1" stroke-width="1.5"/>
+        <text x="226" y="206" fill="#94A3B8" font-family="Inter, sans-serif" font-size="11" font-weight="800" text-anchor="middle">24</text>
+        
+        <!-- Left seats -->
+        <rect x="40" y="228" width="32" height="32" rx="6" fill="#FFFFFF" stroke="#2F6BFF" stroke-width="1.5"/>
+        <text x="56" y="248" fill="#2F6BFF" font-family="Inter, sans-serif" font-size="11" font-weight="800" text-anchor="middle">9</text>
+        
+        <rect x="80" y="228" width="32" height="32" rx="6" fill="#FFFFFF" stroke="#2F6BFF" stroke-width="1.5"/>
+        <text x="96" y="248" fill="#2F6BFF" font-family="Inter, sans-serif" font-size="11" font-weight="800" text-anchor="middle">10</text>
+
+        <!-- Aisle -->
+        <line x1="140" y1="228" x2="140" y2="260" stroke="#E2E8F0" stroke-width="1"/>
+
+        <!-- Right seats (symmetric for representation) -->
+        <rect x="170" y="228" width="32" height="32" rx="6" fill="#FFFFFF" stroke="#2F6BFF" stroke-width="1.5"/>
+        <text x="186" y="248" fill="#2F6BFF" font-family="Inter, sans-serif" font-size="11" font-weight="800" text-anchor="middle">25</text>
+
+        <rect x="210" y="228" width="32" height="32" rx="6" fill="#E2E8F0" stroke="#CBD5E1" stroke-width="1.5"/>
+        <text x="226" y="248" fill="#94A3B8" font-family="Inter, sans-serif" font-size="11" font-weight="800" text-anchor="middle">26</text>
+        
+        <!-- Left seats -->
+        <rect x="40" y="270" width="32" height="32" rx="6" fill="#E2E8F0" stroke="#CBD5E1" stroke-width="1.5"/>
+        <text x="56" y="290" fill="#94A3B8" font-family="Inter, sans-serif" font-size="11" font-weight="800" text-anchor="middle">11</text>
+        
+        <rect x="80" y="270" width="32" height="32" rx="6" fill="#FFFFFF" stroke="#2F6BFF" stroke-width="1.5"/>
+        <text x="96" y="290" fill="#2F6BFF" font-family="Inter, sans-serif" font-size="11" font-weight="800" text-anchor="middle">12</text>
+
+        <!-- Aisle -->
+        <line x1="140" y1="270" x2="140" y2="302" stroke="#E2E8F0" stroke-width="1"/>
+
+        <!-- Right seats (symmetric for representation) -->
+        <rect x="170" y="270" width="32" height="32" rx="6" fill="#FFFFFF" stroke="#2F6BFF" stroke-width="1.5"/>
+        <text x="186" y="290" fill="#2F6BFF" font-family="Inter, sans-serif" font-size="11" font-weight="800" text-anchor="middle">27</text>
+
+        <rect x="210" y="270" width="32" height="32" rx="6" fill="#E2E8F0" stroke="#CBD5E1" stroke-width="1.5"/>
+        <text x="226" y="290" fill="#94A3B8" font-family="Inter, sans-serif" font-size="11" font-weight="800" text-anchor="middle">28</text>
+        
+        <!-- Left seats -->
+        <rect x="40" y="312" width="32" height="32" rx="6" fill="#E2E8F0" stroke="#CBD5E1" stroke-width="1.5"/>
+        <text x="56" y="332" fill="#94A3B8" font-family="Inter, sans-serif" font-size="11" font-weight="800" text-anchor="middle">13</text>
+        
+        <rect x="80" y="312" width="32" height="32" rx="6" fill="#2F6BFF" stroke="#2F6BFF" stroke-width="1.5"/>
+        <text x="96" y="332" fill="#FFFFFF" font-family="Inter, sans-serif" font-size="11" font-weight="800" text-anchor="middle">14</text>
+
+        <!-- Aisle -->
+        <line x1="140" y1="312" x2="140" y2="344" stroke="#E2E8F0" stroke-width="1"/>
+
+        <!-- Right seats (symmetric for representation) -->
+        <rect x="170" y="312" width="32" height="32" rx="6" fill="#FFFFFF" stroke="#2F6BFF" stroke-width="1.5"/>
+        <text x="186" y="332" fill="#2F6BFF" font-family="Inter, sans-serif" font-size="11" font-weight="800" text-anchor="middle">29</text>
+
+        <rect x="210" y="312" width="32" height="32" rx="6" fill="#E2E8F0" stroke="#CBD5E1" stroke-width="1.5"/>
+        <text x="226" y="332" fill="#94A3B8" font-family="Inter, sans-serif" font-size="11" font-weight="800" text-anchor="middle">30</text>
+        
+        <!-- Left seats -->
+        <rect x="40" y="354" width="32" height="32" rx="6" fill="#FFFFFF" stroke="#2F6BFF" stroke-width="1.5"/>
+        <text x="56" y="374" fill="#2F6BFF" font-family="Inter, sans-serif" font-size="11" font-weight="800" text-anchor="middle">15</text>
+        
+        <rect x="80" y="354" width="32" height="32" rx="6" fill="#FFFFFF" stroke="#2F6BFF" stroke-width="1.5"/>
+        <text x="96" y="374" fill="#2F6BFF" font-family="Inter, sans-serif" font-size="11" font-weight="800" text-anchor="middle">16</text>
+
+        <!-- Aisle -->
+        <line x1="140" y1="354" x2="140" y2="386" stroke="#E2E8F0" stroke-width="1"/>
+
+        <!-- Right seats (symmetric for representation) -->
+        <rect x="170" y="354" width="32" height="32" rx="6" fill="#FFFFFF" stroke="#2F6BFF" stroke-width="1.5"/>
+        <text x="186" y="374" fill="#2F6BFF" font-family="Inter, sans-serif" font-size="11" font-weight="800" text-anchor="middle">31</text>
+
+        <rect x="210" y="354" width="32" height="32" rx="6" fill="#E2E8F0" stroke="#CBD5E1" stroke-width="1.5"/>
+        <text x="226" y="374" fill="#94A3B8" font-family="Inter, sans-serif" font-size="11" font-weight="800" text-anchor="middle">32</text>
+        
+    </g>
+  </g>
+
+  </g>
+</svg>

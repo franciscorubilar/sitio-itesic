@@ -1,0 +1,19 @@
+<%- include('partials/header') %>
+<section class="section page-title">
+  <span class="eyebrow">Lo que podemos construir</span>
+  <h1>Sistemas para ordenar procesos reales</h1>
+  <p>Estos son puntos de partida. Si el nombre técnico no te dice nada, quédate con lo importante: qué problema resuelve cada solución.</p>
+</section>
+<section class="section">
+  <div class="product-grid">
+    <% products.forEach(p => { %>
+      <a class="product-card tall" href="/productos/<%= p.slug %>">
+        <img src="<%= p.image %>" alt="<%= p.name %>">
+        <span><%= p.name %></span>
+        <h3><%= productTitle(p) %></h3>
+        <p><%= p.summary %></p>
+      </a>
+    <% }) %>
+  </div>
+</section>
+<%- include('partials/footer') %>

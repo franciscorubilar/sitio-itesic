@@ -1,0 +1,142 @@
+<svg width="1180" height="720" viewBox="0 0 1180 720" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer Window Frame -->
+  <rect width="1180" height="720" rx="20" fill="#F3F5F9"/>
+  <rect x="1" y="1" width="1178" height="718" rx="19" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="2"/>
+  
+  <!-- Browser Header Bar -->
+  <rect x="2" y="2" width="1176" height="52" rx="18" fill="#FFFFFF"/>
+  <rect x="2" y="53" width="1176" height="1" fill="#E2E8F0"/>
+  
+  <!-- Window Controls -->
+  <circle cx="28" cy="26" r="6" fill="#EF4444"/>
+  <circle cx="48" cy="26" r="6" fill="#F59E0B"/>
+  <circle cx="68" cy="26" r="6" fill="#10B981"/>
+  
+  <!-- Address Bar -->
+  <rect x="100" y="12" width="600" height="28" rx="14" fill="#F1F5F9"/>
+  <text x="120" y="30" fill="#64748B" font-family="Inter, sans-serif" font-size="12" font-weight="500">app.itesic.cl/sistemas/perseus-erp</text>
+  
+  <!-- User/Status -->
+  <rect x="1010" y="12" width="140" height="28" rx="14" fill="#F1F5F9"/>
+  <circle cx="1024" cy="26" r="7" fill="#64748B"/>
+  <text x="1040" y="30" fill="#475569" font-family="Inter, sans-serif" font-size="11" font-weight="700">F. Rubilar</text>
+
+  <!-- Sidebar Container -->
+  <rect x="2" y="54" width="220" height="664" fill="#FFFFFF"/>
+  <rect x="221" y="54" width="1" height="664" fill="#E2E8F0"/>
+
+  <!-- Logo -->
+  <rect x="24" y="80" width="36" height="36" rx="8" fill="#2F6BFF"/>
+  <text x="32" y="104" fill="#FFFFFF" font-family="Sora, sans-serif" font-size="18" font-weight="900">Pe</text>
+  <text x="72" y="96" fill="#0F172A" font-family="Sora, sans-serif" font-size="15" font-weight="800">Perseus ERP</text>
+  <text x="72" y="112" fill="#64748B" font-family="Inter, sans-serif" font-size="10" font-weight="600">Área de Trabajo</text>
+
+  <!-- Sidebar Menu Items -->
+  
+    <rect x="12" y="146" width="196" height="34" rx="8" fill="#2F6BFF12"/>
+    <circle cx="34" cy="160" r="4" fill="#2F6BFF"/>
+    <text x="48" y="164" fill="#2F6BFF" font-family="Inter, sans-serif" font-size="13" font-weight="700">Producción</text>
+    
+    
+    <circle cx="34" cy="202" r="4" fill="#94A3B8"/>
+    <text x="48" y="206" fill="#475569" font-family="Inter, sans-serif" font-size="13" font-weight="600">Bodegas</text>
+    
+    
+    <circle cx="34" cy="244" r="4" fill="#94A3B8"/>
+    <text x="48" y="248" fill="#475569" font-family="Inter, sans-serif" font-size="13" font-weight="600">Despacho</text>
+    
+    
+    <circle cx="34" cy="286" r="4" fill="#94A3B8"/>
+    <text x="48" y="290" fill="#475569" font-family="Inter, sans-serif" font-size="13" font-weight="600">Eventos</text>
+    
+    
+    <circle cx="34" cy="328" r="4" fill="#94A3B8"/>
+    <text x="48" y="332" fill="#475569" font-family="Inter, sans-serif" font-size="13" font-weight="600">Configuración</text>
+    
+
+  <!-- Main Content Area -->
+  <g transform="translate(242, 74)">
+    
+  <!-- Top Title Bar -->
+  <text x="20" y="40" fill="#0F172A" font-family="Sora, sans-serif" font-size="22" font-weight="800">PERSEUS ERP — Control de Producción</text>
+  <text x="20" y="60" fill="#64748B" font-family="Inter, sans-serif" font-size="13" font-weight="500">Monitoreo en tiempo real de planta maderera y despacho</text>
+  
+  <!-- Metric Cards -->
+  <g transform="translate(20, 90)">
+    <!-- OEE Card -->
+    <rect x="0" y="0" width="200" height="90" rx="12" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.5"/>
+    <text x="16" y="28" fill="#64748B" font-family="Inter, sans-serif" font-size="11" font-weight="700" text-transform="uppercase">Rendimiento OEE</text>
+    <text x="16" y="64" fill="#0F172A" font-family="Sora, sans-serif" font-size="28" font-weight="800">89.4%</text>
+    <rect x="140" y="44" width="44" height="20" rx="10" fill="#10B9811A"/>
+    <text x="148" y="58" fill="#10B981" font-family="Inter, sans-serif" font-size="11" font-weight="700">+2.4%</text>
+
+    <!-- Stock Card -->
+    <rect x="220" y="0" width="200" height="90" rx="12" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.5"/>
+    <text x="236" y="28" fill="#64748B" font-family="Inter, sans-serif" font-size="11" font-weight="700" text-transform="uppercase">Stock en Bodega</text>
+    <text x="236" y="64" fill="#0F172A" font-family="Sora, sans-serif" font-size="28" font-weight="800">14,250 m³</text>
+
+    <!-- Despachos Card -->
+    <rect x="440" y="0" width="200" height="90" rx="12" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.5"/>
+    <text x="456" y="28" fill="#64748B" font-family="Inter, sans-serif" font-size="11" font-weight="700" text-transform="uppercase">Guías Despachadas</text>
+    <text x="456" y="64" fill="#0F172A" font-family="Sora, sans-serif" font-size="28" font-weight="800">42 hoy</text>
+  </g>
+
+  <!-- Production Table -->
+  <g transform="translate(20, 210)">
+    <rect x="0" y="0" width="860" height="380" rx="14" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.5"/>
+    <text x="20" y="32" fill="#0F172A" font-family="Sora, sans-serif" font-size="16" font-weight="800">Últimos Lotes Procesados</text>
+    
+    <!-- Table Header -->
+    <rect x="20" y="54" width="820" height="34" rx="6" fill="#F8FAFC"/>
+    <text x="36" y="76" fill="#475569" font-family="Inter, sans-serif" font-size="11" font-weight="700">LOTE ID</text>
+    <text x="140" y="76" fill="#475569" font-family="Inter, sans-serif" font-size="11" font-weight="700">PRODUCTO</text>
+    <text x="360" y="76" fill="#475569" font-family="Inter, sans-serif" font-size="11" font-weight="700">BODEGA DESTINO</text>
+    <text x="540" y="76" fill="#475569" font-family="Inter, sans-serif" font-size="11" font-weight="700">CANTIDAD</text>
+    <text x="680" y="76" fill="#475569" font-family="Inter, sans-serif" font-size="11" font-weight="700">ESTADO</text>
+
+    <!-- Table Rows -->
+    
+      <text x="36" y="120" fill="#0F172A" font-family="Inter, sans-serif" font-size="12" font-weight="700">LT-2026-90</text>
+      <text x="140" y="120" fill="#475569" font-family="Inter, sans-serif" font-size="12" font-weight="600">Pino Radiata Dimensionado 2x4</text>
+      <text x="360" y="120" fill="#475569" font-family="Inter, sans-serif" font-size="12" font-weight="600">Bodega A - Secado</text>
+      <text x="540" y="120" fill="#0F172A" font-family="Inter, sans-serif" font-size="12" font-weight="700">35.4 m³</text>
+      <rect x="680" y="104" width="90" height="22" rx="11" fill="#10B9811A"/>
+      <text x="692" y="119" fill="#10B981" font-family="Inter, sans-serif" font-size="11" font-weight="700">Operativo</text>
+      <line x1="20" y1="138" x2="840" y2="138" stroke="#F1F5F9" stroke-width="1"/>
+      
+      <text x="36" y="170" fill="#0F172A" font-family="Inter, sans-serif" font-size="12" font-weight="700">LT-2026-89</text>
+      <text x="140" y="170" fill="#475569" font-family="Inter, sans-serif" font-size="12" font-weight="600">Madera Impregnada Terreno</text>
+      <text x="360" y="170" fill="#475569" font-family="Inter, sans-serif" font-size="12" font-weight="600">Bodega B - Despacho</text>
+      <text x="540" y="170" fill="#0F172A" font-family="Inter, sans-serif" font-size="12" font-weight="700">12.8 m³</text>
+      <rect x="680" y="154" width="90" height="22" rx="11" fill="#10B9811A"/>
+      <text x="692" y="169" fill="#10B981" font-family="Inter, sans-serif" font-size="11" font-weight="700">Operativo</text>
+      <line x1="20" y1="188" x2="840" y2="188" stroke="#F1F5F9" stroke-width="1"/>
+      
+      <text x="36" y="220" fill="#0F172A" font-family="Inter, sans-serif" font-size="12" font-weight="700">LT-2026-88</text>
+      <text x="140" y="220" fill="#475569" font-family="Inter, sans-serif" font-size="12" font-weight="600">Pino Verde para Cepillar</text>
+      <text x="360" y="220" fill="#475569" font-family="Inter, sans-serif" font-size="12" font-weight="600">Cámara Secado #3</text>
+      <text x="540" y="220" fill="#0F172A" font-family="Inter, sans-serif" font-size="12" font-weight="700">44.0 m³</text>
+      <rect x="680" y="204" width="90" height="22" rx="11" fill="#3B82F61A"/>
+      <text x="692" y="219" fill="#3B82F6" font-family="Inter, sans-serif" font-size="11" font-weight="700">En proceso</text>
+      <line x1="20" y1="238" x2="840" y2="238" stroke="#F1F5F9" stroke-width="1"/>
+      
+      <text x="36" y="270" fill="#0F172A" font-family="Inter, sans-serif" font-size="12" font-weight="700">LT-2026-87</text>
+      <text x="140" y="270" fill="#475569" font-family="Inter, sans-serif" font-size="12" font-weight="600">Astillas Pulpable Despacho</text>
+      <text x="360" y="270" fill="#475569" font-family="Inter, sans-serif" font-size="12" font-weight="600">Bodega Acopio</text>
+      <text x="540" y="270" fill="#0F172A" font-family="Inter, sans-serif" font-size="12" font-weight="700">89.1 m³</text>
+      <rect x="680" y="254" width="90" height="22" rx="11" fill="#10B9811A"/>
+      <text x="692" y="269" fill="#10B981" font-family="Inter, sans-serif" font-size="11" font-weight="700">Operativo</text>
+      <line x1="20" y1="288" x2="840" y2="288" stroke="#F1F5F9" stroke-width="1"/>
+      
+      <text x="36" y="320" fill="#0F172A" font-family="Inter, sans-serif" font-size="12" font-weight="700">LT-2026-86</text>
+      <text x="140" y="320" fill="#475569" font-family="Inter, sans-serif" font-size="12" font-weight="600">Molduras Finger Joint Clear</text>
+      <text x="360" y="320" fill="#475569" font-family="Inter, sans-serif" font-size="12" font-weight="600">Bodega C - Terminados</text>
+      <text x="540" y="320" fill="#0F172A" font-family="Inter, sans-serif" font-size="12" font-weight="700">8.5 m³</text>
+      <rect x="680" y="304" width="90" height="22" rx="11" fill="#EF44441A"/>
+      <text x="692" y="319" fill="#EF4444" font-family="Inter, sans-serif" font-size="11" font-weight="700">En revisión</text>
+      <line x1="20" y1="338" x2="840" y2="338" stroke="#F1F5F9" stroke-width="1"/>
+      
+  </g>
+
+  </g>
+</svg>

@@ -1,0 +1,108 @@
+<%- include('../partials/header') %>
+<section class="admin-shell admin-modern">
+  <aside class="admin-sidebar">
+    <div class="admin-sidebar-head">
+      <span class="brand-mark">IT</span>
+      <div>
+        <b>Panel ITESICWS</b>
+        <small>Administración</small>
+      </div>
+    </div>
+    <a href="/admin">Dashboard</a>
+    <a href="/admin/products">Productos</a>
+    <a href="/admin/leads">Leads</a>
+    <a class="active" href="/admin/settings">Configuración</a>
+    <form method="post" action="/admin/logout"><button type="submit">Cerrar sesión</button></form>
+  </aside>
+
+  <div class="admin-content">
+    <div class="admin-page-head">
+      <div>
+        <span class="eyebrow">Configuración</span>
+        <h1>Sitio, leads y correo</h1>
+        <p>Controla a qué correos llegan las solicitudes, el WhatsApp del equipo y la configuración SMTP.</p>
+      </div>
+      <a class="btn ghost" href="/" target="_blank"><span>Ver sitio</span></a>
+    </div>
+
+    <% if (path.includes('saved')) { %>
+      <p class="notice">Configuración guardada correctamente.</p>
+    <% } %>
+
+    <form class="settings-grid" method="post" action="/admin/settings">
+      <section class="settings-card wide">
+        <div class="settings-card-head">
+          <div>
+            <h2>Destino de solicitudes</h2>
+            <p>Estos correos recibirán una copia cada vez que alguien complete el formulario.</p>
+          </div>
+          <span class="status-pill">Leads</span>
+        </div>
+        <label>
+          <span>Correos receptores</span>
+          <textarea name="contactEmail" rows="4" placeholder="frubilar@itesic.cl&#10;colega@itesic.cl"><%= settings.contactEmail %></textarea>
+          <small>Uno por línea, o separados por coma.</small>
+        </label>
+        <div class="settings-two">
+          <label>
+            <span>WhatsApp destino</span>
+            <input name="whatsappNumber" value="<%= settings.whatsappNumber %>" placeholder="56912345678">
+          </label>
+          <label>
+            <span>Modo de envío</span>
+            <select name="leadDeliveryMode">
+              <% [
+                ['DATABASE_ONLY','Solo guardar'],
+                ['EMAIL','Correo'],
+                ['WHATSAPP','WhatsApp'],
+                ['EMAIL_AND_WHATSAPP','Correo + WhatsApp']
+              ].forEach(([value,label])=>{ %>
+                <option value="<%= value %>" <%= settings.leadDeliveryMode===value?'selected':'' %>><%= label %></option>
+              <% }) %>
+            </select>
+          </label>
+        </div>
+        <label>
+          <span>Mensaje base de WhatsApp</span>
+          <textarea name="whatsappMessage" rows="3" placeholder="Mensaje base"><%= settings.whatsappMessage %></textarea>
+        </label>
+      </section>
+
+      <section class="settings-card">
+        <div class="settings-card-head">
+          <div>
+            <h2>Correo SMTP</h2>
+            <p>Usa Gmail, Outlook o un servidor corporativo para enviar avisos automáticos.</p>
+          </div>
+          <span class="status-pill success">SMTP</span>
+        </div>
+        <label><span>Servidor</span><input name="smtpHost" value="<%= settings.smtpHost || '' %>" placeholder="smtp.gmail.com"></label>
+        <div class="settings-two">
+          <label><span>Puerto</span><input name="smtpPort" type="number" value="<%= settings.smtpPort || 587 %>" placeholder="465"></label>
+          <label><span>Usuario</span><input name="smtpUser" value="<%= settings.smtpUser || '' %>" placeholder="correo@gmail.com"></label>
+        </div>
+        <label><span>Contraseña / app password</span><input name="smtpPass" type="password" placeholder="<%= settings.smtpPass ? 'Guardada; deja vacío para mantener' : 'App password' %>"></label>
+        <label><span>Remitente</span><input name="smtpFrom" value="<%= settings.smtpFrom || '' %>" placeholder="ITESICWS <correo@gmail.com>"></label>
+        <label class="checkbox-line"><input type="checkbox" name="smtpSecure" <%= settings.smtpSecure ? 'checked' : '' %>> Usar SSL/TLS directo, típico puerto 465</label>
+      </section>
+
+      <section class="settings-card">
+        <div class="settings-card-head">
+          <div>
+            <h2>Portada</h2>
+            <p>Texto principal de la primera sección del sitio.</p>
+          </div>
+          <span class="status-pill">Home</span>
+        </div>
+        <label><span>Título principal</span><input name="heroTitle" value="<%= settings.heroTitle %>"></label>
+        <label><span>Subtítulo</span><textarea name="heroSubtitle" rows="7"><%= settings.heroSubtitle %></textarea></label>
+      </section>
+
+      <div class="settings-actions">
+        <button class="btn primary" type="submit"><span>Guardar configuración</span></button>
+        <a class="btn ghost" href="/admin"><span>Volver al dashboard</span></a>
+      </div>
+    </form>
+  </div>
+</section>
+<%- include('../partials/footer') %>

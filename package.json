@@ -1,0 +1,30 @@
+{
+  "name": "itesicws-web-platform-prisma",
+  "version": "3.0.0",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js",
+    "docker:start": "sh scripts/docker-start.sh",
+    "prisma:generate": "./node_modules/.bin/prisma generate",
+    "prisma:push": "./node_modules/.bin/prisma db push",
+    "seed": "node prisma/seed.js"
+  },
+  "dependencies": {
+    "@prisma/client": "5.22.0",
+    "bcryptjs": "2.4.3",
+    "dotenv": "16.4.5",
+    "ejs": "3.1.10",
+    "express": "4.21.1",
+    "express-session": "1.18.1",
+    "nodemailer": "6.9.16",
+    "slugify": "1.6.6",
+    "pg": "8.13.1",
+    "prisma": "5.22.0",
+    "multer": "^1.4.5-lts.1"
+  },
+  "engines": {
+    "node": ">=20 <21"
+  }
+}

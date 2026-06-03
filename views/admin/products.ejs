@@ -1,0 +1,30 @@
+<%- include('../partials/header') %>
+<section class="admin-shell admin-modern">
+  <aside class="admin-sidebar">
+    <div class="admin-sidebar-head"><span class="brand-mark">IT</span><div><b>Panel ITESICWS</b><small>Administración</small></div></div>
+    <a href="/admin">Dashboard</a>
+    <a class="active" href="/admin/products">Productos</a>
+    <a href="/admin/leads">Leads</a>
+    <a href="/admin/settings">Configuración</a>
+  </aside>
+  <div class="admin-content">
+    <div class="admin-page-head">
+      <div><span class="eyebrow">Catálogo</span><h1>Productos</h1><p>Administra soluciones, textos comerciales, módulos, beneficios e imágenes del sitio.</p></div>
+      <a class="btn primary" href="/admin/products/new"><span>Nuevo producto</span></a>
+    </div>
+    <section class="settings-card">
+      <div class="table">
+        <% products.forEach(p=>{ %>
+          <div class="row admin-row product-admin-row">
+            <div><b><%= p.name %></b><small><%= p.slug %></small></div>
+            <span><%= p.category %></span>
+            <span class="status-pill <%= p.published ? 'success' : '' %>"><%= p.published?'Publicado':'Borrador' %></span>
+            <a class="btn ghost" href="/admin/products/<%= p.id %>/edit"><span>Editar</span></a>
+            <form method="post" action="/admin/products/<%= p.id %>/delete" onsubmit="return confirm('¿Eliminar producto?')"><button type="submit">Eliminar</button></form>
+          </div>
+        <% }) %>
+      </div>
+    </section>
+  </div>
+</section>
+<%- include('../partials/footer') %>

@@ -1,0 +1,15 @@
+<svg width="900" height="620" viewBox="0 0 900 620" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="900" height="620" rx="42" fill="url(#bg)"/>
+<circle cx="710" cy="120" r="160" fill="#A855F7" opacity=".28" filter="url(#blur)"/>
+<circle cx="190" cy="520" r="190" fill="#22D3FF" opacity=".18" filter="url(#blur)"/>
+<rect x="80" y="80" width="740" height="460" rx="32" fill="white" opacity=".08" stroke="white" stroke-opacity=".18"/>
+<rect x="120" y="130" width="270" height="42" rx="12" fill="white" opacity=".16"/>
+<rect x="120" y="198" width="650" height="18" rx="9" fill="white" opacity=".13"/>
+<rect x="120" y="232" width="540" height="18" rx="9" fill="white" opacity=".1"/>
+<rect x="120" y="300" width="190" height="150" rx="24" fill="#A855F7" opacity=".55"/>
+<rect x="340" y="300" width="190" height="150" rx="24" fill="#22D3FF" opacity=".32"/>
+<rect x="560" y="300" width="190" height="150" rx="24" fill="white" opacity=".13"/>
+<path d="M145 410 C220 340 255 390 310 330 C380 250 435 420 515 330 C590 245 640 330 730 250" stroke="white" stroke-width="10" stroke-linecap="round" opacity=".65"/>
+<text x="120" y="515" fill="white" font-family="Arial" font-size="42" font-weight="800">Consultoría IA</text>
+<defs><linearGradient id="bg" x1="0" x2="900" y1="0" y2="620"><stop stop-color="#080D24"/><stop offset="1" stop-color="#1A1150"/></linearGradient><filter id="blur" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="50"/></filter></defs>
+</svg>
