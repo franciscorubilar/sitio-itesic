@@ -96,15 +96,46 @@
   <div><b data-count="99">0</b><span>foco en ordenar la operación</span></div>
 </section>
 
-<section class="section human-intro reveal">
-  <div>
+<section class="section about-studio reveal">
+  <div class="about-copy">
     <span class="eyebrow">Quiénes somos</span>
-    <h2>Somos un equipo chico, técnico y bien metido en la operación.</h2>
+    <h2>Convertimos procesos desordenados en sistemas que la gente realmente usa.</h2>
+    <p>ITESICWS combina desarrollo web, datos e IA aplicada para empresas que necesitan trazabilidad, reportes confiables y menos trabajo manual. Entramos al detalle de la operación, bajamos el ruido y construimos una plataforma entendible para usuarios, jefaturas y gerencia.</p>
+    <div class="about-actions">
+      <a class="btn primary" href="#contacto"><span>Quiero ordenar mi proceso</span></a>
+      <a class="btn ghost" href="/productos"><span>Ver soluciones</span></a>
+    </div>
   </div>
-  <div>
-    <p>Nos llaman cuando una empresa tiene planillas por todos lados, reportes que toman demasiado tiempo, sistemas que no conversan entre sí o procesos que dependen de perseguir información por correo.</p>
-    <p>No partimos vendiendo humo. Partimos preguntando cómo trabajan hoy, qué les duele y qué sería una mejora real para el equipo.</p>
+  <div class="about-board" data-parallax-stage>
+    <img class="about-team-img" src="/images/hero-bg-team.png" alt="Equipo técnico trabajando en soluciones empresariales">
+    <div class="about-panel panel-main">
+      <span>Diagnóstico operativo</span>
+      <b>Procesos, datos y responsables en una sola ruta</b>
+    </div>
+    <div class="about-panel panel-kpi">
+      <b>24h</b>
+      <span>primera respuesta</span>
+    </div>
+    <div class="about-panel panel-check">
+      <span></span>
+      <b>Implementación por etapas</b>
+    </div>
   </div>
+</section>
+
+<section class="section proof-strip reveal">
+  <% [
+    ['Levantamiento serio', 'Mapeamos usuarios, permisos, reglas y datos antes de prometer.'],
+    ['Pantallas útiles', 'Diseñamos flujos para operación diaria, no solo dashboards bonitos.'],
+    ['Datos conectados', 'Integramos bases, APIs, documentos, BI, correos y sistemas existentes.'],
+    ['Mejora continua', 'Entregamos por etapas y ajustamos con feedback real del equipo.']
+  ].forEach((item, i) => { %>
+    <article style="--i:<%= i %>">
+      <b><%= String(i + 1).padStart(2, '0') %></b>
+      <h3><%= item[0] %></h3>
+      <p><%= item[1] %></p>
+    </article>
+  <% }) %>
 </section>
 
 <section id="servicios" class="section service-showcase reveal">
@@ -117,7 +148,7 @@
   </div>
   <div class="service-grid">
     <article class="service-large">
-      <img src="/images/img-perseus-erp.svg" alt="PERSEUS ERP">
+      <img src="/images/img-perseus-erp.png" alt="PERSEUS ERP">
       <span>ERP Industrial</span>
       <h3>Producción, stock, despacho y trazabilidad sin depender de planillas eternas.</h3>
       <a href="/productos/perseus-erp">Ver este tipo de sistema</a>
@@ -147,7 +178,7 @@
     <div class="product-track">
       <% products.concat(products).slice(0,16).forEach(p => { %>
         <a class="product-card mini" href="/productos/<%= p.slug %>">
-          <img src="<%= p.image %>" alt="<%= p.name %>">
+          <img src="<%= productImage(p) %>" alt="<%= p.name %>">
           <span><%= p.name %></span>
           <h3><%= productTitle(p) %></h3>
         </a>

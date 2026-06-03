@@ -49,6 +49,7 @@ app.use(async (req, res, next) => {
   res.locals.path = req.path;
   res.locals.settings = await getSettings();
   res.locals.productTitle = productTitle;
+  res.locals.productImage = productImage;
   res.locals.primaryContactEmail = primaryContactEmail;
   next();
 });
@@ -72,6 +73,23 @@ function productTitle(product) {
     'consultoria-ia': 'IA útil para automatizar trabajo repetitivo'
   };
   return titles[product.slug] || product.summary || product.name;
+}
+
+function productImage(product) {
+  const images = {
+    'perseus-erp': '/images/img-perseus-erp.png',
+    'sistema-calibraciones': '/images/img-calibraciones.png',
+    forms: '/images/img-forms.png',
+    'portal-balances': '/images/img-balances.png',
+    bitacoras: '/images/img-bitacoras.png',
+    'plataforma-zebbra': '/images/img-zebbra.svg',
+    'venta-pasajes-buses': '/images/img-buses.svg',
+    'perseus-ofa': '/images/img-perseus-erp.png',
+    'opms-caitan': '/images/img-opms-caitan.svg',
+    'bi-powerbi': '/images/img-bi-powerbi.svg',
+    'consultoria-ia': '/images/ai-brain-graphic.png'
+  };
+  return images[product.slug] || product.image;
 }
 
 function requireAuth(req, res, next) {

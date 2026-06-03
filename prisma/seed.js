@@ -4,7 +4,7 @@ const prisma = new PrismaClient();
 
 const products = [
   {
-    name: 'PERSEUS ERP', slug: 'perseus-erp', category: 'ERP Industrial', featured: true, sortOrder: 1, image: '/images/img-perseus-erp.svg',
+    name: 'PERSEUS ERP', slug: 'perseus-erp', category: 'ERP Industrial', featured: true, sortOrder: 1, image: '/images/img-perseus-erp.png',
     summary: 'Suite modular para controlar producción, inventario, trazabilidad, documentos y logística.',
     description: 'PerseusERP conecta planta, administración y logística para entregar trazabilidad real, información confiable y control operativo diario. Está orientado a empresas industriales, productivas, forestales, madereras y logísticas.',
     problem: 'Reduce registros manuales, duplicidad de datos y desconexión entre producción, stock, despacho, documentos y reportabilidad.',
@@ -13,7 +13,7 @@ const products = [
     industries: ['Forestal', 'Maderera', 'Manufactura', 'Logística']
   },
   {
-    name: 'Sistema de Calibraciones', slug: 'sistema-calibraciones', category: 'Operación Industrial', featured: true, sortOrder: 2, image: '/images/img-calibraciones.svg',
+    name: 'Sistema de Calibraciones', slug: 'sistema-calibraciones', category: 'Operación Industrial', featured: true, sortOrder: 2, image: '/images/img-calibraciones.png',
     summary: 'Gestión integral de calibraciones de instrumentos, equipos, evidencias y auditoría.',
     description: 'Sistema Calibraciones es una plataforma web para administrar instrumentos, divisiones, tipos de instrumento, programas mensuales, validaciones, registros de ejecución, evidencias, revisión final, auditoría y monitoreo de envíos hacia PI Web API.',
     problem: 'Digitaliza el proceso de calibración, mejora la trazabilidad, reduce controles manuales y entrega visibilidad completa sobre cada ciclo.',
@@ -22,7 +22,7 @@ const products = [
     industries: ['Minería', 'Industria', 'Energía', 'Operaciones']
   },
   {
-    name: 'FORMS', slug: 'forms', category: 'Formularios Digitales', featured: false, sortOrder: 3, image: '/images/img-forms.svg',
+    name: 'FORMS', slug: 'forms', category: 'Formularios Digitales', featured: false, sortOrder: 3, image: '/images/img-forms.png',
     summary: 'Formularios empresariales para capturar datos, digitalizar procesos y eliminar papel.',
     description: 'Permite construir formularios digitales, capturar información estructurada y activar flujos de revisión o reportabilidad.',
     problem: 'Evita registros dispersos, formularios físicos y procesos manuales difíciles de auditar.',
@@ -31,7 +31,7 @@ const products = [
     industries: ['Administración', 'Operaciones', 'Terreno']
   },
   {
-    name: 'Portal de Balances', slug: 'portal-balances', category: 'Gestión Operacional', featured: false, sortOrder: 4, image: '/images/img-balances.svg',
+    name: 'Portal de Balances', slug: 'portal-balances', category: 'Gestión Operacional', featured: false, sortOrder: 4, image: '/images/img-balances.png',
     summary: 'Dashboards e indicadores para monitoreo de balances operacionales.',
     description: 'Portal de Balances permite visualizar KPIs, revisar calidad de información, controlar consistencia de resultados, analizar recuperaciones, monitorear divisiones y acceder a documentación o vistas PI Vision.',
     problem: 'Centraliza indicadores críticos, facilita el seguimiento operacional y entrega información clara para la toma de decisiones.',
@@ -40,7 +40,7 @@ const products = [
     industries: ['Finanzas', 'Operaciones', 'Gerencia']
   },
   {
-    name: 'Bitácoras', slug: 'bitacoras', category: 'Operación', featured: false, sortOrder: 5, image: '/images/img-bitacoras.svg',
+    name: 'Bitácoras', slug: 'bitacoras', category: 'Operación', featured: false, sortOrder: 5, image: '/images/img-bitacoras.png',
     summary: 'Registro digital de eventos, turnos, novedades y seguimiento operacional.',
     description: 'Permite transformar bitácoras manuales en registros digitales trazables, consultables y auditables.',
     problem: 'Reduce pérdida de información entre turnos, eventos no registrados y falta de historial operativo.',
@@ -49,7 +49,7 @@ const products = [
     industries: ['Operaciones', 'Transporte', 'Industria']
   },
   {
-    name: 'Plataforma Zebbra', slug: 'plataforma-zebbra', category: 'Monitoreo Operacional', featured: false, sortOrder: 6, image: '/images/img-balances.svg',
+    name: 'Plataforma Zebbra', slug: 'plataforma-zebbra', category: 'Monitoreo Operacional', featured: false, sortOrder: 6, image: '/images/img-zebbra.svg',
     summary: 'Monitoreo operacional, reportabilidad SMA/DGA y control de continuidad de datos.',
     description: 'Plataforma Zebbra permite consultar dashboards, gráficos, reportes de cobertura, datos faltantes, errores de recepción, errores de envío y retransmisiones.',
     problem: 'Ayuda a monitorear información crítica, detectar brechas de datos y mejorar la gestión operacional mediante tableros claros y trazables.',
@@ -67,7 +67,7 @@ const products = [
     industries: ['Transporte']
   },
   {
-    name: 'PERSEUS OFA', slug: 'perseus-ofa', category: 'Producción', featured: false, sortOrder: 8, image: '/images/img-perseus-erp.svg',
+    name: 'PERSEUS OFA', slug: 'perseus-ofa', category: 'Producción', featured: false, sortOrder: 8, image: '/images/img-perseus-erp.png',
     summary: 'Aplicación web para administrar procesos OFA, OFP y productos principales.',
     description: 'PERSEUS OFA permite consultar registros, planificar, editar, abrir, cerrar, eliminar, revisar progreso y exportar información operacional dentro del ecosistema Perseus.',
     problem: 'Ordena procesos productivos, reduce dependencia de planillas y entrega mayor control sobre registros OFA/OFP.',
@@ -76,7 +76,7 @@ const products = [
     industries: ['Producción', 'Industria', 'Operaciones']
   },
   {
-    name: 'OPMS Caitán', slug: 'opms-caitan', category: 'Gestión Empresarial', featured: false, sortOrder: 9, image: '/images/img-forms.svg',
+    name: 'OPMS Caitán', slug: 'opms-caitan', category: 'Gestión Empresarial', featured: false, sortOrder: 9, image: '/images/img-opms-caitan.svg',
     summary: 'Suite web para gestión operacional, nominaciones, proformas, reportes y documentos.',
     description: 'OPMS Caitán administra usuarios, roles, permisos, flujos internos, nominaciones por período, información operacional, proformas, reportes y documentos desde una interfaz moderna y segura.',
     problem: 'Ayuda a ordenar procesos internos, mejorar el control operacional y fortalecer la seguridad de acceso a los sistemas.',

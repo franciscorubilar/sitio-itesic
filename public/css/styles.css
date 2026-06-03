@@ -347,6 +347,32 @@ nav a.active,nav a:hover{color:var(--primary)}
 .counter-band span{display:block;color:var(--muted);font-weight:900}
 .human-intro{display:grid;grid-template-columns:.8fr 1.2fr;gap:42px;align-items:start}
 .human-intro p{font-size:20px}
+.about-studio{display:grid;grid-template-columns:.92fr 1.08fr;gap:54px;align-items:center}
+.about-copy{max-width:640px}
+.about-copy h2{max-width:780px}
+.about-copy p{font-size:19px;line-height:1.75}
+.about-actions{display:flex;gap:14px;flex-wrap:wrap;margin-top:30px}
+.about-board{position:relative;min-height:560px;border-radius:24px;overflow:hidden;background:#111827;box-shadow:var(--heavy)}
+.about-board:before{content:"";position:absolute;inset:0;background:linear-gradient(140deg,rgba(17,24,39,.1),rgba(17,24,39,.78) 68%);z-index:1}
+.about-board:after{content:"";position:absolute;inset:auto -18% -24% 20%;height:220px;background:linear-gradient(90deg,var(--primary),var(--accent));transform:rotate(-8deg);opacity:.72;z-index:2}
+.about-team-img{width:100%;height:100%;min-height:560px;object-fit:cover;display:block;filter:saturate(1.06) contrast(1.02)}
+.about-panel{position:absolute;z-index:3;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.92);color:#111827;border-radius:16px;padding:18px;box-shadow:0 28px 80px rgba(0,0,0,.28);backdrop-filter:blur(16px)}
+.about-panel span{display:block;color:#667085;font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;margin-bottom:7px}
+.about-panel b{display:block;font-family:Sora,Inter,sans-serif;line-height:1.2}
+.panel-main{left:28px;bottom:34px;width:min(360px,calc(100% - 56px))}
+.panel-main b{font-size:22px}
+.panel-kpi{right:28px;top:28px;text-align:center;min-width:134px;animation:floatY 6s ease-in-out infinite}
+.panel-kpi b{font-size:44px;color:var(--primary)}
+.panel-check{right:34px;bottom:150px;display:flex;align-items:center;gap:12px;max-width:250px;animation:floatY 7s ease-in-out infinite reverse}
+.panel-check span{width:22px;height:22px;border-radius:7px;background:var(--accent);margin:0;position:relative;flex:0 0 auto}
+.panel-check span:after{content:"";position:absolute;left:7px;top:4px;width:6px;height:11px;border:solid white;border-width:0 2px 2px 0;transform:rotate(45deg)}
+.panel-check b{font-size:15px}
+.proof-strip{padding-top:0;display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.proof-strip article{border:1px solid var(--line);background:var(--surface);border-radius:16px;padding:24px;box-shadow:var(--shadow);transition:.25s ease;animation:cardBreath 5.5s ease-in-out infinite;animation-delay:calc(var(--i,0) * .28s)}
+.proof-strip article:hover{transform:translateY(-6px);border-color:color-mix(in srgb,var(--primary) 48%,var(--line))}
+.proof-strip b{display:inline-grid;place-items:center;width:42px;height:42px;border-radius:12px;background:var(--ink);color:white;font-family:Sora,Inter,sans-serif;margin-bottom:18px}
+.proof-strip h3{font-size:19px}
+.proof-strip p{font-size:14px;margin:0}
 .section-head{display:flex;justify-content:space-between;align-items:end;gap:20px;margin-bottom:34px}
 .service-grid{display:grid;grid-template-columns:1.25fr 1fr 1fr;gap:20px}
 .service-large,.service-tile,.product-card,.process-grid article,.panel,.lead-card,.auth-card{border:1px solid var(--line);background:var(--card);border-radius:18px;padding:24px;box-shadow:var(--shadow)}
@@ -364,7 +390,7 @@ nav a.active,nav a:hover{color:var(--primary)}
 .product-track{display:flex;gap:18px;width:max-content;animation:marquee 28s linear infinite}
 .product-carousel:hover .product-track,.integration-marquee:hover .integration-track{animation-play-state:paused}
 .product-card{display:flex;flex-direction:column;min-height:100%;transition:.25s transform,.25s border-color;min-width:250px}
-.product-card img{width:100%;height:146px;object-fit:cover;border-radius:14px;margin-bottom:16px;background:var(--soft)}
+.product-card img{width:100%;height:146px;object-fit:cover;border-radius:14px;margin-bottom:16px;background:var(--soft);border:1px solid color-mix(in srgb,var(--line) 72%,transparent)}
 .product-card p{margin-bottom:0}
 .product-card.mini h3{font-size:18px}
 .product-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
@@ -1539,10 +1565,11 @@ nav a.active,nav a:hover{color:var(--primary)}
 @media (max-width:1100px){
   nav{display:none}
   .hero-container{grid-template-columns:1fr;gap:40px}
-  .service-grid,.product-feature,.rated-section,.app-split,.contact,.detail-hero,.product-overview,.two-col,.settings-grid,.modern-leads,.ai-dark-band,.ai-split,.human-intro,.solution-hero,.solution-summary,.solution-implementation{grid-template-columns:1fr}
+  .service-grid,.product-feature,.rated-section,.app-split,.contact,.detail-hero,.product-overview,.two-col,.settings-grid,.modern-leads,.ai-dark-band,.ai-split,.human-intro,.about-studio,.solution-hero,.solution-summary,.solution-implementation{grid-template-columns:1fr}
   .settings-card.wide{grid-row:auto}
   .product-grid{grid-template-columns:repeat(2,1fr)}
-  .process-grid,.benefit-grid,.module-grid,.ai-usecase-grid,.impact-grid,.solution-benefits,.implementation-steps{grid-template-columns:1fr 1fr}
+  .process-grid,.benefit-grid,.module-grid,.ai-usecase-grid,.impact-grid,.solution-benefits,.implementation-steps,.proof-strip{grid-template-columns:1fr 1fr}
+  .about-board{max-width:760px;margin:auto;width:100%}
   .solution-module-grid{grid-template-columns:repeat(3,1fr)}
   .app-art{min-height:420px}
   .rated-visual{min-height:320px}
@@ -1568,7 +1595,16 @@ nav a.active,nav a:hover{color:var(--primary)}
   .counter-band div:last-child{border-bottom:0}
   .section{padding:58px 18px}
   .section-head,.admin-page-head{display:block}
-  .service-grid,.product-grid,.process-grid,.stats,.benefit-grid,.module-grid,.settings-two,.lead-meta,.lead-form,.ai-proof,.ai-usecase-grid,.ai-roadmap,.impact-grid,.solution-benefits,.solution-module-grid,.implementation-steps{grid-template-columns:1fr}
+  .service-grid,.product-grid,.process-grid,.stats,.benefit-grid,.module-grid,.settings-two,.lead-meta,.lead-form,.ai-proof,.ai-usecase-grid,.ai-roadmap,.impact-grid,.solution-benefits,.solution-module-grid,.implementation-steps,.proof-strip{grid-template-columns:1fr}
+  .about-copy p{font-size:17px}
+  .about-actions{flex-direction:column}
+  .about-actions .btn{width:100%}
+  .about-board{min-height:440px;border-radius:18px}
+  .about-team-img{min-height:440px}
+  .panel-main{left:16px;right:16px;bottom:18px;width:auto}
+  .panel-kpi{right:16px;top:16px;min-width:108px}
+  .panel-kpi b{font-size:34px}
+  .panel-check{display:none}
   .service-large{min-height:390px}
   .product-feature{gap:10px;overflow:hidden}
   .product-carousel,.integration-marquee{max-width:100vw}

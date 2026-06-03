@@ -8,7 +8,7 @@
   <div class="product-grid">
     <% products.forEach(p => { %>
       <a class="product-card tall" href="/productos/<%= p.slug %>">
-        <img src="<%= p.image %>" alt="<%= p.name %>">
+        <img src="<%= productImage(p) %>" alt="<%= p.name %>">
         <span><%= p.name %></span>
         <h3><%= productTitle(p) %></h3>
         <p><%= p.summary %></p>
