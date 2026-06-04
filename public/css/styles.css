@@ -13,7 +13,7 @@ ul{color:var(--muted);line-height:1.8}
 .site-header{position:sticky;top:0;z-index:40;display:grid;gap:10px;padding:14px clamp(18px,5vw,72px);backdrop-filter:blur(18px);background:color-mix(in srgb,var(--surface) 92%,transparent);border-bottom:1px solid color-mix(in srgb,var(--line) 80%,transparent)}
 .header-main-row{display:flex;align-items:center;justify-content:space-between;gap:22px}
 .brand{display:flex;gap:12px;align-items:center;min-width:max-content}
-.brand-logo{display:block;width:188px;height:auto}
+.brand-logo{display:block;width:320px;height:auto}
 .brand-mark{display:grid;place-items:center;width:42px;height:42px;border-radius:10px;background:var(--ink);font-weight:900;color:white;box-shadow:0 12px 28px rgba(17,24,39,.18)}
 .brand small{display:block;color:var(--muted);font-size:11px;margin-top:2px}
 nav{display:flex;gap:22px;align-items:center}
@@ -1597,7 +1597,7 @@ nav a.active,nav a:hover{color:var(--primary)}
   h2{font-size:31px}
   .site-header{padding:12px 14px}
   .header-main-row{display:flex}
-  .brand-logo{width:152px}
+  .brand-logo{width:230px}
   .brand small,.theme-toggle{display:none}
   .hero-crm{padding:60px 18px 50px;max-width:100vw}
   .hero-title{font-size:clamp(30px,10vw,38px);max-width:100%;overflow-wrap:break-word}
