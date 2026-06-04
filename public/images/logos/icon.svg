@@ -1,19 +1,20 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" fill="none">
   <defs>
-    <linearGradient id="hex" x1="116" y1="84" x2="402" y2="426" gradientUnits="userSpaceOnUse">
+    <linearGradient id="hex" x1="76" y1="74" x2="440" y2="438" gradientUnits="userSpaceOnUse">
       <stop offset="0" stop-color="#7C3AED"/>
-      <stop offset="0.48" stop-color="#2563EB"/>
+      <stop offset="0.50" stop-color="#2563EB"/>
       <stop offset="1" stop-color="#22D3EE"/>
     </linearGradient>
-    <linearGradient id="glyph" x1="160" y1="256" x2="352" y2="256" gradientUnits="userSpaceOnUse">
+    <linearGradient id="glyph" x1="170" y1="256" x2="342" y2="256" gradientUnits="userSpaceOnUse">
       <stop offset="0" stop-color="#8B5CF6"/>
       <stop offset="1" stop-color="#38BDF8"/>
     </linearGradient>
   </defs>
-  <path d="M256 48L396 130V382L256 464L116 382V130L256 48Z" stroke="url(#hex)" stroke-width="28" stroke-linejoin="round"/>
-  <path d="M190 198L148 240L190 282" stroke="url(#glyph)" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M322 198L364 240L322 282" stroke="url(#glyph)" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M256 152V360" stroke="url(#glyph)" stroke-width="16" stroke-linecap="round"/>
-  <circle cx="256" cy="147" r="19" fill="white" stroke="url(#glyph)" stroke-width="11"/>
-  <circle cx="256" cy="365" r="19" fill="#22D3EE" stroke="url(#glyph)" stroke-width="9"/>
+  <!-- Wider shield/hexagon: expanded left and right only, center icon preserved -->
+  <path d="M256 56L426 146V366L256 456L86 366V146L256 56Z" stroke="url(#hex)" stroke-width="30" stroke-linejoin="round"/>
+  <path d="M190 202L162 230L190 258" stroke="url(#glyph)" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M322 202L350 230L322 258" stroke="url(#glyph)" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M256 146V366" stroke="url(#glyph)" stroke-width="16" stroke-linecap="round"/>
+  <circle cx="256" cy="141" r="17" fill="white" stroke="url(#glyph)" stroke-width="11"/>
+  <circle cx="256" cy="371" r="17" fill="#22D3EE" stroke="url(#glyph)" stroke-width="9"/>
 </svg>
