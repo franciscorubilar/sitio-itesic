@@ -5,9 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title><%= settings.siteName %> - Software empresarial e IA</title>
   <meta name="description" content="Software empresarial, consultoría IA, automatización, Power BI y plataformas operacionales." />
-  <link rel="icon" href="/images/favicon.svg" type="image/svg+xml" />
-  <link rel="shortcut icon" href="/images/favicon.svg" type="image/svg+xml" />
-  <link rel="apple-touch-icon" href="/images/itesic-icon.svg" />
+  <link rel="icon" href="/images/logos/icon.svg" type="image/svg+xml" />
+  <link rel="icon" href="/images/logos/favicon-32.png" type="image/png" sizes="32x32" />
+  <link rel="icon" href="/images/logos/favicon-16.png" type="image/png" sizes="16x16" />
+  <link rel="shortcut icon" href="/images/logos/favicon.ico" />
+  <link rel="apple-touch-icon" href="/images/logos/icon-256.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sora:wght@500;600;700;800&display=swap" rel="stylesheet">
@@ -16,7 +18,9 @@
 <body>
   <header class="site-header">
     <div class="header-main-row">
-      <a class="brand" href="/"><span class="brand-mark">IT</span><span><b>ITESICWS</b><small>Software empresarial e IA</small></span></a>
+      <a class="brand" href="/" aria-label="ITESICWS inicio">
+        <img class="brand-logo" data-theme-image data-light-src="/images/logos/logo-light.svg" data-dark-src="/images/logos/logo-dark.svg" src="/images/logos/logo-light.svg" alt="ITESICWS">
+      </a>
       <nav>
         <a href="/" class="<%= path==='/'?'active':'' %>">Inicio</a>
         <a href="/productos" class="<%= path.startsWith('/productos')?'active':'' %>">Productos</a>

@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" fill="none">
+  <defs>
+    <linearGradient id="hex" x1="126" y1="94" x2="386" y2="418" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#7C3AED"/>
+      <stop offset="0.48" stop-color="#2563EB"/>
+      <stop offset="1" stop-color="#22D3EE"/>
+    </linearGradient>
+    <linearGradient id="glyph" x1="164" y1="256" x2="348" y2="256" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#8B5CF6"/>
+      <stop offset="1" stop-color="#38BDF8"/>
+    </linearGradient>
+  </defs>
+  <path d="M256 52L392 132V380L256 460L120 380V132L256 52Z" stroke="url(#hex)" stroke-width="22" stroke-linejoin="round"/>
+  <path d="M193 200L154 240L193 280" stroke="url(#glyph)" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M319 200L358 240L319 280" stroke="url(#glyph)" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M256 164V348" stroke="url(#glyph)" stroke-width="14" stroke-linecap="round"/>
+  <circle cx="256" cy="159" r="18" fill="white" stroke="url(#glyph)" stroke-width="10"/>
+  <circle cx="256" cy="353" r="18" fill="#22D3EE" stroke="url(#glyph)" stroke-width="8"/>
+</svg>

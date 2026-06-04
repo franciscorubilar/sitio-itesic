@@ -2,8 +2,8 @@ const root = document.documentElement;
 const saved = localStorage.getItem('theme') || 'light';
 root.dataset.theme = saved;
 
-function syncThemeProductImages() {
-  document.querySelectorAll('[data-theme-product-image]').forEach(image => {
+function syncThemeImages() {
+  document.querySelectorAll('[data-theme-image], [data-theme-product-image]').forEach(image => {
     const nextSrc = root.dataset.theme === 'dark' ? image.dataset.darkSrc : image.dataset.lightSrc;
     if (nextSrc && image.getAttribute('src') !== nextSrc) image.setAttribute('src', nextSrc);
   });
@@ -12,9 +12,9 @@ function syncThemeProductImages() {
 document.querySelectorAll('[data-theme-toggle]').forEach(btn => btn.addEventListener('click', () => {
   root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
   localStorage.setItem('theme', root.dataset.theme);
-  syncThemeProductImages();
+  syncThemeImages();
 }));
-syncThemeProductImages();
+syncThemeImages();
 
 document.querySelectorAll('[data-split-title]').forEach(title => {
   const words = title.textContent.trim().split(/\s+/);
