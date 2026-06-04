@@ -19,7 +19,7 @@
   <!-- User/Status -->
   <rect x="1010" y="12" width="140" height="28" rx="14" fill="#F1F5F9"/>
   <circle cx="1024" cy="26" r="7" fill="#64748B"/>
-  <text x="1040" y="30" fill="#475569" font-family="Inter, sans-serif" font-size="11" font-weight="700">F. Rubilar</text>
+  <text x="1040" y="30" fill="#475569" font-family="Inter, sans-serif" font-size="11" font-weight="700">Usuario</text>
 
   <!-- Sidebar Container -->
   <rect x="2" y="54" width="220" height="664" fill="#FFFFFF"/>
@@ -81,7 +81,7 @@
       <text x="440" y="126" fill="#475569" font-family="Inter, sans-serif" font-size="12" font-weight="600">03 Jun 2026</text>
       <text x="580" y="126" fill="#0F172A" font-family="Inter, sans-serif" font-size="12" font-weight="700">$12,450 USD</text>
       <rect x="710" y="110" width="120" height="22" rx="11" fill="#10B9811A"/>
-      <text x="770" y="125" fill="#10B981" font-family="Inter, sans-serif" font-size="10.5" font-weight="800" text-anchor="middle">Aprobado CMPC</text>
+      <text x="770" y="125" fill="#10B981" font-family="Inter, sans-serif" font-size="10.5" font-weight="800" text-anchor="middle">Aprobado</text>
       <line x1="20" y1="146" x2="840" y2="146" stroke="#F1F5F9" stroke-width="1"/>
       
       <text x="36" y="180" fill="#0F172A" font-family="Inter, sans-serif" font-size="12" font-weight="700">Suministro Energía Planta B</text>
@@ -89,7 +89,7 @@
       <text x="440" y="180" fill="#475569" font-family="Inter, sans-serif" font-size="12" font-weight="600">Semana 23</text>
       <text x="580" y="180" fill="#0F172A" font-family="Inter, sans-serif" font-size="12" font-weight="700">$45,000 USD</text>
       <rect x="710" y="164" width="120" height="22" rx="11" fill="#10B9811A"/>
-      <text x="770" y="179" fill="#10B981" font-family="Inter, sans-serif" font-size="10.5" font-weight="800" text-anchor="middle">Aprobado CMPC</text>
+      <text x="770" y="179" fill="#10B981" font-family="Inter, sans-serif" font-size="10.5" font-weight="800" text-anchor="middle">Aprobado</text>
       <line x1="20" y1="200" x2="840" y2="200" stroke="#F1F5F9" stroke-width="1"/>
       
       <text x="36" y="234" fill="#0F172A" font-family="Inter, sans-serif" font-size="12" font-weight="700">Obras Civiles Fundición</text>
@@ -108,7 +108,7 @@
       <text x="770" y="287" fill="#3B82F6" font-family="Inter, sans-serif" font-size="10.5" font-weight="800" text-anchor="middle">Facturado</text>
       <line x1="20" y1="308" x2="840" y2="308" stroke="#F1F5F9" stroke-width="1"/>
       
-      <text x="36" y="342" fill="#0F172A" font-family="Inter, sans-serif" font-size="12" font-weight="700">Soporte Ambiental CMPC</text>
+      <text x="36" y="342" fill="#0F172A" font-family="Inter, sans-serif" font-size="12" font-weight="700">Soporte Ambiental</text>
       <text x="240" y="342" fill="#475569" font-family="Inter, sans-serif" font-size="12" font-weight="600">Semanal</text>
       <text x="440" y="342" fill="#475569" font-family="Inter, sans-serif" font-size="12" font-weight="600">Semana 22</text>
       <text x="580" y="342" fill="#0F172A" font-family="Inter, sans-serif" font-size="12" font-weight="700">$15,000 USD</text>

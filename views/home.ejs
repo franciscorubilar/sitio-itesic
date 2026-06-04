@@ -107,7 +107,7 @@
     </div>
   </div>
   <div class="about-board" data-parallax-stage>
-    <img class="about-team-img" src="/images/hero-bg-team.png" alt="Equipo técnico trabajando en soluciones empresariales">
+    <img class="about-team-img" data-theme-product-image data-light-src="/images/backgrond%20dark.png" data-dark-src="/images/background%20light.png" src="/images/backgrond%20dark.png" alt="Equipo conversando sobre procesos y sistemas empresariales">
     <div class="about-panel panel-main">
       <span>Diagnóstico operativo</span>
       <b>Procesos, datos y responsables en una sola ruta</b>
@@ -148,7 +148,7 @@
   </div>
   <div class="service-grid">
     <article class="service-large">
-      <img src="/images/img-perseus-erp.png" alt="PERSEUS ERP">
+      <img data-theme-product-image data-light-src="/images/perseus-erp-dark.png" data-dark-src="/images/perseus-erp-light.png" src="/images/perseus-erp-dark.png" alt="Maqueta de control operacional">
       <span>ERP Industrial</span>
       <h3>Producción, stock, despacho y trazabilidad sin depender de planillas eternas.</h3>
       <a href="/productos/perseus-erp">Ver este tipo de sistema</a>
@@ -178,8 +178,8 @@
     <div class="product-track">
       <% products.concat(products).slice(0,16).forEach(p => { %>
         <a class="product-card mini" href="/productos/<%= p.slug %>">
-          <img src="<%= productImage(p) %>" alt="<%= p.name %>">
-          <span><%= p.name %></span>
+          <img data-theme-product-image data-light-src="<%= productImage(p, 'dark') %>" data-dark-src="<%= productImage(p, 'light') %>" src="<%= productImage(p, 'dark') %>" alt="<%= p.name %>">
+          <span><%= p.category %></span>
           <h3><%= productTitle(p) %></h3>
         </a>
       <% }) %>
@@ -195,7 +195,7 @@
     <a class="btn primary" href="#contacto">Hablemos</a>
   </div>
   <div class="rated-visual" data-parallax-stage>
-    <img class="rated-main" src="/images/mockup-floating-card.svg" alt="Métricas de operación">
+    <img class="rated-main" src="/images/graphic-metrics.svg" alt="Indicadores operacionales sobrios">
     <div class="quote-card">
       <b>"Que el dato esté donde debe estar"</b>
       <span>Ese suele ser el primer gran alivio.</span>
@@ -205,8 +205,8 @@
 
 <section class="section app-split reveal">
   <div class="app-art" data-parallax-stage>
-    <img class="app-dashboard" src="/images/mockup-suite-dashboard.svg" alt="Dashboard empresarial">
-    <img class="app-phone" src="/images/mockup-phone.svg" alt="Vista móvil de procesos">
+    <img class="app-dashboard" data-theme-product-image data-light-src="/images/consultoria-ia-dark.png" data-dark-src="/images/consultoria-ia-light.png" src="/images/consultoria-ia-dark.png" alt="Consultoría IA aplicada a procesos y datos corporativos">
+    <img class="app-phone" src="/images/logo-itesicws-mark.svg" alt="Icono ITESICWS">
   </div>
   <div>
     <span class="eyebrow">Datos + IA</span>

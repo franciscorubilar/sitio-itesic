@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" role="img" aria-labelledby="title desc">
+  <title id="title">ITESICWS operacion digital</title>
+  <desc id="desc">Visual de marca con tableros, procesos y datos conectados</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#0f172a"/>
+      <stop offset="0.58" stop-color="#123047"/>
+      <stop offset="1" stop-color="#35b5bb"/>
+    </linearGradient>
+    <linearGradient id="card" x1="0" x2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#edf7fb"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="28" stdDeviation="28" flood-color="#020617" flood-opacity="0.28"/>
+    </filter>
+  </defs>
+  <rect width="1200" height="900" rx="46" fill="url(#bg)"/>
+  <path d="M0 705 C220 640 330 750 520 690 S780 530 1200 610 V900 H0Z" fill="#36b6bc" opacity=".18"/>
+  <path d="M80 160 H1120 M80 300 H1120 M80 440 H1120 M80 580 H1120 M80 720 H1120 M210 80 V820 M390 80 V820 M570 80 V820 M750 80 V820 M930 80 V820" stroke="#8bdde1" stroke-width="2" opacity=".14"/>
+  <g transform="translate(92 76)" filter="url(#shadow)">
+    <rect width="350" height="136" rx="28" fill="#ffffff" opacity=".95"/>
+    <g transform="translate(28 24) scale(.42)">
+      <path d="M84 0 168 48v96l-84 48L0 144V48Z" fill="none" stroke="#35b5bb" stroke-width="17" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M62 72 38 96l24 24M106 72l24 24-24 24M92 60 76 132" fill="none" stroke="#35b5bb" stroke-width="17" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+    <text x="128" y="64" fill="#155d75" font-family="Arial Black, Sora, Inter, sans-serif" font-size="34" font-weight="900">ITESICWS</text>
+    <text x="128" y="96" fill="#152437" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="800">Software, datos e IA aplicada</text>
+  </g>
+  <g transform="translate(96 280)" filter="url(#shadow)">
+    <rect width="500" height="380" rx="28" fill="url(#card)" stroke="#d7e6f0"/>
+    <rect x="34" y="34" width="432" height="56" rx="16" fill="#152437"/>
+    <text x="60" y="69" fill="#fff" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="800">Panel operacional conectado</text>
+    <g transform="translate(34 126)">
+      <rect width="126" height="82" rx="18" fill="#fff" stroke="#dbe7ef"/>
+      <rect x="30" y="50" width="16" height="20" rx="4" fill="#35b5bb"/>
+      <rect x="56" y="35" width="16" height="35" rx="4" fill="#2f6bff"/>
+      <rect x="82" y="18" width="16" height="52" rx="4" fill="#155d75"/>
+      <text x="18" y="28" fill="#667085" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="800">PRODUCCION</text>
+    </g>
+    <g transform="translate(186 126)">
+      <rect width="126" height="82" rx="18" fill="#fff" stroke="#dbe7ef"/>
+      <path d="M24 58 C54 20 78 76 106 28" fill="none" stroke="#35b5bb" stroke-width="8" stroke-linecap="round"/>
+      <text x="18" y="28" fill="#667085" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="800">TRAZA</text>
+    </g>
+    <g transform="translate(338 126)">
+      <rect width="126" height="82" rx="18" fill="#fff" stroke="#dbe7ef"/>
+      <text x="24" y="55" fill="#2f6bff" font-family="Arial Black, Sora, sans-serif" font-size="34">24h</text>
+    </g>
+    <rect x="34" y="244" width="432" height="34" rx="12" fill="#e8f2f8"/>
+    <rect x="34" y="296" width="330" height="34" rx="12" fill="#e8f2f8"/>
+  </g>
+  <g transform="translate(666 260)" filter="url(#shadow)">
+    <rect width="420" height="280" rx="30" fill="#ffffff" opacity=".96"/>
+    <text x="34" y="58" fill="#152437" font-family="Sora, Inter, sans-serif" font-size="26" font-weight="900">Procesos claros</text>
+    <g fill="none" stroke="#35b5bb" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M56 118 H172"/>
+      <path d="M172 118 C226 118 226 178 280 178 H360"/>
+      <path d="M56 214 H214 C250 214 250 178 280 178"/>
+    </g>
+    <g fill="#152437">
+      <circle cx="56" cy="118" r="18"/><circle cx="172" cy="118" r="18"/><circle cx="280" cy="178" r="18"/><circle cx="360" cy="178" r="18"/><circle cx="56" cy="214" r="18"/>
+    </g>
+  </g>
+</svg>

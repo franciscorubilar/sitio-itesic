@@ -75,21 +75,24 @@ function productTitle(product) {
   return titles[product.slug] || product.summary || product.name;
 }
 
-function productImage(product) {
+function productImage(product, variant = '') {
   const images = {
-    'perseus-erp': '/images/img-perseus-erp.png',
-    'sistema-calibraciones': '/images/img-calibraciones.png',
-    forms: '/images/img-forms.png',
-    'portal-balances': '/images/img-balances.png',
-    bitacoras: '/images/img-bitacoras.png',
-    'plataforma-zebbra': '/images/img-zebbra.svg',
-    'venta-pasajes-buses': '/images/img-buses.svg',
-    'perseus-ofa': '/images/img-perseus-erp.png',
+    'perseus-erp': 'perseus-erp',
+    'sistema-calibraciones': 'sistema-calibraciones',
+    forms: 'forms-formularios-digitales',
+    'portal-balances': 'portal-balances',
+    bitacoras: 'bitacoras',
+    'plataforma-zebbra': 'plataforma-zebbra',
+    'venta-pasajes-buses': 'venta-pasajes-buses',
+    'perseus-ofa': 'perseus-ofa-ofp',
     'opms-caitan': '/images/img-opms-caitan.svg',
-    'bi-powerbi': '/images/img-bi-powerbi.svg',
-    'consultoria-ia': '/images/ai-brain-graphic.png'
+    'bi-powerbi': 'bi-power-bi',
+    'consultoria-ia': 'consultoria-ia'
   };
-  return images[product.slug] || product.image;
+  const image = images[product.slug];
+  if (!image) return product.image || '/images/img-opms-caitan.svg';
+  if (image.startsWith('/images/')) return image;
+  return `/images/${image}${variant ? `-${variant}` : ''}.png`;
 }
 
 function requireAuth(req, res, next) {

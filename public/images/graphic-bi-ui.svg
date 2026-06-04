@@ -1,0 +1,36 @@
+<svg width="1200" height="760" viewBox="0 0 1200 760" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="760" fill="#F8F7F2"/>
+  <rect width="238" height="760" fill="#FFFFFF"/>
+  <rect x="238" width="1" height="760" fill="#E6E0D2"/>
+  <circle cx="42" cy="56" r="15" fill="#CA8A04"/>
+  <rect x="70" y="45" width="92" height="21" rx="7" fill="#3C3524"/>
+  <text x="24" y="130" fill="#9A9282" font-family="Inter, Arial" font-size="13" font-weight="800" letter-spacing="2">DATOS</text>
+  <rect x="20" y="150" width="198" height="46" rx="10" fill="#F4EACD"/>
+  <text x="38" y="179" fill="#A16207" font-family="Inter, Arial" font-size="19" font-weight="900">Dashboards</text>
+  <text x="38" y="228" fill="#3C3524" font-family="Inter, Arial" font-size="19" font-weight="800">Modelos</text>
+  <text x="38" y="276" fill="#3C3524" font-family="Inter, Arial" font-size="19" font-weight="800">ETL</text>
+  <text x="38" y="324" fill="#3C3524" font-family="Inter, Arial" font-size="19" font-weight="800">Alertas</text>
+  <rect x="272" y="34" width="884" height="56" rx="12" fill="#FFFFFF" stroke="#E6E0D2"/>
+  <text x="292" y="69" fill="#3C3524" font-family="Inter, Arial" font-size="18" font-weight="900">Business intelligence operacional</text>
+  <circle cx="1120" cy="62" r="18" fill="#DED8CA"/>
+  <rect x="272" y="116" width="884" height="116" rx="20" fill="#A16207"/>
+  <text x="308" y="158" fill="#F8EBC8" font-family="Inter, Arial" font-size="14" font-weight="900" letter-spacing="4">INDICADORES EJECUTIVOS</text>
+  <text x="308" y="194" fill="#FFFFFF" font-family="Inter, Arial" font-size="34" font-weight="900">Datos listos para decidir</text>
+  <text x="308" y="220" fill="#FFF7E3" font-family="Inter, Arial" font-size="17" font-weight="600">KPIs automaticos, historicos y comparativos por area.</text>
+  <rect x="272" y="260" width="264" height="138" rx="16" fill="#FFFFFF" stroke="#E6E0D2"/>
+  <text x="304" y="302" fill="#9A9282" font-family="Inter, Arial" font-size="13" font-weight="900" letter-spacing="2">VENTAS</text>
+  <text x="304" y="350" fill="#3C3524" font-family="Inter, Arial" font-size="38" font-weight="900">+18%</text>
+  <rect x="562" y="260" width="264" height="138" rx="16" fill="#FFFFFF" stroke="#E6E0D2"/>
+  <text x="594" y="302" fill="#9A9282" font-family="Inter, Arial" font-size="13" font-weight="900" letter-spacing="2">EFICIENCIA</text>
+  <text x="594" y="350" fill="#3C3524" font-family="Inter, Arial" font-size="38" font-weight="900">96%</text>
+  <rect x="852" y="260" width="304" height="138" rx="16" fill="#FFFFFF" stroke="#E6E0D2"/>
+  <text x="884" y="302" fill="#9A9282" font-family="Inter, Arial" font-size="13" font-weight="900" letter-spacing="2">ALERTAS</text>
+  <text x="884" y="350" fill="#3C3524" font-family="Inter, Arial" font-size="38" font-weight="900">5</text>
+  <rect x="272" y="428" width="884" height="190" rx="16" fill="#FFFFFF" stroke="#E6E0D2"/>
+  <text x="304" y="478" fill="#3C3524" font-family="Inter, Arial" font-size="28" font-weight="900">Desempeno mensual</text>
+  <rect x="332" y="548" width="56" height="48" rx="8" fill="#E6E0D2"/>
+  <rect x="426" y="510" width="56" height="86" rx="8" fill="#CA8A04"/>
+  <rect x="520" y="468" width="56" height="128" rx="8" fill="#A16207"/>
+  <rect x="614" y="532" width="56" height="64" rx="8" fill="#E6E0D2"/>
+  <path d="M742 570C806 500 860 552 918 496C972 444 1022 482 1080 430" stroke="#A16207" stroke-width="10" stroke-linecap="round"/>
+</svg>

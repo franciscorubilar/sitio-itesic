@@ -1,0 +1,34 @@
+<svg width="1200" height="760" viewBox="0 0 1200 760" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="760" fill="#F5F7FA"/>
+  <rect x="54" y="54" width="1092" height="652" rx="30" fill="#FFFFFF" stroke="#DDE5EE"/>
+  <rect x="92" y="92" width="1020" height="64" rx="16" fill="#263142"/>
+  <text x="126" y="132" fill="#FFFFFF" font-family="Inter, Arial" font-size="20" font-weight="900">Asistente interno con documentos</text>
+  <rect x="910" y="108" width="154" height="32" rx="16" fill="#E8EDF3"/>
+  <text x="942" y="129" fill="#475569" font-family="Inter, Arial" font-size="13" font-weight="900">Modo seguro</text>
+  <rect x="92" y="190" width="310" height="470" rx="20" fill="#F0F4F8" stroke="#DDE5EE"/>
+  <text x="126" y="238" fill="#263142" font-family="Inter, Arial" font-size="24" font-weight="900">Fuentes</text>
+  <rect x="126" y="278" width="230" height="68" rx="14" fill="#FFFFFF" stroke="#DDE5EE"/>
+  <text x="152" y="306" fill="#475569" font-family="Inter, Arial" font-size="12" font-weight="900" letter-spacing="2">PDF</text>
+  <text x="152" y="330" fill="#263142" font-family="Inter, Arial" font-size="15" font-weight="900">Manual de proceso</text>
+  <rect x="126" y="370" width="230" height="68" rx="14" fill="#FFFFFF" stroke="#DDE5EE"/>
+  <text x="152" y="398" fill="#475569" font-family="Inter, Arial" font-size="12" font-weight="900" letter-spacing="2">DATOS</text>
+  <text x="152" y="422" fill="#263142" font-family="Inter, Arial" font-size="15" font-weight="900">Indicadores internos</text>
+  <rect x="126" y="462" width="230" height="68" rx="14" fill="#FFFFFF" stroke="#DDE5EE"/>
+  <text x="152" y="490" fill="#475569" font-family="Inter, Arial" font-size="12" font-weight="900" letter-spacing="2">CORREO</text>
+  <text x="152" y="514" fill="#263142" font-family="Inter, Arial" font-size="15" font-weight="900">Solicitudes recientes</text>
+  <rect x="436" y="190" width="676" height="470" rx="20" fill="#FFFFFF" stroke="#DDE5EE"/>
+  <text x="470" y="238" fill="#263142" font-family="Inter, Arial" font-size="28" font-weight="900">Consulta trazable</text>
+  <rect x="470" y="278" width="520" height="64" rx="16" fill="#F5F7FA" stroke="#DDE5EE"/>
+  <text x="498" y="316" fill="#263142" font-family="Inter, Arial" font-size="17" font-weight="800">¿Qué documentos respaldan este indicador?</text>
+  <rect x="548" y="382" width="520" height="132" rx="18" fill="#263142"/>
+  <text x="582" y="424" fill="#FFFFFF" font-family="Inter, Arial" font-size="18" font-weight="900">Respuesta del asistente</text>
+  <text x="582" y="462" fill="#DDE5EE" font-family="Inter, Arial" font-size="15" font-weight="700">Se encontraron 3 fuentes internas relacionadas, con fecha, responsable y cita de documento.</text>
+  <rect x="582" y="486" width="150" height="28" rx="14" fill="#E8EDF3"/>
+  <text x="606" y="505" fill="#475569" font-family="Inter, Arial" font-size="12" font-weight="900">Ver evidencia</text>
+  <rect x="470" y="552" width="176" height="46" rx="12" fill="#F0F4F8" stroke="#DDE5EE"/>
+  <text x="498" y="581" fill="#475569" font-family="Inter, Arial" font-size="14" font-weight="900">Costo controlado</text>
+  <rect x="674" y="552" width="176" height="46" rx="12" fill="#F0F4F8" stroke="#DDE5EE"/>
+  <text x="702" y="581" fill="#475569" font-family="Inter, Arial" font-size="14" font-weight="900">Logs auditables</text>
+  <rect x="878" y="552" width="176" height="46" rx="12" fill="#F0F4F8" stroke="#DDE5EE"/>
+  <text x="906" y="581" fill="#475569" font-family="Inter, Arial" font-size="14" font-weight="900">Datos privados</text>
+</svg>

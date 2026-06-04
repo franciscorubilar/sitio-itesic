@@ -1,10 +1,20 @@
 const root = document.documentElement;
 const saved = localStorage.getItem('theme') || 'light';
 root.dataset.theme = saved;
+
+function syncThemeProductImages() {
+  document.querySelectorAll('[data-theme-product-image]').forEach(image => {
+    const nextSrc = root.dataset.theme === 'dark' ? image.dataset.darkSrc : image.dataset.lightSrc;
+    if (nextSrc && image.getAttribute('src') !== nextSrc) image.setAttribute('src', nextSrc);
+  });
+}
+
 document.querySelectorAll('[data-theme-toggle]').forEach(btn => btn.addEventListener('click', () => {
   root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
   localStorage.setItem('theme', root.dataset.theme);
+  syncThemeProductImages();
 }));
+syncThemeProductImages();
 
 document.querySelectorAll('[data-split-title]').forEach(title => {
   const words = title.textContent.trim().split(/\s+/);
@@ -49,3 +59,38 @@ document.querySelectorAll('[data-parallax-stage]').forEach(stage => {
     movable.forEach(el => { el.style.transform = ''; });
   });
 });
+
+const contactExamples = {
+  'Consultoría IA': 'Ej: Queremos evaluar cómo usar IA para consultar documentos internos, automatizar reportes o reducir tareas manuales repetitivas.',
+  'ERP / Gestión operacional': 'Ej: Necesitamos ordenar producción, stock, usuarios, estados y reportes en una plataforma centralizada.',
+  'Reportes y Power BI': 'Ej: Queremos conectar datos de planillas o sistemas internos para tener tableros confiables y actualizados.',
+  'Integración de sistemas': 'Ej: Necesitamos conectar nuestras plataformas para evitar doble digitación y mejorar la trazabilidad.',
+  'Software a medida': 'Ej: Tenemos un proceso propio que hoy vive en planillas y queremos convertirlo en una aplicación web.',
+  'Formularios y flujos': 'Ej: Queremos digitalizar formularios, aprobaciones, adjuntos y seguimiento de estados.'
+};
+
+function contactExampleFor(interest) {
+  return contactExamples[interest] || `Ej: Me interesa conversar sobre ${interest}. Queremos revisar alcance, implementación y una posible demo.`;
+}
+
+function applyContactInterest() {
+  const params = new URLSearchParams(window.location.search);
+  const interest = params.get('interest');
+  if (!interest) return;
+
+  document.querySelectorAll('form[action="/leads"]').forEach(form => {
+    const select = form.querySelector('select[name="interest"]');
+    const message = form.querySelector('textarea[name="message"]');
+
+    if (select) {
+      const option = Array.from(select.options).find(item => item.value === interest || item.textContent.trim() === interest);
+      if (option) select.value = option.value;
+    }
+
+    if (message && !message.value.trim()) {
+      message.placeholder = contactExampleFor(interest);
+    }
+  });
+}
+
+applyContactInterest();

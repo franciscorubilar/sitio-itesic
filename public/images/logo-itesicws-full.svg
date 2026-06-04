@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 220" role="img" aria-labelledby="title desc">
+  <title id="title">ITESICWS</title>
+  <desc id="desc">Logo ITESICWS con icono de codigo y texto Nos encanta el codigo</desc>
+  <rect width="900" height="220" fill="none"/>
+  <g transform="translate(28 25)" fill="none" stroke="#35b5bb" stroke-width="17" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M84 0 168 48v96l-84 48L0 144V48Z"/>
+    <path d="M62 72 38 96l24 24"/>
+    <path d="M106 72 130 96l-24 24"/>
+    <path d="M92 60 76 132"/>
+  </g>
+  <g transform="translate(250 42)">
+    <text x="0" y="72" fill="#155d75" font-family="Arial Black, Sora, Inter, sans-serif" font-size="76" font-weight="900" letter-spacing="2">ITESICWS</text>
+    <text x="0" y="145" fill="#152437" font-family="Impact, Arial Black, Sora, Inter, sans-serif" font-size="50" font-weight="900" letter-spacing="3">Nos encanta el codigo_</text>
+  </g>
+</svg>

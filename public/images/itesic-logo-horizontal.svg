@@ -1,0 +1,26 @@
+<svg width="900" height="240" viewBox="0 0 900 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="itesicGradient" x1="30" y1="34" x2="206" y2="210" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2F6BFF"/>
+      <stop offset="0.55" stop-color="#10D5D0"/>
+      <stop offset="1" stop-color="#6D5BFF"/>
+    </linearGradient>
+    <linearGradient id="itesicGlow" x1="52" y1="52" x2="190" y2="190" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7DD3FF"/>
+      <stop offset="1" stop-color="#2F6BFF" stop-opacity="0.2"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="900" height="240" rx="42" fill="transparent"/>
+
+  <g>
+    <rect x="30" y="34" width="172" height="172" rx="46" fill="#071326"/>
+    <rect x="30" y="34" width="172" height="172" rx="46" fill="url(#itesicGradient)" opacity="0.14"/>
+    <path d="M70 124C67.8 121.8 67.8 118.2 70 116L100.5 85.5C103.6 82.4 109 84.6 109 89V108.7C109 110.1 108.4 111.5 107.4 112.5L95.9 124L107.4 135.5C108.4 136.5 109 137.9 109 139.3V159C109 163.4 103.6 165.6 100.5 162.5L70 124Z" fill="url(#itesicGradient)"/>
+    <path d="M162 116C164.2 118.2 164.2 121.8 162 124L131.5 162.5C128.4 165.6 123 163.4 123 159V139.3C123 137.9 123.6 136.5 124.6 135.5L136.1 124L124.6 112.5C123.6 111.5 123 110.1 123 108.7V89C123 84.6 128.4 82.4 131.5 85.5L162 116Z" fill="url(#itesicGradient)"/>
+    <path d="M116.8 72.2C119.3 67.5 126.4 69.5 126.1 74.8L120.4 171.5C120.1 176.8 113 177.9 111.1 173L105.7 158.7C105.2 157.4 105.2 155.9 105.8 154.6L118.1 127.5L107.6 101.9C107.1 100.6 107.2 99.1 107.8 97.9L116.8 72.2Z" fill="url(#itesicGlow)"/>
+  </g>
+
+  <text x="238" y="136" fill="#0F172A" font-family="Inter, Arial, Helvetica, sans-serif" font-size="72" font-weight="850" letter-spacing="-2">ITESIC</text>
+  <text x="242" y="174" fill="#64748B" font-family="Inter, Arial, Helvetica, sans-serif" font-size="24" font-weight="600" letter-spacing="4">SOFTWARE · DATOS · IA</text>
+</svg>

@@ -4,7 +4,7 @@ const prisma = new PrismaClient();
 
 const products = [
   {
-    name: 'PERSEUS ERP', slug: 'perseus-erp', category: 'ERP Industrial', featured: true, sortOrder: 1, image: '/images/img-perseus-erp.png',
+    name: 'PERSEUS ERP', slug: 'perseus-erp', category: 'ERP Industrial', featured: true, sortOrder: 1, image: '/images/perseus-erp.png',
     summary: 'Suite modular para controlar producción, inventario, trazabilidad, documentos y logística.',
     description: 'PerseusERP conecta planta, administración y logística para entregar trazabilidad real, información confiable y control operativo diario. Está orientado a empresas industriales, productivas, forestales, madereras y logísticas.',
     problem: 'Reduce registros manuales, duplicidad de datos y desconexión entre producción, stock, despacho, documentos y reportabilidad.',
@@ -13,7 +13,7 @@ const products = [
     industries: ['Forestal', 'Maderera', 'Manufactura', 'Logística']
   },
   {
-    name: 'Sistema de Calibraciones', slug: 'sistema-calibraciones', category: 'Operación Industrial', featured: true, sortOrder: 2, image: '/images/img-calibraciones.png',
+    name: 'Sistema de Calibraciones', slug: 'sistema-calibraciones', category: 'Operación Industrial', featured: true, sortOrder: 2, image: '/images/sistema-calibraciones.png',
     summary: 'Gestión integral de calibraciones de instrumentos, equipos, evidencias y auditoría.',
     description: 'Sistema Calibraciones es una plataforma web para administrar instrumentos, divisiones, tipos de instrumento, programas mensuales, validaciones, registros de ejecución, evidencias, revisión final, auditoría y monitoreo de envíos hacia PI Web API.',
     problem: 'Digitaliza el proceso de calibración, mejora la trazabilidad, reduce controles manuales y entrega visibilidad completa sobre cada ciclo.',
@@ -22,7 +22,7 @@ const products = [
     industries: ['Minería', 'Industria', 'Energía', 'Operaciones']
   },
   {
-    name: 'FORMS', slug: 'forms', category: 'Formularios Digitales', featured: false, sortOrder: 3, image: '/images/img-forms.png',
+    name: 'FORMS', slug: 'forms', category: 'Formularios Digitales', featured: false, sortOrder: 3, image: '/images/forms-formularios-digitales.png',
     summary: 'Formularios empresariales para capturar datos, digitalizar procesos y eliminar papel.',
     description: 'Permite construir formularios digitales, capturar información estructurada y activar flujos de revisión o reportabilidad.',
     problem: 'Evita registros dispersos, formularios físicos y procesos manuales difíciles de auditar.',
@@ -31,7 +31,7 @@ const products = [
     industries: ['Administración', 'Operaciones', 'Terreno']
   },
   {
-    name: 'Portal de Balances', slug: 'portal-balances', category: 'Gestión Operacional', featured: false, sortOrder: 4, image: '/images/img-balances.png',
+    name: 'Portal de Balances', slug: 'portal-balances', category: 'Gestión Operacional', featured: false, sortOrder: 4, image: '/images/portal-balances.png',
     summary: 'Dashboards e indicadores para monitoreo de balances operacionales.',
     description: 'Portal de Balances permite visualizar KPIs, revisar calidad de información, controlar consistencia de resultados, analizar recuperaciones, monitorear divisiones y acceder a documentación o vistas PI Vision.',
     problem: 'Centraliza indicadores críticos, facilita el seguimiento operacional y entrega información clara para la toma de decisiones.',
@@ -40,7 +40,7 @@ const products = [
     industries: ['Finanzas', 'Operaciones', 'Gerencia']
   },
   {
-    name: 'Bitácoras', slug: 'bitacoras', category: 'Operación', featured: false, sortOrder: 5, image: '/images/img-bitacoras.png',
+    name: 'Bitácoras', slug: 'bitacoras', category: 'Operación', featured: false, sortOrder: 5, image: '/images/bitacoras-operacionales.png',
     summary: 'Registro digital de eventos, turnos, novedades y seguimiento operacional.',
     description: 'Permite transformar bitácoras manuales en registros digitales trazables, consultables y auditables.',
     problem: 'Reduce pérdida de información entre turnos, eventos no registrados y falta de historial operativo.',
@@ -49,7 +49,7 @@ const products = [
     industries: ['Operaciones', 'Transporte', 'Industria']
   },
   {
-    name: 'Plataforma Zebbra', slug: 'plataforma-zebbra', category: 'Monitoreo Operacional', featured: false, sortOrder: 6, image: '/images/img-zebbra.svg',
+    name: 'Plataforma Zebbra', slug: 'plataforma-zebbra', category: 'Monitoreo Operacional', featured: false, sortOrder: 6, image: '/images/plataforma-zebbra.png',
     summary: 'Monitoreo operacional, reportabilidad SMA/DGA y control de continuidad de datos.',
     description: 'Plataforma Zebbra permite consultar dashboards, gráficos, reportes de cobertura, datos faltantes, errores de recepción, errores de envío y retransmisiones.',
     problem: 'Ayuda a monitorear información crítica, detectar brechas de datos y mejorar la gestión operacional mediante tableros claros y trazables.',
@@ -58,7 +58,7 @@ const products = [
     industries: ['Operaciones', 'Medio ambiente', 'Gestión hídrica', 'Industria']
   },
   {
-    name: 'Sistema de Venta de Pasajes de Buses', slug: 'venta-pasajes-buses', category: 'Transporte', featured: false, sortOrder: 7, image: '/images/img-buses.svg',
+    name: 'Sistema de Venta de Pasajes de Buses', slug: 'venta-pasajes-buses', category: 'Transporte', featured: false, sortOrder: 7, image: '/images/venta-pasajes-buses.png',
     summary: 'Administración de venta, emisión, impresión y anulación de pasajes de buses.',
     description: 'Sistema web para consultar viajes, seleccionar asientos, administrar buses, servicios, tarifas, pasajeros, puntos de venta, anulaciones, reportes de caja e impresión de tickets.',
     problem: 'Ordena la operación de boletería, controla servicios y asientos, mejora la trazabilidad de ventas y facilita reportes comerciales.',
@@ -67,7 +67,7 @@ const products = [
     industries: ['Transporte']
   },
   {
-    name: 'PERSEUS OFA', slug: 'perseus-ofa', category: 'Producción', featured: false, sortOrder: 8, image: '/images/img-perseus-erp.png',
+    name: 'PERSEUS OFA', slug: 'perseus-ofa', category: 'Producción', featured: false, sortOrder: 8, image: '/images/perseus-ofa-ofp.png',
     summary: 'Aplicación web para administrar procesos OFA, OFP y productos principales.',
     description: 'PERSEUS OFA permite consultar registros, planificar, editar, abrir, cerrar, eliminar, revisar progreso y exportar información operacional dentro del ecosistema Perseus.',
     problem: 'Ordena procesos productivos, reduce dependencia de planillas y entrega mayor control sobre registros OFA/OFP.',
@@ -85,7 +85,7 @@ const products = [
     industries: ['Operaciones', 'Administración', 'Gestión empresarial']
   },
   {
-    name: 'BI / Power BI', slug: 'bi-powerbi', category: 'Business Intelligence', featured: true, sortOrder: 10, image: '/images/img-bi-powerbi.svg',
+    name: 'BI / Power BI', slug: 'bi-powerbi', category: 'Business Intelligence', featured: true, sortOrder: 10, image: '/images/bi-power-bi.png',
     summary: 'Extracción, transformación y visualización de datos mediante dashboards ejecutivos.',
     description: 'Convertimos datos dispersos en información ejecutiva lista para decidir mediante pipelines, modelos y tableros Power BI.',
     problem: 'Resuelve reportes manuales, datos inconsistentes y falta de visibilidad ejecutiva.',
@@ -94,7 +94,7 @@ const products = [
     industries: ['Gerencia', 'Producción', 'Logística', 'Ventas']
   },
   {
-    name: 'Consultoría IA', slug: 'consultoria-ia', category: 'Inteligencia Artificial', featured: true, sortOrder: 11, image: '/images/ai-brain-graphic.png',
+    name: 'Consultoría IA', slug: 'consultoria-ia', category: 'Inteligencia Artificial', featured: true, sortOrder: 11, image: '/images/consultoria-ia.png',
     summary: 'Diagnóstico, roadmap, asistentes inteligentes, automatización documental y agentes IA.',
     description: 'Ayudamos a identificar oportunidades reales de IA, diseñar soluciones aplicables y construir asistentes, automatizaciones, modelos y plataformas que generan impacto operativo.',
     problem: 'Evita implementar IA sin foco, sin datos preparados o sin conexión real con procesos de negocio.',

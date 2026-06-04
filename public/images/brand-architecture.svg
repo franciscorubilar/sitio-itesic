@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" role="img" aria-labelledby="title desc">
+  <title id="title">Arquitectura ITESICWS</title>
+  <desc id="desc">Diagrama de arquitectura conectando documentos, bases, IA, API y reportes</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#f8fbff"/>
+      <stop offset="1" stop-color="#eaf8f8"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="22" stdDeviation="22" flood-color="#0f172a" flood-opacity=".16"/>
+    </filter>
+  </defs>
+  <rect width="1000" height="800" rx="42" fill="url(#bg)"/>
+  <path d="M98 130 H902 M98 270 H902 M98 410 H902 M98 550 H902 M98 690 H902 M200 70 V730 M400 70 V730 M600 70 V730 M800 70 V730" stroke="#b9d9e3" stroke-width="2" opacity=".38"/>
+  <g stroke="#35b5bb" stroke-width="8" fill="none" stroke-linecap="round">
+    <path d="M230 250 C350 250 350 390 470 390"/>
+    <path d="M230 550 C350 550 350 410 470 410"/>
+    <path d="M530 400 C650 400 650 250 770 250"/>
+    <path d="M530 400 C650 400 650 550 770 550"/>
+  </g>
+  <g filter="url(#shadow)">
+    <rect x="112" y="176" width="228" height="146" rx="24" fill="#fff" stroke="#d7e6f0"/>
+    <text x="146" y="232" fill="#152437" font-family="Sora, Inter, sans-serif" font-size="24" font-weight="900">Documentos</text>
+    <text x="146" y="268" fill="#667085" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="700">PDF, manuales, correos</text>
+    <rect x="112" y="476" width="228" height="146" rx="24" fill="#fff" stroke="#d7e6f0"/>
+    <text x="146" y="532" fill="#152437" font-family="Sora, Inter, sans-serif" font-size="24" font-weight="900">Datos</text>
+    <text x="146" y="568" fill="#667085" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="700">ERP, SQL, planillas</text>
+    <rect x="386" y="290" width="228" height="220" rx="30" fill="#152437"/>
+    <g transform="translate(448 326) scale(.36)">
+      <path d="M84 0 168 48v96l-84 48L0 144V48Z" fill="none" stroke="#35b5bb" stroke-width="17" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M62 72 38 96l24 24M106 72l24 24-24 24M92 60 76 132" fill="none" stroke="#35b5bb" stroke-width="17" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+    <text x="442" y="456" fill="#fff" font-family="Sora, Inter, sans-serif" font-size="26" font-weight="900">IA aplicada</text>
+    <text x="444" y="486" fill="#cbd5e1" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="800">RAG + APIs + seguridad</text>
+    <rect x="660" y="176" width="228" height="146" rx="24" fill="#fff" stroke="#d7e6f0"/>
+    <text x="694" y="232" fill="#152437" font-family="Sora, Inter, sans-serif" font-size="24" font-weight="900">Acciones</text>
+    <text x="694" y="268" fill="#667085" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="700">Flujos y automatizacion</text>
+    <rect x="660" y="476" width="228" height="146" rx="24" fill="#fff" stroke="#d7e6f0"/>
+    <text x="694" y="532" fill="#152437" font-family="Sora, Inter, sans-serif" font-size="24" font-weight="900">Reportes</text>
+    <text x="694" y="568" fill="#667085" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="700">BI, alertas, evidencia</text>
+  </g>
+  <g fill="#35b5bb">
+    <circle cx="230" cy="250" r="14"/><circle cx="230" cy="550" r="14"/><circle cx="500" cy="400" r="16"/><circle cx="770" cy="250" r="14"/><circle cx="770" cy="550" r="14"/>
+  </g>
+</svg>

@@ -3,11 +3,12 @@
 <section class="solution-hero">
   <div class="solution-hero-bg" aria-hidden="true"></div>
   <div class="solution-copy reveal">
-    <span class="eyebrow"><%= product.name %> · <%= product.category %></span>
-    <h1 data-split-title><%= productTitle(product) %></h1>
+    <span class="eyebrow">Solución empresarial · <%= product.category %></span>
+    <h1 data-split-title><%= product.name %></h1>
+    <p class="solution-lead"><%= productTitle(product) %></p>
     <p><%= product.description %></p>
     <div class="actions">
-      <a class="btn primary" href="/#contacto"><span><%= product.cta %></span></a>
+      <a class="btn primary" href="/?interest=<%= encodeURIComponent(productTitle(product)) %>#contacto"><span><%= product.cta %></span></a>
       <a class="btn ghost" href="#modulos"><span>Ver módulos</span></a>
     </div>
     <div class="solution-stats">
@@ -17,7 +18,7 @@
     </div>
   </div>
   <div class="solution-visual reveal delay" data-parallax-stage>
-    <img class="solution-main-img" src="<%= productImage(product) %>" alt="<%= product.name %>">
+    <img class="solution-main-img" data-theme-product-image data-light-src="<%= productImage(product, 'dark') %>" data-dark-src="<%= productImage(product, 'light') %>" src="<%= productImage(product, 'dark') %>" alt="<%= product.name %>">
     <div class="solution-float top">
       <b>Operación trazable</b>
       <span>Estados, usuarios, reportes y evidencia conectada.</span>
@@ -55,7 +56,7 @@
       <span class="eyebrow">Beneficios</span>
       <h2>Qué gana tu operación</h2>
     </div>
-    <a class="btn ghost" href="/#contacto"><span>Solicitar demo</span></a>
+    <a class="btn ghost" href="/?interest=<%= encodeURIComponent(productTitle(product)) %>#contacto"><span>Solicitar demo</span></a>
   </div>
   <div class="solution-benefits">
     <% product.benefits.forEach((b, i) => { %>
@@ -131,7 +132,7 @@
     <h2>Veamos cómo adaptar esto a tu operación.</h2>
     <p>Podemos revisar procesos, módulos, usuarios, reportabilidad e integraciones para definir un alcance claro.</p>
   </div>
-  <a class="btn primary" href="/#contacto"><span>Solicitar conversación</span></a>
+  <a class="btn primary" href="/?interest=<%= encodeURIComponent(productTitle(product)) %>#contacto"><span>Solicitar conversación</span></a>
 </section>
 
 <%- include('partials/footer') %>

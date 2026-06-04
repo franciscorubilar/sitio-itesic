@@ -1,0 +1,47 @@
+<svg width="1200" height="760" viewBox="0 0 1200 760" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="760" fill="#F4F7F1"/>
+  <rect x="48" y="42" width="1104" height="676" rx="28" fill="#FFFFFF" stroke="#DDE8D8"/>
+  <rect x="88" y="82" width="1024" height="74" rx="18" fill="#294235"/>
+  <circle cx="126" cy="119" r="9" fill="#91B84A"/>
+  <circle cx="154" cy="119" r="9" fill="#D9E8C9"/>
+  <circle cx="182" cy="119" r="9" fill="#FFFFFF" opacity=".6"/>
+  <text x="228" y="126" fill="#FFFFFF" font-family="Inter, Arial" font-size="20" font-weight="900">Planificacion OFA / OFP</text>
+  <rect x="930" y="100" width="132" height="36" rx="18" fill="#E4EFD9"/>
+  <text x="962" y="123" fill="#4D7C0F" font-family="Inter, Arial" font-size="14" font-weight="900">Exportar</text>
+  <rect x="88" y="188" width="220" height="470" rx="18" fill="#F0F5EC" stroke="#DDE8D8"/>
+  <text x="120" y="232" fill="#294235" font-family="Inter, Arial" font-size="22" font-weight="900">Filtros</text>
+  <text x="120" y="284" fill="#7A8A76" font-family="Inter, Arial" font-size="12" font-weight="900" letter-spacing="2">FECHA</text>
+  <rect x="120" y="304" width="152" height="38" rx="9" fill="#FFFFFF" stroke="#DDE8D8"/>
+  <text x="138" y="328" fill="#294235" font-family="Inter, Arial" font-size="15" font-weight="800">Junio 2026</text>
+  <text x="120" y="390" fill="#7A8A76" font-family="Inter, Arial" font-size="12" font-weight="900" letter-spacing="2">ESTADO</text>
+  <rect x="120" y="410" width="152" height="36" rx="9" fill="#DDECCF"/>
+  <text x="138" y="433" fill="#4D7C0F" font-family="Inter, Arial" font-size="15" font-weight="900">Abiertas</text>
+  <text x="138" y="486" fill="#294235" font-family="Inter, Arial" font-size="15" font-weight="800">Planificadas</text>
+  <text x="138" y="538" fill="#294235" font-family="Inter, Arial" font-size="15" font-weight="800">Cerradas</text>
+  <rect x="340" y="188" width="232" height="470" rx="18" fill="#FFFFFF" stroke="#DDE8D8"/>
+  <text x="372" y="232" fill="#294235" font-family="Inter, Arial" font-size="22" font-weight="900">OFA abiertas</text>
+  <rect x="372" y="274" width="168" height="116" rx="16" fill="#F4F7F1" stroke="#DDE8D8"/>
+  <text x="394" y="306" fill="#4D7C0F" font-family="Inter, Arial" font-size="16" font-weight="900">OFA-2408</text>
+  <text x="394" y="336" fill="#294235" font-family="Inter, Arial" font-size="15" font-weight="800">Producto principal</text>
+  <rect x="394" y="358" width="116" height="10" rx="5" fill="#DDECCF"/>
+  <rect x="394" y="358" width="84" height="10" rx="5" fill="#4D7C0F"/>
+  <rect x="372" y="414" width="168" height="116" rx="16" fill="#F4F7F1" stroke="#DDE8D8"/>
+  <text x="394" y="446" fill="#4D7C0F" font-family="Inter, Arial" font-size="16" font-weight="900">OFA-2412</text>
+  <text x="394" y="476" fill="#294235" font-family="Inter, Arial" font-size="15" font-weight="800">Linea secundaria</text>
+  <rect x="394" y="498" width="116" height="10" rx="5" fill="#DDECCF"/>
+  <rect x="394" y="498" width="52" height="10" rx="5" fill="#A16207"/>
+  <rect x="604" y="188" width="232" height="470" rx="18" fill="#FFFFFF" stroke="#DDE8D8"/>
+  <text x="636" y="232" fill="#294235" font-family="Inter, Arial" font-size="22" font-weight="900">OFP en curso</text>
+  <rect x="636" y="274" width="168" height="116" rx="16" fill="#F4F7F1" stroke="#DDE8D8"/>
+  <text x="658" y="306" fill="#294235" font-family="Inter, Arial" font-size="16" font-weight="900">OFP-1186</text>
+  <text x="658" y="336" fill="#51665A" font-family="Inter, Arial" font-size="15" font-weight="800">Subproceso</text>
+  <rect x="658" y="358" width="86" height="28" rx="14" fill="#FFF4D6"/>
+  <text x="676" y="377" fill="#A16207" font-family="Inter, Arial" font-size="13" font-weight="900">Revision</text>
+  <rect x="868" y="188" width="244" height="470" rx="18" fill="#FFFFFF" stroke="#DDE8D8"/>
+  <text x="900" y="232" fill="#294235" font-family="Inter, Arial" font-size="22" font-weight="900">Productos</text>
+  <path d="M916 332C944 284 982 360 1018 302C1042 264 1068 290 1090 252" stroke="#4D7C0F" stroke-width="10" stroke-linecap="round"/>
+  <rect x="900" y="414" width="160" height="42" rx="10" fill="#F4F7F1" stroke="#DDE8D8"/>
+  <text x="918" y="441" fill="#294235" font-family="Inter, Arial" font-size="15" font-weight="900">Productos activos</text>
+  <rect x="900" y="480" width="160" height="42" rx="10" fill="#F4F7F1" stroke="#DDE8D8"/>
+  <text x="918" y="507" fill="#294235" font-family="Inter, Arial" font-size="15" font-weight="900">Avance diario</text>
+</svg>
