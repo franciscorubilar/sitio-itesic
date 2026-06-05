@@ -1,0 +1,68 @@
+<%- include('../partials/header') %>
+<section class="admin-shell admin-modern">
+  <aside class="admin-sidebar">
+    <div class="admin-sidebar-head"><span class="brand-mark">IT</span><div><b>Panel ITESICWS</b><small>Administración</small></div></div>
+    <a href="/admin">Dashboard</a>
+    <a href="/admin/products">Productos</a>
+    <a class="active" href="/admin/blog">Blog</a>
+    <a href="/admin/leads">Leads</a>
+    <a href="/admin/settings">Configuración</a>
+    <form method="post" action="/admin/logout"><button type="submit">Cerrar sesión</button></form>
+  </aside>
+  <div class="admin-content">
+    <div class="admin-page-head">
+      <div>
+        <span class="eyebrow">Blog informativo</span>
+        <h1>Entradas y categorías</h1>
+        <p>Administra noticias, lanzamientos de IA, guías, FAQs y artículos para posicionamiento del sitio.</p>
+      </div>
+      <a class="btn primary" href="/admin/blog/new"><span>Nueva entrada</span></a>
+    </div>
+
+    <section class="settings-card">
+      <div class="settings-card-head">
+        <div><h2>Publicaciones</h2><p>Control de artículos publicados, borradores y destacados.</p></div>
+        <a class="btn ghost" href="/blog" target="_blank"><span>Ver blog</span></a>
+      </div>
+      <div class="table">
+        <% posts.forEach(post => { %>
+          <div class="row admin-row product-admin-row">
+            <div><b><%= post.title %></b><small>/<%= post.slug %></small></div>
+            <span><%= post.category.name %></span>
+            <span class="status-pill <%= post.published ? 'success' : '' %>"><%= post.published ? 'Publicado' : 'Borrador' %></span>
+            <span class="status-pill <%= post.featured ? 'success' : '' %>"><%= post.featured ? 'Destacado' : 'Normal' %></span>
+            <a class="btn ghost" href="/admin/blog/<%= post.id %>/edit"><span>Editar</span></a>
+            <form method="post" action="/admin/blog/<%= post.id %>/delete" onsubmit="return confirm('¿Eliminar entrada del blog?')"><button type="submit">Eliminar</button></form>
+          </div>
+        <% }) %>
+        <% if (!posts.length) { %><p class="notice">Aún no hay entradas de blog.</p><% } %>
+      </div>
+    </section>
+
+    <section id="categorias" class="settings-card">
+      <div class="settings-card-head">
+        <div><h2>Categorías</h2><p>Crea secciones como Noticias IA, Lanzamientos, Guías, Chatbots y FAQ.</p></div>
+      </div>
+      <form class="form admin-form form-grid compact-grid" method="post" action="/admin/blog/categories">
+        <input name="name" required placeholder="Nombre de categoría">
+        <input name="slug" placeholder="slug-automatico">
+        <input name="sortOrder" type="number" value="0" placeholder="Orden">
+        <textarea name="description" placeholder="Descripción breve"></textarea>
+        <button class="btn primary" type="submit"><span>Crear categoría</span></button>
+      </form>
+      <div class="table">
+        <% categories.forEach(category => { %>
+          <form class="row admin-row product-admin-row" method="post" action="/admin/blog/categories/<%= category.id %>">
+            <input name="name" value="<%= category.name %>" required>
+            <input name="slug" value="<%= category.slug %>" required>
+            <input name="sortOrder" type="number" value="<%= category.sortOrder %>">
+            <input name="description" value="<%= category.description %>" placeholder="Descripción">
+            <button type="submit">Guardar</button>
+            <button type="submit" formaction="/admin/blog/categories/<%= category.id %>/delete" onclick="return confirm('¿Eliminar categoría? Solo funciona si no tiene entradas.')">Eliminar</button>
+          </form>
+        <% }) %>
+      </div>
+    </section>
+  </div>
+</section>
+<%- include('../partials/footer') %>

@@ -34,9 +34,10 @@ const upload = multer({
 
 app.set('view engine', 'ejs');
 app.set('views', __dirname + '/views');
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+app.use(express.urlencoded({ extended: true, limit: '5mb' }));
+app.use(express.json({ limit: '5mb' }));
 app.use(express.static(__dirname + '/public'));
+app.use('/vendor/quill', express.static(path.join(__dirname, 'node_modules', 'quill', 'dist')));
 app.use(session({
   secret: process.env.SESSION_SECRET || 'dev-secret-change-me',
   resave: false,
@@ -51,6 +52,9 @@ app.use(async (req, res, next) => {
   res.locals.productTitle = productTitle;
   res.locals.productImage = productImage;
   res.locals.primaryContactEmail = primaryContactEmail;
+  res.locals.whatsappUrl = whatsappUrl;
+  res.locals.formatDate = formatDate;
+  res.locals.renderBlogContent = renderBlogContent;
   next();
 });
 
@@ -103,6 +107,51 @@ function requireAuth(req, res, next) {
 function splitLines(value) {
   if (Array.isArray(value)) return value;
   return (value || '').split('\n').map(x => x.trim()).filter(Boolean);
+}
+
+function splitFaqs(value) {
+  return splitLines(value)
+    .map(line => {
+      const [question, ...answerParts] = line.split('|');
+      return { question: (question || '').trim(), answer: answerParts.join('|').trim() };
+    })
+    .filter(faq => faq.question && faq.answer);
+}
+
+function formatDate(date) {
+  return new Intl.DateTimeFormat('es-CL', { day: '2-digit', month: 'long', year: 'numeric' }).format(new Date(date));
+}
+
+function paragraphs(value) {
+  return String(value || '').split(/\n{2,}/).map(x => x.trim()).filter(Boolean);
+}
+
+function markdownishToHtml(value) {
+  return paragraphs(value).map(block => {
+    if (block.startsWith('## ')) return `<h2>${escapeHtml(block.replace(/^##\s*/, ''))}</h2>`;
+    if (block.startsWith('### ')) return `<h3>${escapeHtml(block.replace(/^###\s*/, ''))}</h3>`;
+    const image = block.match(/^!\[(.*)\]\((.*)\)$/);
+    if (image) {
+      return `<figure class="blog-inline-image"><img src="${escapeHtml(image[2])}" alt="${escapeHtml(image[1] || 'Imagen del articulo')}">${image[1] ? `<figcaption>${escapeHtml(image[1])}</figcaption>` : ''}</figure>`;
+    }
+    if (block.startsWith('> ')) return `<blockquote>${escapeHtml(block.replace(/^>\s*/, ''))}</blockquote>`;
+    if (block.startsWith('- ')) {
+      return `<ul>${block.split('\n').filter(line => line.startsWith('- ')).map(line => `<li>${escapeHtml(line.replace(/^-\s*/, ''))}</li>`).join('')}</ul>`;
+    }
+    return `<p>${escapeHtml(block).replace(/\n/g, '<br>')}</p>`;
+  }).join('');
+}
+
+function renderBlogContent(value) {
+  const content = String(value || '').trim();
+  if (!content) return '';
+  if (/<\/?[a-z][\s\S]*>/i.test(content)) return content;
+  return markdownishToHtml(content);
+}
+
+function readMinutes(value) {
+  const words = String(value || '').replace(/<[^>]*>/g, ' ').trim().split(/\s+/).filter(Boolean).length;
+  return Math.max(1, Math.ceil(words / 190));
 }
 
 function whatsappUrl(number, text) {
@@ -205,8 +254,11 @@ ${lead.message}`;
 }
 
 app.get('/', async (req, res) => {
-  const products = await prisma.product.findMany({ where: { published: true }, orderBy: [{ featured: 'desc' }, { sortOrder: 'asc' }] });
-  res.render('home', { products });
+  const [products, latestPosts] = await Promise.all([
+    prisma.product.findMany({ where: { published: true }, orderBy: [{ featured: 'desc' }, { sortOrder: 'asc' }] }),
+    prisma.blogPost.findMany({ where: { published: true }, include: { category: true }, orderBy: { publishedAt: 'desc' }, take: 3 })
+  ]);
+  res.render('home', { products, latestPosts });
 });
 
 app.get('/productos', async (req, res) => {
@@ -218,6 +270,42 @@ app.get('/productos/:slug', async (req, res) => {
   const product = await prisma.product.findUnique({ where: { slug: req.params.slug }, include: { faqs: true } });
   if (!product || !product.published) return res.status(404).render('404');
   res.render('product-detail', { product });
+});
+
+app.get('/blog', async (req, res) => {
+  const selectedCategory = req.query.categoria || '';
+  const [categories, featuredPost, posts] = await Promise.all([
+    prisma.blogCategory.findMany({ orderBy: [{ sortOrder: 'asc' }, { name: 'asc' }] }),
+    prisma.blogPost.findFirst({
+      where: { published: true, featured: true },
+      include: { category: true },
+      orderBy: { publishedAt: 'desc' }
+    }),
+    prisma.blogPost.findMany({
+      where: {
+        published: true,
+        ...(selectedCategory ? { category: { slug: selectedCategory } } : {})
+      },
+      include: { category: true },
+      orderBy: { publishedAt: 'desc' }
+    })
+  ]);
+  res.render('blog', { categories, featuredPost, posts, selectedCategory });
+});
+
+app.get('/blog/:slug', async (req, res) => {
+  const post = await prisma.blogPost.findUnique({
+    where: { slug: req.params.slug },
+    include: { category: true, faqs: true }
+  });
+  if (!post || !post.published) return res.status(404).render('404');
+  const relatedPosts = await prisma.blogPost.findMany({
+    where: { published: true, id: { not: post.id }, categoryId: post.categoryId },
+    include: { category: true },
+    orderBy: { publishedAt: 'desc' },
+    take: 3
+  });
+  res.render('blog-detail', { post, relatedPosts });
 });
 
 app.get('/consultoria-ia', async (req, res) => {
@@ -258,10 +346,13 @@ app.post('/admin/login', async (req, res) => {
 app.post('/admin/logout', (req, res) => req.session.destroy(() => res.redirect('/')));
 
 app.get('/admin', requireAuth, async (req, res) => {
-  const [productCount, leadCount, latestLeads] = await Promise.all([
-    prisma.product.count(), prisma.lead.count(), prisma.lead.findMany({ orderBy: { createdAt: 'desc' }, take: 5 })
+  const [productCount, leadCount, blogCount, latestLeads] = await Promise.all([
+    prisma.product.count(),
+    prisma.lead.count(),
+    prisma.blogPost.count(),
+    prisma.lead.findMany({ orderBy: { createdAt: 'desc' }, take: 5 })
   ]);
-  res.render('admin/dashboard', { productCount, leadCount, latestLeads });
+  res.render('admin/dashboard', { productCount, leadCount, blogCount, latestLeads });
 });
 
 app.get('/admin/products', requireAuth, async (req, res) => {
@@ -300,6 +391,99 @@ app.post('/admin/products/:id', requireAuth, async (req, res) => {
   res.redirect('/admin/products');
 });
 app.post('/admin/products/:id/delete', requireAuth, async (req, res) => { await prisma.product.delete({ where: { id: req.params.id } }); res.redirect('/admin/products'); });
+
+app.get('/admin/blog', requireAuth, async (req, res) => {
+  const [posts, categories] = await Promise.all([
+    prisma.blogPost.findMany({ include: { category: true }, orderBy: { publishedAt: 'desc' } }),
+    prisma.blogCategory.findMany({ orderBy: [{ sortOrder: 'asc' }, { name: 'asc' }] })
+  ]);
+  res.render('admin/blog', { posts, categories });
+});
+
+app.get('/admin/blog/new', requireAuth, async (req, res) => {
+  const categories = await prisma.blogCategory.findMany({ orderBy: [{ sortOrder: 'asc' }, { name: 'asc' }] });
+  res.render('admin/blog-form', { post: null, categories });
+});
+
+app.post('/admin/blog', requireAuth, async (req, res) => {
+  const slug = req.body.slug || slugify(req.body.title, { lower: true, strict: true });
+  const content = req.body.content || '';
+  const post = await prisma.blogPost.create({ data: {
+    title: req.body.title,
+    slug,
+    categoryId: req.body.categoryId,
+    excerpt: req.body.excerpt || '',
+    content,
+    image: req.body.image || '/images/consultoria-ia.png',
+    author: req.body.author || 'ITESICWS',
+    readMinutes: Number(req.body.readMinutes || readMinutes(content)),
+    published: !!req.body.published,
+    featured: !!req.body.featured,
+    publishedAt: req.body.publishedAt ? new Date(req.body.publishedAt) : new Date()
+  }});
+  const faqs = splitFaqs(req.body.faqs);
+  if (faqs.length) await prisma.blogFAQ.createMany({ data: faqs.map(f => ({ ...f, postId: post.id })) });
+  res.redirect('/admin/blog');
+});
+
+app.get('/admin/blog/:id/edit', requireAuth, async (req, res) => {
+  const [post, categories] = await Promise.all([
+    prisma.blogPost.findUnique({ where: { id: req.params.id }, include: { faqs: true } }),
+    prisma.blogCategory.findMany({ orderBy: [{ sortOrder: 'asc' }, { name: 'asc' }] })
+  ]);
+  res.render('admin/blog-form', { post, categories });
+});
+
+app.post('/admin/blog/:id', requireAuth, async (req, res) => {
+  const content = req.body.content || '';
+  await prisma.blogPost.update({ where: { id: req.params.id }, data: {
+    title: req.body.title,
+    slug: req.body.slug || slugify(req.body.title, { lower: true, strict: true }),
+    categoryId: req.body.categoryId,
+    excerpt: req.body.excerpt || '',
+    content,
+    image: req.body.image || '/images/consultoria-ia.png',
+    author: req.body.author || 'ITESICWS',
+    readMinutes: Number(req.body.readMinutes || readMinutes(content)),
+    published: !!req.body.published,
+    featured: !!req.body.featured,
+    publishedAt: req.body.publishedAt ? new Date(req.body.publishedAt) : new Date()
+  }});
+  await prisma.blogFAQ.deleteMany({ where: { postId: req.params.id } });
+  const faqs = splitFaqs(req.body.faqs);
+  if (faqs.length) await prisma.blogFAQ.createMany({ data: faqs.map(f => ({ ...f, postId: req.params.id })) });
+  res.redirect('/admin/blog');
+});
+
+app.post('/admin/blog/:id/delete', requireAuth, async (req, res) => {
+  await prisma.blogPost.delete({ where: { id: req.params.id } });
+  res.redirect('/admin/blog');
+});
+
+app.post('/admin/blog/categories', requireAuth, async (req, res) => {
+  await prisma.blogCategory.create({ data: {
+    name: req.body.name,
+    slug: req.body.slug || slugify(req.body.name, { lower: true, strict: true }),
+    description: req.body.description || '',
+    sortOrder: Number(req.body.sortOrder || 0)
+  }});
+  res.redirect('/admin/blog#categorias');
+});
+
+app.post('/admin/blog/categories/:id', requireAuth, async (req, res) => {
+  await prisma.blogCategory.update({ where: { id: req.params.id }, data: {
+    name: req.body.name,
+    slug: req.body.slug || slugify(req.body.name, { lower: true, strict: true }),
+    description: req.body.description || '',
+    sortOrder: Number(req.body.sortOrder || 0)
+  }});
+  res.redirect('/admin/blog#categorias');
+});
+
+app.post('/admin/blog/categories/:id/delete', requireAuth, async (req, res) => {
+  await prisma.blogCategory.delete({ where: { id: req.params.id } });
+  res.redirect('/admin/blog#categorias');
+});
 
 app.get('/admin/leads', requireAuth, async (req, res) => {
   const leads = await prisma.lead.findMany({ orderBy: { createdAt: 'desc' } });

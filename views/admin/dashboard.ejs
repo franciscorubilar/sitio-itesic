@@ -4,6 +4,7 @@
     <div class="admin-sidebar-head"><span class="brand-mark">IT</span><div><b>Panel ITESICWS</b><small>Administración</small></div></div>
     <a class="active" href="/admin">Dashboard</a>
     <a href="/admin/products">Productos</a>
+    <a href="/admin/blog">Blog</a>
     <a href="/admin/leads">Leads</a>
     <a href="/admin/settings">Configuración</a>
     <form method="post" action="/admin/logout"><button type="submit">Cerrar sesión</button></form>
@@ -15,6 +16,7 @@
     </div>
     <div class="stats">
       <div><b><%= productCount %></b><span>Productos</span></div>
+      <div><b><%= blogCount %></b><span>Entradas blog</span></div>
       <div><b><%= leadCount %></b><span>Leads</span></div>
     </div>
     <section class="settings-card admin-section-card">

@@ -1,9 +1,14 @@
   </main>
   <footer class="footer">
     <div><b>ITESICWS</b><p>Software, datos e inteligencia artificial para procesos reales.</p></div>
-    <div><b>Navegación</b><a href="/productos">Productos</a><a href="/consultoria-ia">Consultoría IA</a><a href="/admin/login">Admin</a></div>
+    <div><b>Navegación</b><a href="/productos">Productos</a><a href="/consultoria-ia">Consultoría IA</a><a href="/blog">Blog</a><a href="/admin/login">Admin</a></div>
     <div><b>Hablemos</b><a href="mailto:<%= primaryContactEmail(settings) %>"><%= primaryContactEmail(settings) %></a><a href="https://wa.me/<%= settings.whatsappNumber %>" target="_blank">WhatsApp</a></div>
   </footer>
+  <% if (settings.whatsappNumber) { %>
+    <a class="whatsapp-float" href="<%= whatsappUrl(settings.whatsappNumber, settings.whatsappMessage) %>" target="_blank" rel="noopener" aria-label="Contactar por WhatsApp">
+      <img src="/images/logos/logo-whatsapp.png" alt="">
+    </a>
+  <% } %>
   <script src="/js/app.js"></script>
 </body>
 </html>

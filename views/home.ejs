@@ -247,6 +247,29 @@
   </div>
 </section>
 
+<% if (latestPosts && latestPosts.length) { %>
+  <section class="section home-blog reveal">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">Blog</span>
+        <h2>Noticias, lanzamientos y guías para aplicar IA con criterio</h2>
+      </div>
+      <a class="btn ghost" href="/blog"><span>Ver blog</span></a>
+    </div>
+    <div class="blog-grid">
+      <% latestPosts.forEach(post => { %>
+        <a class="blog-card" href="/blog/<%= post.slug %>">
+          <img src="<%= post.image %>" alt="<%= post.title %>">
+          <span><%= post.category.name %></span>
+          <h3><%= post.title %></h3>
+          <p><%= post.excerpt %></p>
+          <small><%= formatDate(post.publishedAt) %> · <%= post.readMinutes %> min</small>
+        </a>
+      <% }) %>
+    </div>
+  </section>
+<% } %>
+
 <section id="contacto" class="section contact reveal">
   <div>
     <span class="eyebrow">Contacto</span>

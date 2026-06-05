@@ -13,6 +13,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sora:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <% if (path.startsWith('/admin/blog')) { %>
+    <link rel="stylesheet" href="/vendor/quill/quill.snow.css" />
+  <% } %>
   <link rel="stylesheet" href="/css/styles.css" />
 </head>
 <body>
@@ -25,6 +28,7 @@
         <a href="/" class="<%= path==='/'?'active':'' %>">Inicio</a>
         <a href="/productos" class="<%= path.startsWith('/productos')?'active':'' %>">Productos</a>
         <a href="/consultoria-ia" class="<%= path==='/consultoria-ia'?'active':'' %>">Consultoría IA</a>
+        <a href="/blog" class="nav-blog-button <%= path.startsWith('/blog')?'active':'' %>">Blog</a>
         <a href="/#servicios">Servicios</a>
         <a href="/#contacto">Contacto</a>
         <% if (user) { %><a href="/admin">Admin</a><% } %>

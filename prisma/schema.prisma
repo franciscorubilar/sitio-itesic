@@ -61,6 +61,46 @@ model ProductFAQ {
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 }
 
+model BlogCategory {
+  id          String     @id @default(cuid())
+  name        String
+  slug        String     @unique
+  description String     @default("") @db.Text
+  sortOrder   Int        @default(0)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  posts BlogPost[]
+}
+
+model BlogPost {
+  id           String       @id @default(cuid())
+  title        String
+  slug         String       @unique
+  excerpt      String       @default("") @db.Text
+  content      String       @db.Text
+  image        String       @default("/images/consultoria-ia.png")
+  author       String       @default("ITESICWS")
+  readMinutes  Int          @default(4)
+  published    Boolean      @default(true)
+  featured     Boolean      @default(false)
+  publishedAt  DateTime     @default(now())
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  categoryId   String
+  category     BlogCategory @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+
+  faqs BlogFAQ[]
+}
+
+model BlogFAQ {
+  id        String   @id @default(cuid())
+  question  String
+  answer    String   @db.Text
+  postId    String
+  post      BlogPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+}
+
 model Lead {
   id        String     @id @default(cuid())
   name      String

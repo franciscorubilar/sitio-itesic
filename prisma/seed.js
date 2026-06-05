@@ -162,6 +162,132 @@ const productFaqs = {
   ]
 };
 
+const blogCategories = [
+  { name: 'Noticias IA', slug: 'noticias-ia', description: 'Actualidad, cambios relevantes y tendencias de inteligencia artificial.', sortOrder: 1 },
+  { name: 'Lanzamientos', slug: 'lanzamientos', description: 'Nuevas herramientas, modelos, agentes y plataformas IA.', sortOrder: 2 },
+  { name: 'Guias practicas', slug: 'guias-practicas', description: 'Contenido aplicable para empresas que quieren empezar con IA.', sortOrder: 3 },
+  { name: 'Chatbots y agentes', slug: 'chatbots-agentes', description: 'Asistentes, FAQ inteligentes, RAG y automatizacion conversacional.', sortOrder: 4 },
+  { name: 'FAQ IA', slug: 'faq-ia', description: 'Preguntas frecuentes sobre adopcion, riesgos, datos y costos.', sortOrder: 5 }
+];
+
+const blogPosts = [
+  {
+    title: 'NVIDIA Vera Rubin entra en produccion completa: por que importa para la IA empresarial',
+    slug: 'nvidia-vera-rubin-produccion-completa-2026',
+    categorySlug: 'lanzamientos',
+    featured: true,
+    image: '/images/blog/nvidia-vera-rubin-2026.png',
+    publishedAt: '2026-06-01T10:00:00.000Z',
+    excerpt: 'NVIDIA anuncio el 31 de mayo de 2026 que su plataforma Vera Rubin entro en produccion completa para fabricas de IA agentica.',
+    content: `El 31 de mayo de 2026, NVIDIA anuncio que Vera Rubin entro en produccion completa. La compania presento esta plataforma como base para una nueva etapa de fabricas de IA agentica, donde el entrenamiento, la inferencia y los agentes operan a gran escala.
+
+## Que significa para una empresa
+
+Aunque una pyme o una empresa industrial no compre estos chips directamente, el impacto se siente en servicios cloud, asistentes corporativos, modelos multimodales y automatizacion mas potente. Mas capacidad de computo suele traducirse en mejores herramientas, menor latencia y nuevas formas de integrar IA en procesos reales.
+
+![Infraestructura de fabricas de IA conectando chips, nube y automatizacion empresarial](/images/blog/ai-factory-infrastructure.png)
+
+## Donde mirar el impacto
+
+- Asistentes internos con documentos y datos de negocio.
+- Automatizacion de reportes, clasificacion y busqueda.
+- Agentes IA que ejecutan pasos sobre sistemas empresariales.
+- Analisis mas rapido de imagenes, documentos, voz y datos.
+
+La lectura practica es simple: los lanzamientos de hardware no son solo noticias tecnicas. Son senales de hacia donde iran las plataformas que despues usaran las empresas.`,
+    faqs: [
+      ['¿Tengo que comprar hardware NVIDIA para usar IA?', 'No necesariamente. Muchas empresas consumen esta capacidad mediante servicios cloud, APIs o plataformas empresariales.'],
+      ['¿Por que una noticia de chips importa para software?', 'Porque la capacidad de computo define que tan rapidos, baratos y complejos pueden ser los modelos y agentes disponibles.'],
+      ['¿Que deberia hacer una empresa ahora?', 'Identificar procesos con datos, documentos y tareas repetitivas donde un asistente o agente IA pueda generar impacto medible.']
+    ]
+  },
+  {
+    title: 'Chatbot IA para FAQ: cuando conviene y cuando no',
+    slug: 'chatbot-ia-para-faq',
+    categorySlug: 'chatbots-agentes',
+    featured: false,
+    image: '/images/blog/chatbot-faq-enterprise.png',
+    publishedAt: '2026-05-20T10:00:00.000Z',
+    excerpt: 'Un chatbot de preguntas frecuentes puede mejorar atencion y soporte, pero solo si tiene informacion confiable y buen diseno conversacional.',
+    content: `Un chatbot IA de FAQ no deberia ser solo una ventana que conversa. Debe conocer las preguntas importantes, responder con informacion validada y derivar a una persona cuando el tema necesita criterio humano.
+
+## Cuando si conviene
+
+- Hay preguntas repetidas sobre servicios, precios, procesos o soporte.
+- Existe una base de conocimiento, documentos o respuestas oficiales.
+- El equipo quiere capturar leads o clasificar solicitudes.
+- Se necesita atencion fuera del horario de oficina.
+
+## Cuando no conviene todavia
+
+Si la informacion cambia todos los dias y nadie la mantiene, el chatbot puede entregar respuestas inconsistentes. En ese caso conviene partir ordenando contenidos, categorias y responsables.
+
+Un buen chatbot IA se disena como un sistema: contenido, permisos, tono, limites, registro de conversaciones y mejora continua.`,
+    faqs: [
+      ['¿El chatbot puede enviar clientes a WhatsApp?', 'Si. Puede abrir WhatsApp con un mensaje prearmado o derivar solicitudes segun la pregunta.'],
+      ['¿Puede responder con datos de mi empresa?', 'Si, usando documentos, bases de datos o integraciones controladas.'],
+      ['¿Se puede administrar desde el panel?', 'El blog, las categorias y el WhatsApp quedan configurables. Un chatbot avanzado puede sumarse como siguiente modulo.']
+    ]
+  },
+  {
+    title: 'Noticias IA de abril: como separar avances utiles de puro ruido',
+    slug: 'noticias-ia-abril-avances-utiles-ruido',
+    categorySlug: 'noticias-ia',
+    featured: false,
+    image: '/images/blog/ai-news-timeline.png',
+    publishedAt: '2026-04-18T10:00:00.000Z',
+    excerpt: 'No toda noticia de IA merece implementarse. Revisa seguridad, integraciones, costos, soporte y valor operativo antes de mover procesos.',
+    content: `Cada semana aparecen herramientas nuevas de IA. Algunas son brillantes, otras son demos bonitas sin base operacional. Para una empresa, la pregunta no es si la herramienta sorprende, sino si mejora un proceso real.
+
+## Criterios de evaluacion
+
+- Seguridad y manejo de datos.
+- Integracion con sistemas actuales.
+- Costos por usuario, uso o volumen.
+- Calidad de respuestas en casos reales.
+- Control de permisos, auditoria y soporte.
+
+## La prueba correcta
+
+Antes de contratar, define un caso pequeno y prueba con informacion real pero controlada. Evalua si el equipo entiende la herramienta, si reduce trabajo y si sus respuestas son confiables.
+
+La mejor tecnologia no siempre es la mas nueva. Es la que el equipo puede usar, medir y sostener.`,
+    faqs: [
+      ['¿Hay que adoptar todos los lanzamientos de IA?', 'No. Conviene filtrarlos segun impacto, seguridad e integracion con el proceso.'],
+      ['¿Como pruebo una herramienta sin riesgo?', 'Con un piloto acotado, datos controlados y usuarios internos que midan resultados.'],
+      ['¿Que pasa si la herramienta no integra?', 'Puede servir para tareas aisladas, pero no deberia convertirse en pieza critica del proceso.']
+    ]
+  },
+  {
+    title: 'Guia marzo 2026: como partir con agentes IA en procesos internos',
+    slug: 'guia-marzo-2026-agentes-ia-procesos-internos',
+    categorySlug: 'guias-practicas',
+    featured: false,
+    image: '/images/blog/enterprise-ai-agents.png',
+    publishedAt: '2026-03-14T10:00:00.000Z',
+    excerpt: 'Una ruta simple para detectar procesos repetitivos, ordenar datos y construir primeros agentes IA con impacto real.',
+    content: `La inteligencia artificial sirve cuando resuelve una friccion concreta. Antes de pensar en modelos, conviene mirar donde el equipo pierde tiempo: busqueda de documentos, reportes manuales, respuestas repetidas, clasificacion de correos o revision de informacion operacional.
+
+## El primer paso es elegir un problema pequeno
+
+Un buen primer caso de IA debe tener informacion disponible, usuarios claros y una metrica simple. Por ejemplo: reducir tiempo de respuesta, bajar errores de digitacion o acelerar la preparacion de reportes.
+
+## Casos que suelen funcionar
+
+- Asistentes que responden sobre manuales, procedimientos o politicas internas.
+- Automatizacion de resumen y clasificacion de documentos.
+- Chatbots para preguntas frecuentes de clientes o usuarios internos.
+- Agentes que preparan borradores, consultas o reportes.
+
+La clave no es automatizar todo de una vez. Es construir una primera version controlada, medirla y mejorarla con feedback real.`,
+    faqs: [
+      ['¿Necesito muchos datos para partir?', 'No siempre. Para un asistente RAG puedes partir con documentos internos bien seleccionados y reglas claras de uso.'],
+      ['¿Conviene conectar IA a sistemas internos desde el inicio?', 'Conviene si el caso requiere datos actualizados. Si no, puede partir con documentos y luego integrar APIs o bases de datos.'],
+      ['¿Como se mide si valio la pena?', 'Con metricas simples: tiempo ahorrado, errores evitados, consultas resueltas o tareas repetitivas reducidas.']
+    ]
+  }
+];
+
 async function main() {
   const passwordHash = await bcrypt.hash('Admin12345!', 10);
   await prisma.user.upsert({
@@ -205,7 +331,56 @@ async function main() {
     });
   }
 
-  console.log('Seed listo: admin, settings y productos cargados.');
+  const categoryBySlug = {};
+  for (const category of blogCategories) {
+    const savedCategory = await prisma.blogCategory.upsert({
+      where: { slug: category.slug },
+      update: {},
+      create: category
+    });
+    categoryBySlug[category.slug] = savedCategory;
+  }
+
+  await prisma.blogPost.deleteMany({
+    where: {
+      slug: {
+        in: [
+          'como-partir-con-ia-en-una-empresa',
+          'lanzamientos-ia-que-mirar-antes-de-adoptar',
+          'noticias-ia-para-equipos-operacionales'
+        ]
+      }
+    }
+  });
+
+  for (const entry of blogPosts) {
+    const postData = {
+      title: entry.title,
+      slug: entry.slug,
+      excerpt: entry.excerpt,
+      content: entry.content,
+      image: entry.image,
+      featured: entry.featured,
+      published: true,
+      author: 'ITESICWS',
+      publishedAt: new Date(entry.publishedAt),
+      readMinutes: Math.max(3, Math.ceil(entry.content.split(/\s+/).length / 190)),
+      categoryId: categoryBySlug[entry.categorySlug].id
+    };
+    const post = await prisma.blogPost.upsert({
+      where: { slug: entry.slug },
+      update: {},
+      create: postData
+    });
+    const faqCount = await prisma.blogFAQ.count({ where: { postId: post.id } });
+    if (!faqCount) {
+      await prisma.blogFAQ.createMany({
+        data: entry.faqs.map(([question, answer]) => ({ postId: post.id, question, answer }))
+      });
+    }
+  }
+
+  console.log('Seed listo: admin, settings, productos y blog cargados.');
 }
 
 main().catch((e) => { console.error(e); process.exit(1); }).finally(() => prisma.$disconnect());

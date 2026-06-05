@@ -1,0 +1,60 @@
+<%- include('partials/header') %>
+
+<article class="blog-detail">
+  <header class="blog-detail-hero">
+    <div>
+      <span class="eyebrow"><%= post.category.name %></span>
+      <h1><%= post.title %></h1>
+      <p><%= post.excerpt %></p>
+      <small><%= formatDate(post.publishedAt) %> · <%= post.readMinutes %> min de lectura · <%= post.author %></small>
+    </div>
+    <img src="<%= post.image %>" alt="<%= post.title %>">
+  </header>
+
+  <section class="blog-article-body ql-editor">
+    <%- renderBlogContent(post.content) %>
+  </section>
+
+  <% if (post.faqs && post.faqs.length) { %>
+    <section class="section blog-detail-faq">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">Preguntas frecuentes</span>
+          <h2>Dudas sobre este tema</h2>
+        </div>
+      </div>
+      <div class="faq">
+        <% post.faqs.forEach(faq => { %>
+          <details>
+            <summary><%= faq.question %></summary>
+            <p><%= faq.answer %></p>
+          </details>
+        <% }) %>
+      </div>
+    </section>
+  <% } %>
+</article>
+
+<% if (relatedPosts.length) { %>
+  <section class="section reveal">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">Relacionado</span>
+        <h2>Más en <%= post.category.name %></h2>
+      </div>
+      <a class="btn ghost" href="/blog"><span>Ver blog</span></a>
+    </div>
+    <div class="blog-grid">
+      <% relatedPosts.forEach(related => { %>
+        <a class="blog-card" href="/blog/<%= related.slug %>">
+          <img src="<%= related.image %>" alt="<%= related.title %>">
+          <span><%= related.category.name %></span>
+          <h3><%= related.title %></h3>
+          <p><%= related.excerpt %></p>
+        </a>
+      <% }) %>
+    </div>
+  </section>
+<% } %>
+
+<%- include('partials/footer') %>

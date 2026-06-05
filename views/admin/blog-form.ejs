@@ -1,0 +1,277 @@
+<%- include('../partials/header') %>
+
+<section class="admin-shell admin-modern">
+  <aside class="admin-sidebar">
+    <div class="admin-sidebar-head"><span class="brand-mark">IT</span><div><b>Panel ITESICWS</b><small>Administración</small></div></div>
+    <a href="/admin">Dashboard</a>
+    <a href="/admin/products">Productos</a>
+    <a class="active" href="/admin/blog">Blog</a>
+    <a href="/admin/leads">Leads</a>
+    <a href="/admin/settings">Configuración</a>
+    <form method="post" action="/admin/logout"><button type="submit">Cerrar sesión</button></form>
+  </aside>
+
+  <div class="admin-content">
+    <div class="admin-page-head">
+      <div>
+        <span class="eyebrow">Blog</span>
+        <h1><%= post ? 'Editar entrada' : 'Nueva entrada' %></h1>
+        <p>Publica contenido sobre IA, lanzamientos, noticias, automatización, chatbots y preguntas frecuentes.</p>
+      </div>
+      <a class="btn ghost" href="/admin/blog"><span>Volver al blog</span></a>
+    </div>
+
+    <section class="settings-card">
+      <% if (!categories.length) { %>
+        <p class="notice">Primero crea una categoría desde Blog.</p>
+      <% } %>
+      <form class="form admin-form form-grid" method="post" action="<%= post ? '/admin/blog/' + post.id : '/admin/blog' %>">
+        <div class="form-section-title">Información principal</div>
+        <div class="form-row-grid">
+          <div>
+            <label class="form-label" for="title">Título *</label>
+            <input id="title" name="title" required value="<%= post?.title || '' %>" placeholder="Ej. Nuevos agentes IA para atención interna">
+          </div>
+          <div>
+            <label class="form-label" for="slug">Slug</label>
+            <input id="slug" name="slug" value="<%= post?.slug || '' %>" placeholder="se-genera-automatico">
+          </div>
+        </div>
+
+        <div class="form-row-grid">
+          <div>
+            <label class="form-label" for="categoryId">Categoría *</label>
+            <select id="categoryId" name="categoryId" required>
+              <% categories.forEach(category => { %>
+                <option value="<%= category.id %>" <%= post?.categoryId === category.id ? 'selected' : '' %>><%= category.name %></option>
+              <% }) %>
+            </select>
+          </div>
+          <div>
+            <label class="form-label" for="publishedAt">Fecha de publicación</label>
+            <input id="publishedAt" name="publishedAt" type="datetime-local" value="<%= post?.publishedAt ? post.publishedAt.toISOString().slice(0,16) : '' %>">
+          </div>
+        </div>
+
+        <div class="form-row-grid">
+          <div>
+            <label class="form-label" for="author">Autor</label>
+            <input id="author" name="author" value="<%= post?.author || 'ITESICWS' %>">
+          </div>
+          <div>
+            <label class="form-label" for="readMinutes">Minutos de lectura</label>
+            <input id="readMinutes" name="readMinutes" type="number" min="1" value="<%= post?.readMinutes || '' %>" placeholder="Automático si queda vacío">
+          </div>
+        </div>
+
+        <label class="form-label" for="excerpt">Resumen corto</label>
+        <textarea id="excerpt" name="excerpt" rows="3" placeholder="Resumen para tarjetas y SEO"><%= post?.excerpt || '' %></textarea>
+
+        <div class="form-section-title">Imagen</div>
+        <div class="image-upload-wrapper">
+          <input type="hidden" id="blog-image-url" name="image" value="<%= post?.image || '/images/consultoria-ia.png' %>">
+          <div class="image-preview-container">
+            <img id="image-preview" src="<%= post?.image || '/images/consultoria-ia.png' %>" alt="Vista previa">
+          </div>
+          <div class="image-dropzone" id="image-dropzone">
+            <span class="dropzone-icon">IMG</span>
+            <div class="dropzone-text">Arrastra una imagen o <span>haz clic para buscar</span></div>
+            <input type="file" id="image-file-input" accept="image/*" style="display:none">
+            <div class="upload-progress-bar" id="upload-progress" style="display:none"><div class="progress-fill"></div></div>
+            <small class="dropzone-tip">PNG, JPG o SVG. Máx. 5MB</small>
+          </div>
+        </div>
+
+        <div class="form-section-title">Contenido</div>
+        <div class="blog-editor-shell">
+          <label class="form-label" for="blog-editor">Artículo completo</label>
+          <textarea id="content" name="content" hidden><%= post ? renderBlogContent(post.content) : '' %></textarea>
+          <div id="blog-editor-toolbar">
+            <span class="ql-formats">
+              <select class="ql-header">
+                <option value="2">Subtítulo</option>
+                <option value="3">Título menor</option>
+                <option selected>Normal</option>
+              </select>
+            </span>
+            <span class="ql-formats">
+              <button class="ql-bold" type="button"></button>
+              <button class="ql-italic" type="button"></button>
+              <button class="ql-link" type="button"></button>
+            </span>
+            <span class="ql-formats">
+              <button class="ql-list" value="ordered" type="button"></button>
+              <button class="ql-list" value="bullet" type="button"></button>
+              <button class="ql-blockquote" type="button"></button>
+            </span>
+            <span class="ql-formats">
+              <button class="ql-image" type="button"></button>
+              <button class="ql-clean" type="button"></button>
+            </span>
+          </div>
+          <div id="blog-editor" class="blog-quill-editor"></div>
+          <div class="blog-editor-actions">
+            <button class="btn ghost" type="button" id="insert-blog-template"><span>Insertar estructura profesional</span></button>
+            <span id="content-upload-status">Editor listo. Usa Enter para párrafos y Shift+Enter para salto simple.</span>
+          </div>
+        </div>
+
+        <label class="form-label" for="faqs">FAQ del artículo</label>
+        <textarea id="faqs" name="faqs" rows="6" placeholder="Una pregunta por línea con este formato: Pregunta|Respuesta"><%= post?.faqs?.map(f => `${f.question}|${f.answer}`).join('\n') || '' %></textarea>
+
+        <div class="form-row-grid inline-options">
+          <div class="checkbox-group">
+            <label class="checkbox-line"><input type="checkbox" name="published" <%= post?.published || !post ? 'checked' : '' %>> <span>Publicado</span></label>
+            <label class="checkbox-line"><input type="checkbox" name="featured" <%= post?.featured ? 'checked' : '' %>> <span>Destacado en blog</span></label>
+          </div>
+        </div>
+
+        <div class="form-actions-bar">
+          <button class="btn primary" type="submit"><span>Guardar entrada</span></button>
+          <a class="btn ghost" href="/admin/blog"><span>Cancelar</span></a>
+        </div>
+      </form>
+    </section>
+  </div>
+</section>
+
+<script src="/vendor/quill/quill.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const dropzone = document.getElementById('image-dropzone');
+  const fileInput = document.getElementById('image-file-input');
+  const preview = document.getElementById('image-preview');
+  const hiddenInput = document.getElementById('blog-image-url');
+  const progress = document.getElementById('upload-progress');
+  const progressFill = progress.querySelector('.progress-fill');
+  const dropzoneText = dropzone.querySelector('.dropzone-text');
+  const contentInput = document.getElementById('content');
+  const contentUploadStatus = document.getElementById('content-upload-status');
+  const form = document.querySelector('form.admin-form');
+  const quill = new Quill('#blog-editor', {
+    theme: 'snow',
+    modules: {
+      toolbar: {
+        container: '#blog-editor-toolbar',
+        handlers: {
+          image: () => selectEditorImage()
+        }
+      }
+    },
+    placeholder: 'Escribe el artículo con párrafos, subtítulos, listas, links e imágenes...'
+  });
+
+  if (contentInput.value) {
+    quill.clipboard.dangerouslyPasteHTML(contentInput.value);
+  }
+
+  form.addEventListener('submit', event => {
+    contentInput.value = quill.root.innerHTML;
+    if (quill.getText().trim().length < 5) {
+      event.preventDefault();
+      alert('Escribe contenido para la entrada antes de guardar.');
+    }
+  });
+
+  dropzone.addEventListener('click', () => fileInput.click());
+  ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+    dropzone.addEventListener(eventName, event => {
+      event.preventDefault();
+      event.stopPropagation();
+    }, false);
+  });
+  ['dragenter', 'dragover'].forEach(eventName => {
+    dropzone.addEventListener(eventName, () => dropzone.classList.add('highlight-drag'), false);
+  });
+  ['dragleave', 'drop'].forEach(eventName => {
+    dropzone.addEventListener(eventName, () => dropzone.classList.remove('highlight-drag'), false);
+  });
+  dropzone.addEventListener('drop', event => {
+    const files = event.dataTransfer.files;
+    if (files.length) uploadFile(files[0], 'cover');
+  }, false);
+  fileInput.addEventListener('change', event => {
+    const files = event.target.files;
+    if (files.length) uploadFile(files[0], 'cover');
+  }, false);
+
+  document.getElementById('insert-blog-template').addEventListener('click', () => {
+    const template = `
+      <h2>Contexto</h2>
+      <p>Explica brevemente qué pasó y por qué importa para una empresa.</p>
+      <h2>Qué cambia para las empresas</h2>
+      <ul>
+        <li>Impacto operativo principal.</li>
+        <li>Riesgo o consideración técnica.</li>
+        <li>Oportunidad práctica para aplicar IA.</li>
+      </ul>
+      <blockquote>Una buena entrada de blog debe ayudar a decidir, no solo informar.</blockquote>
+      <h2>Recomendación ITESICWS</h2>
+      <p>Cierra con una lectura concreta y aplicable.</p>
+    `;
+    const range = quill.getSelection(true);
+    quill.clipboard.dangerouslyPasteHTML(range.index, template);
+  });
+
+  function uploadFile(file, target) {
+    if (!file.type.startsWith('image/')) {
+      alert('Selecciona una imagen válida.');
+      return;
+    }
+    const formData = new FormData();
+    formData.append('imageFile', file);
+    if (target === 'cover') {
+      progress.style.display = 'block';
+      progressFill.style.width = '0%';
+      dropzoneText.innerHTML = 'Subiendo imagen...';
+    } else {
+      contentUploadStatus.textContent = 'Subiendo imagen adicional...';
+    }
+    fetch('/admin/upload-image', { method: 'POST', body: formData })
+      .then(response => {
+        if (!response.ok) throw new Error('Error al subir imagen');
+        return response.json();
+      })
+      .then(data => {
+        if (target === 'cover') {
+          progressFill.style.width = '100%';
+          preview.src = data.imageUrl;
+          hiddenInput.value = data.imageUrl;
+          setTimeout(() => {
+            progress.style.display = 'none';
+            dropzoneText.innerHTML = 'Imagen cargada. Arrastra otra o <span>haz clic</span>';
+          }, 500);
+        } else {
+          insertEditorImage(data.imageUrl);
+          contentUploadStatus.textContent = `Imagen insertada: ${data.imageUrl}`;
+        }
+      })
+      .catch(() => {
+        if (target === 'cover') {
+          progress.style.display = 'none';
+          dropzoneText.innerHTML = '<span style="color:#d93838">Error al subir. Intenta de nuevo</span>';
+        } else {
+          contentUploadStatus.textContent = 'Error al subir la imagen adicional.';
+        }
+      });
+  }
+
+  function selectEditorImage() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.addEventListener('change', () => {
+      if (input.files && input.files[0]) uploadFile(input.files[0], 'content');
+    });
+    input.click();
+  }
+
+  function insertEditorImage(imageUrl) {
+    const range = quill.getSelection(true);
+    quill.insertEmbed(range.index, 'image', imageUrl, 'user');
+    quill.setSelection(range.index + 1, 0, 'silent');
+  }
+});
+</script>
+
+<%- include('../partials/footer') %>

@@ -1,0 +1,89 @@
+<%- include('partials/header') %>
+
+<section class="blog-hero">
+  <div class="blog-hero-copy reveal">
+    <span class="eyebrow">Blog</span>
+    <h1>Noticias de IA, lanzamientos y guías para empresas.</h1>
+    <p>Un espacio editorial con novedades tecnológicas, análisis de lanzamientos, chatbots, agentes, automatización y preguntas frecuentes.</p>
+    <div class="blog-hero-actions">
+      <a class="btn primary" href="#entradas"><span>Últimas entradas</span></a>
+      <a class="btn ghost" href="/consultoria-ia"><span>Consultoría IA</span></a>
+    </div>
+  </div>
+  <div class="blog-edition-panel reveal delay">
+    <span class="eyebrow">Edición actual</span>
+    <h2>IA generativa, chips, agentes y productividad.</h2>
+    <div class="edition-lines">
+      <span>Noticias recientes</span>
+      <span>Lanzamientos verificados</span>
+      <span>FAQ y chatbots</span>
+      <span>Casos para empresas</span>
+    </div>
+  </div>
+</section>
+
+<% if (featuredPost) { %>
+  <section class="section blog-featured reveal">
+    <a class="blog-featured-card" href="/blog/<%= featuredPost.slug %>">
+      <img src="<%= featuredPost.image %>" alt="<%= featuredPost.title %>">
+      <div>
+        <span class="eyebrow"><%= featuredPost.category.name %></span>
+        <h2><%= featuredPost.title %></h2>
+        <p><%= featuredPost.excerpt %></p>
+        <small><%= formatDate(featuredPost.publishedAt) %> · <%= featuredPost.readMinutes %> min de lectura</small>
+      </div>
+    </a>
+  </section>
+<% } %>
+
+<section id="entradas" class="section blog-listing reveal">
+  <div class="section-head">
+    <div>
+      <span class="eyebrow">Categorías</span>
+      <h2>Explora el contenido</h2>
+    </div>
+  </div>
+  <div class="blog-category-tabs">
+    <a class="<%= !selectedCategory ? 'active' : '' %>" href="/blog">Todo</a>
+    <% categories.forEach(category => { %>
+      <a class="<%= selectedCategory === category.slug ? 'active' : '' %>" href="/blog?categoria=<%= category.slug %>"><%= category.name %></a>
+    <% }) %>
+  </div>
+  <div class="blog-grid">
+    <% posts.forEach(post => { %>
+      <a class="blog-card" href="/blog/<%= post.slug %>">
+        <img src="<%= post.image %>" alt="<%= post.title %>">
+        <span><%= post.category.name %></span>
+        <h3><%= post.title %></h3>
+        <p><%= post.excerpt %></p>
+        <small><%= formatDate(post.publishedAt) %> · <%= post.readMinutes %> min</small>
+      </a>
+    <% }) %>
+    <% if (!posts.length) { %>
+      <p class="notice">Todavía no hay entradas publicadas en esta categoría.</p>
+    <% } %>
+  </div>
+</section>
+
+<section class="section blog-faq-strip reveal">
+  <div class="center">
+    <span class="eyebrow">FAQ IA</span>
+    <h2>Preguntas rápidas antes de implementar IA</h2>
+  </div>
+  <div class="faq">
+    <details open>
+      <summary>¿Conviene partir con un chatbot IA?</summary>
+      <p>Conviene cuando ya tienes preguntas repetidas, documentos internos o procesos de atención que pueden responderse con información controlada.</p>
+    </details>
+    <details>
+      <summary>¿Qué diferencia hay entre ChatGPT y un asistente corporativo?</summary>
+      <p>Un asistente corporativo se conecta a tus datos, permisos y documentos. No solo conversa: responde con contexto del negocio.</p>
+    </details>
+    <details>
+      <summary>¿El blog puede administrarse sin tocar código?</summary>
+      <p>Sí. Las entradas, categorías, publicación, destacados, imágenes y FAQ se gestionan desde el panel de administración.</p>
+    </details>
+  </div>
+</section>
+
+<%- include('partials/footer') %>
