@@ -124,12 +124,12 @@ function initSiteChatbot() {
   let nudgeShown = false;
 
   const serviceOptions = [
-    { icon: '🤖', label: 'Consultoría IA', desc: 'Agentes, documentos, automatización y asistentes internos.', prompt: 'Quiero consultoría IA para mi empresa' },
-    { icon: '🧩', label: 'Software a medida', desc: 'Sistemas web para ordenar procesos, usuarios y estados.', prompt: 'Necesito software a medida para un proceso interno' },
-    { icon: '📊', label: 'Power BI / Datos', desc: 'Dashboards, KPIs, reportes y limpieza de información.', prompt: 'Necesito ayuda con Power BI y reportes' },
-    { icon: '⚙️', label: 'Automatización', desc: 'Menos Excel, menos doble digitación y flujos más rápidos.', prompt: 'Quiero automatizar un proceso de mi empresa' },
-    { icon: '💬', label: 'Chatbot inteligente', desc: 'Atención web, FAQs, derivación y captura de oportunidades.', prompt: 'Quiero un chatbot inteligente para mi sitio web' },
-    { icon: '👤', label: 'Hablar con humano', desc: 'Derivación directa por WhatsApp o solicitud de contacto.', prompt: 'Quiero hablar con una persona del equipo' }
+    { icon: '🤖', label: 'Consultoría IA', desc: 'Te ayudo a pensar IA útil, con procesos, documentos y asistentes que realmente funcionen.', prompt: 'Quiero consultoría IA para mi empresa' },
+    { icon: '🧩', label: 'Software a medida', desc: 'Diseño soluciones claras para ordenar procesos, usuarios y estados sin complejidad innecesaria.', prompt: 'Necesito software a medida para un proceso interno' },
+    { icon: '📊', label: 'Power BI / Datos', desc: 'Te acompaño a transformar datos en dashboards y decisiones claras.', prompt: 'Necesito ayuda con Power BI y reportes' },
+    { icon: '⚙️', label: 'Automatización', desc: 'Reducimos tareas repetidas y aceleramos tus flujos con menos errores.', prompt: 'Quiero automatizar un proceso de mi empresa' },
+    { icon: '💬', label: 'Chatbot inteligente', desc: 'Construimos un asistente útil que responde y deriva cuando conviene.', prompt: 'Quiero un chatbot inteligente para mi sitio web' },
+    { icon: '👤', label: 'Hablar con humano', desc: 'Te conecto rápido con el equipo si quieres hablar con alguien real.', prompt: 'Quiero hablar con una persona del equipo' }
   ];
 
   const defaultSuggestions = config.quickReplies && config.quickReplies.length
@@ -275,7 +275,7 @@ function initSiteChatbot() {
   function showLeadForm(prefill = '') {
     shell.classList.remove('lead-open');
     const context = String(prefill || state.leadHint || '').trim();
-    addMessage('Perfecto. Para dejar tus datos y conversar con el equipo, te derivo por WhatsApp o correo. Así no llenas formularios dentro del chat.', 'bot note');
+    addMessage('Perfecto, con esto puedo entregar tu mensaje al equipo y avanzar rápido. Si prefieres, sigo aquí para orientarte antes de derivarte.', 'bot note');
     const items = [];
     if (config.whatsapp) items.push({ type: 'link', label: 'Abrir WhatsApp', url: config.whatsapp });
     if (config.contactEmail) items.push({ type: 'link', label: 'Enviar correo', url: `mailto:${config.contactEmail}?subject=Contacto desde chatbot&body=${encodeURIComponent(context || 'Hola, quiero conversar con el equipo de ITESICWS.')}` });
@@ -336,7 +336,7 @@ function initSiteChatbot() {
     } catch (error) {
       typing.remove();
       setStatus('Derivación disponible');
-      addMessage(error.message || 'No pude responder ahora. Puedes dejar tus datos o escribir por WhatsApp.');
+      addMessage(error.message || 'Ups, no pude responder ahora. Te dejo opciones para seguir y puedo derivarte al equipo si quieres.');
       renderActions(config.whatsapp ? [{ type: 'link', label: 'WhatsApp', url: config.whatsapp }, { type: 'lead', label: 'Dejar mis datos' }] : [{ type: 'lead', label: 'Dejar mis datos' }]);
     } finally {
       if (composerSend) composerSend.disabled = false;
@@ -373,7 +373,7 @@ function initSiteChatbot() {
     if (!messages.dataset.started) {
       messages.dataset.started = 'true';
       setStatus('En línea');
-      addMessage('Hola 👋 ¿En qué te podemos ayudar?');
+      addMessage('¡Hola 👋 Soy tu asistente del sitio. Estoy aquí para ayudarte con lo que necesitas: sistemas, datos, IA o contacto directo. Cuéntame tu caso y te acompaño paso a paso.');
       addOptionChips();
       renderSuggestions(defaultSuggestions);
       renderActions(config.whatsapp ? [{ type: 'link', label: 'WhatsApp', url: config.whatsapp }, { type: 'lead', label: 'Dejar mis datos' }] : [{ type: 'lead', label: 'Dejar mis datos' }]);

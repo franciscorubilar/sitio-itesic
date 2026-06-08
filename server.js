@@ -423,7 +423,7 @@ async function chatbotAnswer(message, state = {}) {
       ok: true,
       intent: previousIntent || 'thanks',
       lead: false,
-      answer: 'De nada. Si quieres, seguimos con una pregunta concreta sobre un software, módulos, áreas, precios referenciales o una posible demo.',
+      answer: '¡Gracias a ti! Estoy aquí para ayudarte cuando quieras. Si te parece, podemos seguir con una pregunta concreta sobre un software, un proceso o una demo.',
       suggestions: ['Qué hace PERSEUS', 'Qué hace Zebbra', 'Quiero una demo', 'Hablar por WhatsApp'],
       actions,
       state: { intent: previousIntent || 'thanks', leadHint }
@@ -435,7 +435,7 @@ async function chatbotAnswer(message, state = {}) {
       ok: true,
       intent: previousIntent || 'clarificacion',
       lead: false,
-      answer: 'Tienes razón, lo explico más simple. Dime el nombre del software o el problema que tienes, y te respondo directo: qué hace, módulos, áreas donde aplica y primer paso recomendado. Ejemplo: “PERSEUS módulos” o “necesito controlar reportes DGA”.',
+      answer: 'No te preocupes, vamos paso a paso. Cuéntame tu problema con tus propias palabras y te respondo claro: qué hace, qué módulos necesita y cuál es el siguiente paso.',
       suggestions: ['PERSEUS módulos', 'Zebbra reportes', 'Power BI datos', 'Hablar con humano'],
       actions,
       state: { intent: previousIntent || 'clarificacion', leadHint }
@@ -505,7 +505,7 @@ async function chatbotAnswer(message, state = {}) {
       ok: true,
       intent: 'welcome',
       lead: false,
-      answer: settings.chatbotWelcome || 'Hola, soy el asistente de ITESICWS. ¿En qué te podemos ayudar hoy? Elige una opción o cuéntame tu caso con tus palabras.',
+      answer: settings.chatbotWelcome || '¡Hola! Soy tu asistente digital de ITESICWS. Estoy aquí para ayudarte con software, datos, IA o para conectarte con un humano del equipo. ¿Qué te gustaría resolver hoy?',
       suggestions: ['Consultoría IA', 'Software a medida', 'Power BI / Datos', 'Automatización', 'Chatbot inteligente'],
       cards: ['Consultoría IA', 'Software a medida', 'Power BI / Datos', 'Automatización', 'Chatbot inteligente', 'Hablar con humano'],
       actions: [{ type: 'link', label: 'Ver productos', url: '/productos' }, { type: 'link', label: 'Consultoría IA', url: '/consultoria-ia' }],
@@ -560,7 +560,7 @@ async function chatbotAnswer(message, state = {}) {
       ok: true,
       intent: 'lead',
       lead: false,
-      answer: 'Perfecto. Para orientarte antes de derivarte: ¿qué proceso quieres resolver, cuántas personas lo usarían y si hoy lo manejan con Excel, correos u otro sistema? Con eso puedo recomendarte el camino correcto.',
+      answer: 'Perfecto, te acompaño. Dime qué proceso quieres resolver, cuántas personas participan y si hoy lo manejan con Excel, correos u otro sistema. Así puedo recomendarte el mejor camino para tu caso.',
       suggestions: ['Lo usamos 8 personas', 'Hoy usamos Excel', 'Necesito integrar sistemas', 'Dejar mis datos'],
       actions,
       state: { intent: 'lead', leadHint }
@@ -572,7 +572,7 @@ async function chatbotAnswer(message, state = {}) {
       ok: true,
       intent: 'software',
       lead: false,
-      answer: 'Para software a medida conviene partir dibujando el proceso: usuarios, roles, estados, permisos, reportes e integraciones. Con eso se define un MVP rápido y después se escala sin llenar todo de parches.',
+      answer: 'Perfecto, para software a medida lo primero es entender tu proceso y quién lo usa. Con eso se arma una solución práctica, sin sobrecargarla, y luego la escalas cuando ya funciona.',
       suggestions: ['Tengo un proceso en Excel', 'Necesito usuarios y permisos', 'Quiero una demo', 'Hablar con humano'],
       actions: [{ type: 'link', label: 'Ver productos', url: '/productos' }, ...actions],
       state: { intent: 'software', leadHint: text }
@@ -620,7 +620,7 @@ async function chatbotAnswer(message, state = {}) {
       ok: true,
       intent: 'chatbot',
       lead: false,
-      answer: 'Un buen chatbot no debe ser solo un formulario: debe saludar, entender intención, hacer preguntas de calificación, responder FAQs, recomendar servicios y derivar a humano cuando corresponde. Para ITESICWS se puede conectar a contenidos del sitio, productos, blog y luego escalar a una IA real con base documental o API.',
+      answer: 'Un chatbot útil es un asistente que responde directo y deriva cuando es necesario. Empieza por lo básico: saludo, preguntas claras y una ruta para resolver tu necesidad. Aquí podemos hacerlo con el contenido del sitio y luego ampliar con datos propios.',
       suggestions: ['Que responda FAQs', 'Que derive a WhatsApp', 'Conectar con documentos', 'Quiero cotizar'],
       actions: [{ type: 'link', label: 'Ver consultoría IA', url: '/consultoria-ia' }, ...actions],
       state: { intent: 'chatbot', leadHint: text }
@@ -729,7 +729,7 @@ async function chatbotAnswer(message, state = {}) {
     ok: true,
     intent: 'fallback',
     lead: false,
-    answer: 'No quiero inventarte una respuesta genérica. Para orientarte bien, dime qué necesitas resolver y en qué contexto: operación interna, página web, reportes, IA, integración de sistemas o atención de clientes. Con una frase basta y te respondo con una recomendación concreta.',
+    answer: 'Prefiero darte algo útil. Cuéntame con palabras sencillas qué quieres mejorar, qué te complica o qué resultado esperas. Yo te ayudo a definir el mejor camino.',
     suggestions: ['Página web', 'Software a medida', 'Consultoría IA', 'Power BI / Datos', 'Conectar sistemas'],
     cards: ['Consultoría IA', 'Software a medida', 'Power BI / Datos', 'Automatización', 'Chatbot inteligente', 'Hablar con humano'],
     actions,
