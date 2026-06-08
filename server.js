@@ -11,7 +11,17 @@ const fs = require('fs');
 const multer = require('multer');
 
 const prisma = new PrismaClient();
-const openai = process.env.OPENAI_API_KEY ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY }) : null;
+
+// Detectar si es Deepseek o OpenAI y configurar correctamente
+let openai = null;
+if (process.env.OPENAI_API_KEY) {
+  const isDeepseek = process.env.OPENAI_MODEL?.includes('deepseek');
+  openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+    baseURL: isDeepseek ? 'https://api.deepseek.com/v1' : undefined
+  });
+}
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -271,75 +281,94 @@ function openAiConfigured() {
 async function chatbotAnswerWithAI({ message, state, settings, products, posts }) {
   if (!openAiConfigured()) return null;
 
-  const vectorStoreIds = String(process.env.OPENAI_VECTOR_STORE_ID || '')
-    .split(',')
-    .map(item => item.trim())
-    .filter(Boolean);
+  try {
+    const isDeepseek = process.env.OPENAI_MODEL?.includes('deepseek');
+    const previousMessages = Array.isArray(state.history)
+      ? state.history.slice(-8).map(item => `${item.from || 'user'}: ${item.text}`).join('\n')
+      : '';
 
-  const tools = vectorStoreIds.length
-    ? [{ type: 'file_search', vector_store_ids: vectorStoreIds, max_num_results: 6 }]
-    : undefined;
+    const systemPrompt = [
+      'Eres el asistente comercial y técnico de ITESICWS.',
+      'Responde en español chileno, claro, útil y coherente.',
+      'No vendas humo. Si el usuario pregunta algo casual, responde casual y breve.',
+      'Si pregunta por una necesidad empresarial, recomienda una ruta concreta.',
+      'Si no existe un software exacto, di que conviene software a medida.',
+      'No inventes certificaciones, normas legales ni precios.',
+      'Sé amigable y directo.'
+    ].join('\n');
 
-  const previousMessages = Array.isArray(state.history)
-    ? state.history.slice(-8).map(item => `${item.from || 'user'}: ${item.text}`).join('\n')
-    : '';
+    const userContent = [
+      `Fecha: ${todayInChile()}`,
+      `Contexto: ${chatbotKnowledgeBase(products, posts).slice(0, 2000)}`,
+      `Pregunta: ${message}`
+    ].join('\n\n');
 
-  const response = await openai.responses.create({
-    model: process.env.OPENAI_MODEL || 'gpt-5-mini',
-    reasoning: { effort: process.env.OPENAI_REASONING_EFFORT || 'low' },
-    text: { verbosity: 'low' },
-    tools,
-    input: [
-      {
-        role: 'developer',
-        content: [
-          'Eres el asistente comercial y técnico de ITESICWS.',
-          'Responde en español chileno, claro, útil y coherente.',
-          'No vendas humo. Si el usuario pregunta algo casual, responde casual y breve.',
-          'Si pregunta por una necesidad empresarial, recomienda una ruta concreta usando el contexto.',
-          'Si no existe un software exacto, di que conviene software a medida y explica módulos esperables.',
-          'No inventes certificaciones, normas legales ni precios.',
-          'Nunca respondas solo por coincidencias de palabras; entiende el problema.',
-          'Devuelve SOLO JSON válido con: answer, suggestions, actions, intent, leadHint, lastProductSlug.',
-          'actions debe usar objetos {type:"link", label, url} o {type:"lead", label}.'
-        ].join('\n')
-      },
-      {
-        role: 'user',
-        content: [
-          `Fecha actual Chile: ${todayInChile()}. Hora Chile: ${timeInChile()}.`,
-          `Estado anterior: ${JSON.stringify(state || {})}`,
-          previousMessages ? `Historial reciente:\n${previousMessages}` : '',
-          `Contexto disponible:\n${chatbotKnowledgeBase(products, posts)}`,
-          `Pregunta del usuario: ${message}`
-        ].filter(Boolean).join('\n\n')
-      }
-    ],
-    max_output_tokens: 900
-  });
+    let response;
 
-  const parsed = safeJsonFromText(response.output_text);
-  if (!parsed || !parsed.answer) return null;
-
-  const actions = Array.isArray(parsed.actions) ? parsed.actions.slice(0, 4) : [];
-  if (!actions.some(action => action.type === 'link' && /whatsapp/i.test(action.label || '')) && settings.whatsappNumber) {
-    actions.push({ type: 'link', label: 'Hablar por WhatsApp', url: buildChatbotWhatsApp(settings, message) });
-  }
-  if (!actions.some(action => action.type === 'lead')) actions.push({ type: 'lead', label: 'Dejar mis datos' });
-
-  return {
-    ok: true,
-    intent: parsed.intent || 'ai',
-    lead: false,
-    answer: String(parsed.answer).trim(),
-    suggestions: Array.isArray(parsed.suggestions) ? parsed.suggestions.slice(0, 5) : ['Ver productos', 'Hablar por WhatsApp'],
-    actions,
-    state: {
-      intent: parsed.intent || 'ai',
-      leadHint: parsed.leadHint || message,
-      lastProductSlug: parsed.lastProductSlug || state.lastProductSlug
+    if (isDeepseek) {
+      // Deepseek usa chat.completions.create (API estándar)
+      response = await openai.chat.completions.create({
+        model: process.env.OPENAI_MODEL || 'deepseek-chat',
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userContent }
+        ],
+        temperature: 0.7,
+        max_tokens: 500
+      });
+    } else {
+      // OpenAI usa responses.create (API avanzada)
+      response = await openai.responses.create({
+        model: process.env.OPENAI_MODEL || 'gpt-4o-mini',
+        reasoning: { effort: process.env.OPENAI_REASONING_EFFORT || 'low' },
+        text: { verbosity: 'low' },
+        input: [
+          { role: 'developer', content: systemPrompt },
+          { role: 'user', content: userContent }
+        ],
+        max_output_tokens: 500
+      });
     }
-  };
+
+    let answer = isDeepseek 
+      ? response.choices[0]?.message?.content 
+      : response.output_text;
+
+    if (!answer) return null;
+
+    // Intenta parsear JSON si lo devuelve
+    let parsed = safeJsonFromText(answer);
+    if (!parsed) {
+      parsed = {
+        answer: answer.trim(),
+        suggestions: ['Ver productos', 'Hablar por WhatsApp'],
+        intent: 'ai'
+      };
+    }
+
+    const actions = Array.isArray(parsed.actions) ? parsed.actions.slice(0, 4) : [];
+    if (!actions.some(action => action.type === 'link' && /whatsapp/i.test(action.label || '')) && settings.whatsappNumber) {
+      actions.push({ type: 'link', label: 'Hablar por WhatsApp', url: buildChatbotWhatsApp(settings, message) });
+    }
+    if (!actions.some(action => action.type === 'lead')) actions.push({ type: 'lead', label: 'Dejar mis datos' });
+
+    return {
+      ok: true,
+      intent: parsed.intent || 'ai',
+      lead: false,
+      answer: String(parsed.answer).trim(),
+      suggestions: Array.isArray(parsed.suggestions) ? parsed.suggestions.slice(0, 5) : ['Ver productos'],
+      actions,
+      state: {
+        intent: parsed.intent || 'ai',
+        leadHint: parsed.leadHint || message,
+        lastProductSlug: parsed.lastProductSlug
+      }
+    };
+  } catch (error) {
+    console.error('Error en IA:', error.message);
+    return null;
+  }
 }
 
 async function chatbotAnswer(message, state = {}) {
