@@ -1,3 +1,34 @@
 <%- include('../partials/header') %>
-<section class="section center auth-card"><span class="eyebrow">Admin</span><h1>Ingreso administrador</h1><% if (error) { %><p class="error"><%= error %></p><% } %><form class="form narrow" method="post" action="/admin/login"><input name="email" type="email" value="admin@itesicws.cl" required><input name="password" type="password" placeholder="Contraseña" required><button class="btn primary" type="submit">Ingresar</button></form></section>
+
+<section class="admin-login-screen">
+  <div class="admin-login-brand">
+    <img src="/images/logos/logo-light.svg" alt="ITESICWS">
+    <span>Panel de administración</span>
+  </div>
+
+  <article class="admin-login-card">
+    <div class="admin-login-copy">
+      <span class="admin-kicker">Acceso seguro</span>
+      <h1>Ingresar al panel</h1>
+      <p>Administra productos, blog, leads, configuración de contacto y contenido del sitio.</p>
+    </div>
+
+    <% if (error) { %>
+      <p class="admin-login-error"><%= error %></p>
+    <% } %>
+
+    <form class="admin-login-form" method="post" action="/admin/login">
+      <label>
+        <span>Email</span>
+        <input name="email" type="email" value="admin@itesicws.cl" required autocomplete="email">
+      </label>
+      <label>
+        <span>Contraseña</span>
+        <input name="password" type="password" placeholder="Ingresa tu contraseña" required autocomplete="current-password">
+      </label>
+      <button type="submit">Ingresar</button>
+    </form>
+  </article>
+</section>
+
 <%- include('../partials/footer') %>

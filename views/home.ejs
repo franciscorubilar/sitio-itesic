@@ -234,6 +234,31 @@
   </div>
 </section>
 
+<section class="section conversion-path reveal">
+  <div class="section-head">
+    <div>
+      <span class="eyebrow">Cómo podemos partir</span>
+      <h2>Elige el camino más cercano a tu problema</h2>
+      <p>Así el visitante entiende rápido qué pedir, y el formulario llega con mejor contexto comercial.</p>
+    </div>
+  </div>
+  <div class="conversion-grid">
+    <% [
+      ['Necesito ordenar una operación', 'ERP, trazabilidad, stock, producción, formularios y aprobaciones.', 'ERP / Gestión operacional'],
+      ['Quiero decidir con datos', 'Dashboards, Power BI, indicadores, reportes automáticos y fuentes conectadas.', 'Reportes y Power BI'],
+      ['Quiero usar IA en serio', 'Chatbots, asistentes con documentos, automatización y agentes para tareas repetitivas.', 'Consultoría IA'],
+      ['Tengo un proceso en planillas', 'Lo convertimos en una aplicación web segura, con usuarios, estados y reportes.', 'Software a medida']
+    ].forEach((item, i) => { %>
+      <a class="conversion-card" style="--i:<%= i %>" href="/?interest=<%= encodeURIComponent(item[2]) %>#contacto">
+        <span><%= String(i + 1).padStart(2, '0') %></span>
+        <h3><%= item[0] %></h3>
+        <p><%= item[1] %></p>
+        <b>Consultar →</b>
+      </a>
+    <% }) %>
+  </div>
+</section>
+
 <section class="section process reveal">
   <div class="center">
     <span class="eyebrow">Método</span>

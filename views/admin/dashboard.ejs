@@ -10,23 +10,76 @@
     <form method="post" action="/admin/logout"><button type="submit">Cerrar sesión</button></form>
   </aside>
   <div class="admin-content">
-    <div class="admin-page-head">
-      <div><span class="eyebrow">Resumen</span><h1>Dashboard</h1><p>Vista rápida de productos publicados y solicitudes recibidas desde el sitio.</p></div>
-      <a class="btn primary" href="/admin/settings"><span>Configurar leads</span></a>
-    </div>
-    <div class="stats">
-      <div><b><%= productCount %></b><span>Productos</span></div>
-      <div><b><%= blogCount %></b><span>Entradas blog</span></div>
-      <div><b><%= leadCount %></b><span>Leads</span></div>
-    </div>
-    <section class="settings-card admin-section-card">
-      <div class="settings-card-head"><div><h2>Últimos leads</h2><p>Solicitudes recientes registradas en el formulario.</p></div><a class="btn ghost" href="/admin/leads"><span>Ver todos</span></a></div>
-      <div class="table">
-        <% latestLeads.forEach(l=>{ %>
-          <div class="row admin-row"><b><%= l.name %></b><span><%= l.email %></span><span><%= l.interest %></span></div>
-        <% }) %>
-        <% if (!latestLeads.length) { %><p class="notice">Todavía no hay leads registrados.</p><% } %>
+    <div class="admin-page-head admin-hero-panel">
+      <div><span class="eyebrow">Panel ITESICWS</span><h1>Centro de control</h1><p>Vista rápida de sitio, productos, blog y oportunidades comerciales. Pensado para administrar sin abrir código.</p></div>
+      <div class="admin-head-actions">
+        <a class="btn ghost" href="/" target="_blank"><span>Ver sitio</span></a>
+        <a class="btn ghost" href="/admin/products/new"><span>Nuevo producto</span></a>
+        <a class="btn primary" href="/admin/blog/new"><span>Nueva entrada</span></a>
       </div>
+    </div>
+
+    <div class="stats dashboard-stats">
+      <div><b><%= productCount %></b><span>Productos</span><small><%= publishedProductCount %> publicados</small></div>
+      <div><b><%= blogCount %></b><span>Entradas blog</span><small><%= publishedBlogCount %> publicadas · <%= draftBlogCount %> borradores</small></div>
+      <div><b><%= leadCount %></b><span>Leads totales</span><small><%= newLeadCount %> últimos 7 días</small></div>
+      <div><b><%= leadStatusCounts.NEW || 0 %></b><span>Leads nuevos</span><small>prioridad comercial</small></div>
+    </div>
+
+    <section class="admin-work-grid">
+      <article class="settings-card admin-section-card">
+        <div class="settings-card-head"><div><h2>Pipeline de leads</h2><p>Estado rápido de oportunidades recibidas.</p></div><a class="btn ghost" href="/admin/leads"><span>Gestionar</span></a></div>
+        <div class="pipeline-board">
+          <% ['NEW','CONTACTED','IN_PROGRESS','CLOSED'].forEach(status => { %>
+            <a href="/admin/leads?status=<%= status %>" class="pipeline-card">
+              <span class="status-pill <%= statusClass(status) %>"><%= statusLabel(status) %></span>
+              <b><%= leadStatusCounts[status] || 0 %></b>
+            </a>
+          <% }) %>
+        </div>
+      </article>
+
+      <article class="settings-card admin-section-card">
+        <div class="settings-card-head"><div><h2>Checklist recomendado</h2><p>Acciones que ayudan a que el sitio convierta mejor.</p></div></div>
+        <ul class="admin-checklist">
+          <li>Publicar al menos 1 artículo mensual sobre IA, software o caso de uso.</li>
+          <li>Revisar leads nuevos y moverlos a “Contactado”.</li>
+          <li>Destacar el producto o servicio que más quieres vender este mes.</li>
+          <li>Mantener WhatsApp y correos receptores actualizados.</li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="admin-work-grid">
+      <article class="settings-card admin-section-card">
+        <div class="settings-card-head"><div><h2>Últimos leads</h2><p>Solicitudes recientes registradas en el formulario y chatbot.</p></div><a class="btn ghost" href="/admin/leads/export.csv"><span>Exportar CSV</span></a></div>
+        <div class="table admin-mini-table">
+          <% latestLeads.forEach(l=>{ %>
+            <div class="row admin-row">
+              <div><b><%= l.name %></b><small><%= formatDate(l.createdAt) %></small></div>
+              <span><%= l.email %></span>
+              <span><%= l.interest %></span>
+              <span class="status-pill <%= statusClass(l.status) %>"><%= statusLabel(l.status) %></span>
+            </div>
+          <% }) %>
+          <% if (!latestLeads.length) { %><p class="notice">Todavía no hay leads registrados.</p><% } %>
+        </div>
+      </article>
+
+      <article class="settings-card admin-section-card">
+        <div class="settings-card-head"><div><h2>Contenido reciente</h2><p>Entradas editadas o creadas recientemente.</p></div><a class="btn ghost" href="/admin/blog"><span>Ver blog</span></a></div>
+        <div class="table admin-mini-table">
+          <% latestPosts.forEach(post=>{ %>
+            <div class="row admin-row">
+              <div><b><%= post.title %></b><small>/<%= post.slug %></small></div>
+              <span><%= post.category.name %></span>
+              <span class="status-pill <%= post.published ? 'success' : 'muted' %>"><%= post.published ? 'Publicado' : 'Borrador' %></span>
+              <a class="btn ghost" href="/admin/blog/<%= post.id %>/edit"><span>Editar</span></a>
+            </div>
+          <% }) %>
+          <% if (!latestPosts.length) { %><p class="notice">Todavía no hay artículos.</p><% } %>
+        </div>
+      </article>
     </section>
   </div>
 </section>

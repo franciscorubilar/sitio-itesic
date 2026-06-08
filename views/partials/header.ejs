@@ -3,8 +3,10 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title><%= settings.siteName %> - Software empresarial e IA</title>
-  <meta name="description" content="Software empresarial, consultoría IA, automatización, Power BI y plataformas operacionales." />
+  <title><%= typeof pageTitle !== 'undefined' ? pageTitle : settings.siteName + ' - Software empresarial e IA' %></title>
+  <meta name="description" content="<%= typeof pageDescription !== 'undefined' ? String(pageDescription).replace(/<[^>]*>/g, ' ').slice(0, 155) : 'Software empresarial, consultoría IA, automatización, Power BI y plataformas operacionales.' %>" />
+  <meta property="og:title" content="<%= typeof pageTitle !== 'undefined' ? pageTitle : settings.siteName + ' - Software empresarial e IA' %>" />
+  <meta property="og:description" content="<%= typeof pageDescription !== 'undefined' ? String(pageDescription).replace(/<[^>]*>/g, ' ').slice(0, 155) : 'Software empresarial, consultoría IA, automatización, Power BI y plataformas operacionales.' %>" />
   <link rel="icon" href="/images/logos/icon.svg" type="image/svg+xml" />
   <link rel="icon" href="/images/logos/favicon-32.png" type="image/png" sizes="32x32" />
   <link rel="icon" href="/images/logos/favicon-16.png" type="image/png" sizes="16x16" />
@@ -18,6 +20,10 @@
   <% } %>
   <link rel="stylesheet" href="/css/styles.css" />
 </head>
+<% if (path.startsWith('/admin')) { %>
+<body class="admin-body">
+  <main class="admin-root">
+<% } else { %>
 <body>
   <header class="site-header">
     <div class="header-main-row">
@@ -33,7 +39,9 @@
         <a href="/#contacto">Contacto</a>
         <% if (user) { %><a href="/admin">Admin</a><% } %>
       </nav>
+      <button class="mobile-nav-toggle" type="button" data-mobile-nav aria-label="Abrir menú">☰</button>
       <button class="theme-toggle" type="button" data-theme-toggle aria-label="Cambiar tema">◐</button>
     </div>
   </header>
   <main>
+<% } %>

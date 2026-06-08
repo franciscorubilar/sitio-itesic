@@ -10,28 +10,59 @@
     <form method="post" action="/admin/logout"><button type="submit">Cerrar sesión</button></form>
   </aside>
   <div class="admin-content">
-    <div class="admin-page-head">
+    <div class="admin-page-head admin-hero-panel">
       <div>
         <span class="eyebrow">Blog informativo</span>
         <h1>Entradas y categorías</h1>
         <p>Administra noticias, lanzamientos de IA, guías, FAQs y artículos para posicionamiento del sitio.</p>
       </div>
-      <a class="btn primary" href="/admin/blog/new"><span>Nueva entrada</span></a>
+      <div class="admin-head-actions">
+        <a class="btn ghost" href="/blog" target="_blank"><span>Ver blog</span></a>
+        <a class="btn primary" href="/admin/blog/new"><span>Nueva entrada</span></a>
+      </div>
+    </div>
+
+    <div class="stats dashboard-stats blog-admin-stats">
+      <a href="/admin/blog"><b><%= counters.total %></b><span>Total</span></a>
+      <a href="/admin/blog?status=published"><b><%= counters.published %></b><span>Publicados</span></a>
+      <a href="/admin/blog?status=draft"><b><%= counters.draft %></b><span>Borradores</span></a>
+      <a href="/admin/blog?status=featured"><b><%= counters.featured %></b><span>Destacados</span></a>
     </div>
 
     <section class="settings-card">
       <div class="settings-card-head">
-        <div><h2>Publicaciones</h2><p>Control de artículos publicados, borradores y destacados.</p></div>
-        <a class="btn ghost" href="/blog" target="_blank"><span>Ver blog</span></a>
+        <div><h2>Publicaciones</h2><p>Control de artículos publicados, borradores, destacados y filtros para administrar rápido.</p></div>
       </div>
+      <form class="form admin-form form-grid compact-grid blog-admin-filters" method="get" action="/admin/blog">
+        <input name="q" value="<%= filters?.q || '' %>" placeholder="Buscar por título, resumen o contenido">
+        <select name="status">
+          <option value="" <%= !filters?.status ? 'selected' : '' %>>Todos los estados</option>
+          <option value="published" <%= filters?.status === 'published' ? 'selected' : '' %>>Publicados</option>
+          <option value="draft" <%= filters?.status === 'draft' ? 'selected' : '' %>>Borradores</option>
+          <option value="featured" <%= filters?.status === 'featured' ? 'selected' : '' %>>Destacados</option>
+        </select>
+        <select name="categoryId">
+          <option value="" <%= !filters?.categoryId ? 'selected' : '' %>>Todas las categorías</option>
+          <% categories.forEach(category => { %>
+            <option value="<%= category.id %>" <%= filters?.categoryId === category.id ? 'selected' : '' %>><%= category.name %></option>
+          <% }) %>
+        </select>
+        <button class="btn primary" type="submit"><span>Filtrar</span></button>
+        <a class="btn ghost" href="/admin/blog"><span>Limpiar</span></a>
+      </form>
       <div class="table">
         <% posts.forEach(post => { %>
-          <div class="row admin-row product-admin-row">
-            <div><b><%= post.title %></b><small>/<%= post.slug %></small></div>
+          <div class="row admin-row product-admin-row blog-management-row">
+            <img class="admin-thumb" src="<%= post.image %>" alt="<%= post.title %>">
+            <div><b><%= post.title %></b><small>/<%= post.slug %> · <%= formatDate(post.publishedAt) %> · <%= post.readMinutes %> min</small></div>
             <span><%= post.category.name %></span>
-            <span class="status-pill <%= post.published ? 'success' : '' %>"><%= post.published ? 'Publicado' : 'Borrador' %></span>
-            <span class="status-pill <%= post.featured ? 'success' : '' %>"><%= post.featured ? 'Destacado' : 'Normal' %></span>
+            <span class="status-pill <%= post.published ? 'success' : 'muted' %>"><%= post.published ? 'Publicado' : 'Borrador' %></span>
+            <span class="status-pill <%= post.featured ? 'success' : 'muted' %>"><%= post.featured ? 'Destacado' : 'Normal' %></span>
+            <a class="btn ghost" href="/blog/<%= post.slug %>" target="_blank"><span>Ver</span></a>
             <a class="btn ghost" href="/admin/blog/<%= post.id %>/edit"><span>Editar</span></a>
+            <form method="post" action="/admin/blog/<%= post.id %>/toggle-published"><button type="submit"><%= post.published ? 'Pasar a borrador' : 'Publicar' %></button></form>
+            <form method="post" action="/admin/blog/<%= post.id %>/toggle-featured"><button type="submit"><%= post.featured ? 'Quitar destacado' : 'Destacar' %></button></form>
+            <form method="post" action="/admin/blog/<%= post.id %>/duplicate"><button type="submit">Duplicar</button></form>
             <form method="post" action="/admin/blog/<%= post.id %>/delete" onsubmit="return confirm('¿Eliminar entrada del blog?')"><button type="submit">Eliminar</button></form>
           </div>
         <% }) %>
@@ -57,6 +88,7 @@
             <input name="slug" value="<%= category.slug %>" required>
             <input name="sortOrder" type="number" value="<%= category.sortOrder %>">
             <input name="description" value="<%= category.description %>" placeholder="Descripción">
+            <span class="status-pill"><%= category._count?.posts || 0 %> entradas</span>
             <button type="submit">Guardar</button>
             <button type="submit" formaction="/admin/blog/categories/<%= category.id %>/delete" onclick="return confirm('¿Eliminar categoría? Solo funciona si no tiene entradas.')">Eliminar</button>
           </form>

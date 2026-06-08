@@ -87,6 +87,24 @@
         <label class="checkbox-line"><input type="checkbox" name="smtpSecure" <%= settings.smtpSecure ? 'checked' : '' %>> Usar SSL/TLS directo, típico puerto 465</label>
       </section>
 
+
+      <section class="settings-card wide">
+        <div class="settings-card-head">
+          <div>
+            <h2>Chatbot del sitio</h2>
+            <p>Activa un asistente flotante para orientar visitantes, capturar leads y derivar a WhatsApp.</p>
+          </div>
+          <span class="status-pill <%= settings.chatbotEnabled ? 'success' : 'muted' %>"><%= settings.chatbotEnabled ? 'Activo' : 'Desactivado' %></span>
+        </div>
+        <label class="checkbox-line"><input type="checkbox" name="chatbotEnabled" <%= settings.chatbotEnabled ? 'checked' : '' %>> Mostrar chatbot en el sitio público</label>
+        <div class="settings-two">
+          <label><span>Título del chatbot</span><input name="chatbotTitle" value="<%= settings.chatbotTitle || 'Asistente ITESICWS' %>"></label>
+          <label><span>Mensaje si no entiende</span><input name="chatbotFallback" value="<%= settings.chatbotFallback || '' %>" placeholder="Puedo ayudarte y derivarte al equipo..."></label>
+        </div>
+        <label><span>Mensaje de bienvenida</span><textarea name="chatbotWelcome" rows="4"><%= settings.chatbotWelcome || '' %></textarea></label>
+        <label><span>Botones rápidos</span><textarea name="chatbotQuickReplies" rows="5" placeholder="Uno por línea"><%= settings.chatbotQuickReplies || '' %></textarea><small>Ejemplo: Quiero una demo, Necesito un chatbot IA, Hablar por WhatsApp.</small></label>
+      </section>
+
       <section class="settings-card">
         <div class="settings-card-head">
           <div>

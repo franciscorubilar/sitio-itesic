@@ -7,23 +7,50 @@
     <a href="/admin/blog">Blog</a>
     <a href="/admin/leads">Leads</a>
     <a href="/admin/settings">Configuración</a>
+    <form method="post" action="/admin/logout"><button type="submit">Cerrar sesión</button></form>
   </aside>
   <div class="admin-content">
-    <div class="admin-page-head">
-      <div><span class="eyebrow">Catálogo</span><h1>Productos</h1><p>Administra soluciones, textos comerciales, módulos, beneficios e imágenes del sitio.</p></div>
+    <div class="admin-page-head admin-hero-panel">
+      <div><span class="eyebrow">Catálogo</span><h1>Productos y soluciones</h1><p>Administra textos comerciales, estados, destacados, imágenes y orden del catálogo público.</p></div>
       <a class="btn primary" href="/admin/products/new"><span>Nuevo producto</span></a>
     </div>
     <section class="settings-card">
+      <div class="settings-card-head">
+        <div><h2>Listado administrable</h2><p>Filtra, previsualiza, duplica y publica soluciones más rápido.</p></div>
+      </div>
+      <form class="form admin-form form-grid compact-grid blog-admin-filters" method="get" action="/admin/products">
+        <input name="q" value="<%= filters?.q || '' %>" placeholder="Buscar por nombre, resumen, slug o descripción">
+        <select name="status">
+          <option value="" <%= !filters?.status ? 'selected' : '' %>>Todos los estados</option>
+          <option value="published" <%= filters?.status === 'published' ? 'selected' : '' %>>Publicados</option>
+          <option value="draft" <%= filters?.status === 'draft' ? 'selected' : '' %>>Borradores</option>
+          <option value="featured" <%= filters?.status === 'featured' ? 'selected' : '' %>>Destacados</option>
+        </select>
+        <select name="category">
+          <option value="" <%= !filters?.category ? 'selected' : '' %>>Todas las categorías</option>
+          <% categories.forEach(category => { %>
+            <option value="<%= category %>" <%= filters?.category === category ? 'selected' : '' %>><%= category %></option>
+          <% }) %>
+        </select>
+        <button class="btn primary" type="submit"><span>Filtrar</span></button>
+        <a class="btn ghost" href="/admin/products"><span>Limpiar</span></a>
+      </form>
       <div class="table">
         <% products.forEach(p=>{ %>
-          <div class="row admin-row product-admin-row">
-            <div><b><%= p.name %></b><small><%= p.slug %></small></div>
+          <div class="row admin-row product-admin-row product-management-row">
+            <img class="admin-thumb" src="<%= p.image || productImage(p, 'dark') %>" alt="<%= p.name %>">
+            <div><b><%= p.name %></b><small>/<%= p.slug %> · orden <%= p.sortOrder %></small></div>
             <span><%= p.category %></span>
-            <span class="status-pill <%= p.published ? 'success' : '' %>"><%= p.published?'Publicado':'Borrador' %></span>
+            <span class="status-pill <%= p.published ? 'success' : 'muted' %>"><%= p.published?'Publicado':'Borrador' %></span>
+            <span class="status-pill <%= p.featured ? 'success' : 'muted' %>"><%= p.featured?'Destacado':'Normal' %></span>
+            <a class="btn ghost" href="/productos/<%= p.slug %>" target="_blank"><span>Ver</span></a>
             <a class="btn ghost" href="/admin/products/<%= p.id %>/edit"><span>Editar</span></a>
+            <form method="post" action="/admin/products/<%= p.id %>/toggle-published"><button type="submit"><%= p.published ? 'Ocultar' : 'Publicar' %></button></form>
+            <form method="post" action="/admin/products/<%= p.id %>/duplicate"><button type="submit">Duplicar</button></form>
             <form method="post" action="/admin/products/<%= p.id %>/delete" onsubmit="return confirm('¿Eliminar producto?')"><button type="submit">Eliminar</button></form>
           </div>
         <% }) %>
+        <% if (!products.length) { %><p class="notice">No hay productos con esos filtros.</p><% } %>
       </div>
     </section>
   </div>

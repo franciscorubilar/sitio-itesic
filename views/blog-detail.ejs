@@ -1,5 +1,6 @@
 <%- include('partials/header') %>
 
+<div class="reading-progress" data-reading-progress></div>
 <article class="blog-detail">
   <header class="blog-detail-hero">
     <div>
@@ -11,8 +12,28 @@
     <img src="<%= post.image %>" alt="<%= post.title %>">
   </header>
 
-  <section class="blog-article-body ql-editor">
-    <%- renderBlogContent(post.content) %>
+  <div class="blog-detail-layout">
+    <aside class="article-side-card">
+      <span class="eyebrow">En esta guía</span>
+      <div data-article-toc class="article-toc"></div>
+      <a class="btn primary" href="/?interest=<%= encodeURIComponent(post.category.name) %>#contacto"><span>Quiero aplicar esto</span></a>
+      <button class="btn ghost" type="button" data-copy-link><span>Copiar enlace</span></button>
+    </aside>
+    <section class="blog-article-body ql-editor" data-article-body>
+      <%- renderBlogContent(post.content) %>
+    </section>
+  </div>
+
+  <section class="article-conversion-card reveal">
+    <div>
+      <span class="eyebrow">Siguiente paso</span>
+      <h2>¿Quieres llevar esta idea a un sistema real?</h2>
+      <p>Podemos ayudarte a convertir el proceso en una aplicación, dashboard, chatbot o automatización concreta para tu operación.</p>
+    </div>
+    <div class="article-conversion-actions">
+      <a class="btn primary" href="/#contacto"><span>Solicitar diagnóstico</span></a>
+      <a class="btn ghost" href="<%= whatsappUrl(settings.whatsappNumber, 'Hola ITESICWS, leí el artículo: ' + post.title + ' y quiero conversar.') %>" target="_blank" rel="noopener"><span>WhatsApp</span></a>
+    </div>
   </section>
 
   <% if (post.faqs && post.faqs.length) { %>

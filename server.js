@@ -4,12 +4,14 @@ const session = require('express-session');
 const bcrypt = require('bcryptjs');
 const nodemailer = require('nodemailer');
 const slugify = require('slugify');
+const OpenAI = require('openai');
 const { PrismaClient, DeliveryMode } = require('@prisma/client');
 const path = require('path');
 const fs = require('fs');
 const multer = require('multer');
 
 const prisma = new PrismaClient();
+const openai = process.env.OPENAI_API_KEY ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY }) : null;
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -53,8 +55,11 @@ app.use(async (req, res, next) => {
   res.locals.productImage = productImage;
   res.locals.primaryContactEmail = primaryContactEmail;
   res.locals.whatsappUrl = whatsappUrl;
+  res.locals.chatbotQuickReplies = chatbotQuickReplies;
   res.locals.formatDate = formatDate;
   res.locals.renderBlogContent = renderBlogContent;
+  res.locals.statusLabel = statusLabel;
+  res.locals.statusClass = statusClass;
   next();
 });
 
@@ -99,6 +104,639 @@ function productImage(product, variant = '') {
   return `/images/${image}${variant ? `-${variant}` : ''}.png`;
 }
 
+
+function normalizeText(value) {
+  return String(value || '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9ñ\s]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function anyIncludes(text, terms) {
+  const clean = normalizeText(text);
+  const words = clean.split(' ').filter(Boolean);
+  return terms.some(term => {
+    const normalizedTerm = normalizeText(term);
+    if (!normalizedTerm) return false;
+    if (normalizedTerm.length <= 3 && !normalizedTerm.includes(' ')) {
+      return words.includes(normalizedTerm);
+    }
+    return clean.includes(normalizedTerm);
+  });
+}
+
+function compactText(value, max = 170) {
+  const text = String(value || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+  return text.length > max ? text.slice(0, max).trim() + '...' : text;
+}
+
+const CHATBOT_STOPWORDS = new Set([
+  'como', 'puedo', 'puede', 'resolver', 'solucionar', 'hacer', 'hace', 'para', 'por', 'con', 'sin',
+  'una', 'uno', 'unos', 'unas', 'mis', 'mio', 'mia', 'empresa', 'negocio', 'necesito', 'quiero',
+  'consulta', 'pregunta', 'ayuda', 'ayudar', 'sobre', 'cual', 'cuales', 'mejor', 'segun'
+]);
+
+function significantWords(value) {
+  return normalizeText(value)
+    .split(' ')
+    .map(word => word.trim())
+    .filter(word => word.length > 2 && !CHATBOT_STOPWORDS.has(word));
+}
+
+function todayInChile() {
+  return new Intl.DateTimeFormat('es-CL', {
+    weekday: 'long',
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric',
+    timeZone: 'America/Santiago'
+  }).format(new Date());
+}
+
+function timeInChile() {
+  return new Intl.DateTimeFormat('es-CL', {
+    hour: '2-digit',
+    minute: '2-digit',
+    timeZone: 'America/Santiago'
+  }).format(new Date());
+}
+
+function productContextText(product, { detailed = false } = {}) {
+  const modules = (product.modules || []).slice(0, detailed ? 12 : 7).join(', ');
+  const benefits = (product.benefits || []).slice(0, detailed ? 7 : 4).join(', ');
+  const industries = (product.industries || []).slice(0, 5).join(', ');
+  const faqs = (product.faqs || []).slice(0, 2).map(faq => `\n- ${faq.question}: ${compactText(faq.answer, 150)}`).join('');
+  return [
+    `${product.name} (${product.category})`,
+    compactText(product.description || product.summary, detailed ? 360 : 220),
+    product.problem ? `Problema que resuelve: ${compactText(product.problem, detailed ? 260 : 180)}` : '',
+    modules ? `Módulos principales: ${modules}.` : '',
+    benefits ? `Beneficios: ${benefits}.` : '',
+    industries ? `Áreas/industrias: ${industries}.` : '',
+    faqs ? `Preguntas frecuentes relacionadas:${faqs}` : ''
+  ].filter(Boolean).join('\n');
+}
+
+function buildChatbotWhatsApp(settings, text = '') {
+  return whatsappUrl(settings.whatsappNumber, `${settings.whatsappMessage}\n\nConsulta desde chatbot: ${text || 'Quiero conversar con el equipo.'}`);
+}
+
+function chatbotKnowledgeBase(products = [], posts = []) {
+  const productBlocks = products.map(product => {
+    const faqs = (product.faqs || []).map(faq => `FAQ: ${faq.question} -> ${faq.answer}`).join('\n');
+    return [
+      `SOFTWARE: ${product.name}`,
+      `Slug: ${product.slug}`,
+      `Categoria: ${product.category}`,
+      `Resumen: ${product.summary}`,
+      `Descripcion: ${product.description}`,
+      `Problema: ${product.problem}`,
+      `Beneficios: ${(product.benefits || []).join('; ')}`,
+      `Modulos: ${(product.modules || []).join('; ')}`,
+      `Areas/industrias: ${(product.industries || []).join('; ')}`,
+      faqs
+    ].filter(Boolean).join('\n');
+  }).join('\n\n---\n\n');
+
+  const blogBlocks = posts.map(post => [
+    `BLOG: ${post.title}`,
+    `Categoria: ${post.category?.name || ''}`,
+    `Resumen: ${compactText(post.excerpt || post.content, 420)}`,
+    `URL: /blog/${post.slug}`
+  ].join('\n')).join('\n\n---\n\n');
+
+  return `PRODUCTOS Y SOFTWARE ITESICWS\n${productBlocks}\n\nBLOG Y CONTENIDO\n${blogBlocks}`;
+}
+
+function safeJsonFromText(value) {
+  const text = String(value || '').trim();
+  if (!text) return null;
+  try { return JSON.parse(text); } catch (_) {}
+  const match = text.match(/\{[\s\S]*\}/);
+  if (!match) return null;
+  try { return JSON.parse(match[0]); } catch (_) { return null; }
+}
+
+function openAiConfigured() {
+  return !!openai && String(process.env.CHATBOT_AI_ENABLED || 'true').toLowerCase() !== 'false';
+}
+
+async function chatbotAnswerWithAI({ message, state, settings, products, posts }) {
+  if (!openAiConfigured()) return null;
+
+  const vectorStoreIds = String(process.env.OPENAI_VECTOR_STORE_ID || '')
+    .split(',')
+    .map(item => item.trim())
+    .filter(Boolean);
+
+  const tools = vectorStoreIds.length
+    ? [{ type: 'file_search', vector_store_ids: vectorStoreIds, max_num_results: 6 }]
+    : undefined;
+
+  const previousMessages = Array.isArray(state.history)
+    ? state.history.slice(-8).map(item => `${item.from || 'user'}: ${item.text}`).join('\n')
+    : '';
+
+  const response = await openai.responses.create({
+    model: process.env.OPENAI_MODEL || 'gpt-5-mini',
+    reasoning: { effort: process.env.OPENAI_REASONING_EFFORT || 'low' },
+    text: { verbosity: 'low' },
+    tools,
+    input: [
+      {
+        role: 'developer',
+        content: [
+          'Eres el asistente comercial y técnico de ITESICWS.',
+          'Responde en español chileno, claro, útil y coherente.',
+          'No vendas humo. Si el usuario pregunta algo casual, responde casual y breve.',
+          'Si pregunta por una necesidad empresarial, recomienda una ruta concreta usando el contexto.',
+          'Si no existe un software exacto, di que conviene software a medida y explica módulos esperables.',
+          'No inventes certificaciones, normas legales ni precios.',
+          'Nunca respondas solo por coincidencias de palabras; entiende el problema.',
+          'Devuelve SOLO JSON válido con: answer, suggestions, actions, intent, leadHint, lastProductSlug.',
+          'actions debe usar objetos {type:"link", label, url} o {type:"lead", label}.'
+        ].join('\n')
+      },
+      {
+        role: 'user',
+        content: [
+          `Fecha actual Chile: ${todayInChile()}. Hora Chile: ${timeInChile()}.`,
+          `Estado anterior: ${JSON.stringify(state || {})}`,
+          previousMessages ? `Historial reciente:\n${previousMessages}` : '',
+          `Contexto disponible:\n${chatbotKnowledgeBase(products, posts)}`,
+          `Pregunta del usuario: ${message}`
+        ].filter(Boolean).join('\n\n')
+      }
+    ],
+    max_output_tokens: 900
+  });
+
+  const parsed = safeJsonFromText(response.output_text);
+  if (!parsed || !parsed.answer) return null;
+
+  const actions = Array.isArray(parsed.actions) ? parsed.actions.slice(0, 4) : [];
+  if (!actions.some(action => action.type === 'link' && /whatsapp/i.test(action.label || '')) && settings.whatsappNumber) {
+    actions.push({ type: 'link', label: 'Hablar por WhatsApp', url: buildChatbotWhatsApp(settings, message) });
+  }
+  if (!actions.some(action => action.type === 'lead')) actions.push({ type: 'lead', label: 'Dejar mis datos' });
+
+  return {
+    ok: true,
+    intent: parsed.intent || 'ai',
+    lead: false,
+    answer: String(parsed.answer).trim(),
+    suggestions: Array.isArray(parsed.suggestions) ? parsed.suggestions.slice(0, 5) : ['Ver productos', 'Hablar por WhatsApp'],
+    actions,
+    state: {
+      intent: parsed.intent || 'ai',
+      leadHint: parsed.leadHint || message,
+      lastProductSlug: parsed.lastProductSlug || state.lastProductSlug
+    }
+  };
+}
+
+async function chatbotAnswer(message, state = {}) {
+  const settings = await getSettings();
+  const text = String(message || '').trim();
+  const clean = normalizeText(text);
+  const previousIntent = state.intent || '';
+  const leadHint = state.leadHint || text;
+
+  const products = await prisma.product.findMany({
+    where: { published: true },
+    include: { faqs: true },
+    orderBy: [{ featured: 'desc' }, { sortOrder: 'asc' }, { name: 'asc' }],
+    take: 12
+  });
+  const posts = await prisma.blogPost.findMany({
+    where: { published: true },
+    include: { category: true },
+    orderBy: [{ featured: 'desc' }, { publishedAt: 'desc' }],
+    take: 6
+  });
+
+  const queryWords = significantWords(clean);
+  const productMatches = products
+    .map(product => {
+      const haystack = normalizeText([product.name, product.slug, product.category, product.summary, product.description, product.problem, product.benefits.join(' '), product.modules.join(' '), product.industries.join(' '), product.faqs.map(faq => `${faq.question} ${faq.answer}`).join(' ')].join(' '));
+      let score = queryWords.filter(word => haystack.includes(word)).length;
+      if (anyIncludes(text, ['inventario', 'stock', 'bodega', 'almacen', 'existencias']) && product.slug === 'perseus-erp') score += 8;
+      if (anyIncludes(text, ['pasaje', 'pasajes', 'bus', 'buses', 'asiento', 'boleto']) && product.slug === 'venta-pasajes-buses') score += 8;
+      if (anyIncludes(text, ['sma', 'dga', 'zebbra', 'ambiental', 'datos faltantes']) && product.slug === 'plataforma-zebbra') score += 8;
+      return { product, score };
+    })
+    .filter(item => item.score > 0 && (item.score > 1 || queryWords.length <= 1))
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 3)
+    .map(item => item.product);
+
+  const productExactMatches = products.filter(product => {
+    const aliases = [
+      product.name,
+      product.slug,
+      product.name.replace(/\s+/g, ''),
+      product.slug.replace(/-/g, ' '),
+      product.slug.split('-')[0]
+    ].map(normalizeText);
+    return aliases.some(alias => alias && (clean.includes(alias) || alias.includes(clean)));
+  });
+  const focusedProducts = (productExactMatches.length ? productExactMatches : productMatches).slice(0, 3);
+
+  const blogMatches = posts
+    .map(post => {
+      const haystack = normalizeText([post.title, post.excerpt, post.category?.name, post.content].join(' '));
+      const score = clean.split(' ').filter(word => word.length > 3 && haystack.includes(word)).length;
+      return { post, score };
+    })
+    .filter(item => item.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 2)
+    .map(item => item.post);
+
+  const isGreeting = anyIncludes(text, ['hola', 'buenas', 'buen dia', 'buenas tardes', 'necesito ayuda', 'ayuda']);
+  const wantsHuman = anyIncludes(text, ['humano', 'ejecutivo', 'vendedor', 'contacto', 'llamar', 'telefono', 'whatsapp', 'hablar con alguien']);
+  const wantsQuote = anyIncludes(text, ['cotizacion', 'cotizar', 'precio', 'valor', 'cuanto cuesta', 'presupuesto', 'demo', 'reunion', 'agendar']);
+  const wantsChatbot = anyIncludes(text, ['chatbot', 'bot', 'asistente virtual', 'atencion automatica', 'whatsapp bot', 'ia conversacional']);
+  const wantsAI = anyIncludes(text, ['ia', 'inteligencia artificial', 'agente', 'rag', 'documentos', 'automatizar', 'automatizacion']);
+  const wantsAdminBlog = anyIncludes(text, ['blog', 'seo', 'contenido', 'articulos', 'noticias', 'admin', 'administrar']);
+  const wantsBI = anyIncludes(text, ['power bi', 'dashboard', 'tablero', 'indicador', 'reporte', 'datos']);
+  const wantsERP = anyIncludes(text, ['erp', 'stock', 'produccion', 'trazabilidad', 'calibracion', 'formularios', 'operacion', 'operacional']);
+  const wantsInventory = anyIncludes(text, ['inventario', 'stock', 'bodega', 'bodegas', 'almacen', 'almacenes', 'existencias', 'control de materiales']);
+  const wantsSoftware = anyIncludes(text, ['software a medida', 'sistema web', 'aplicacion web', 'plataforma', 'desarrollo', 'app interna']);
+  const wantsAutomation = anyIncludes(text, ['automatizacion', 'automatizar', 'flujo', 'workflow', 'doble digitacion', 'excel', 'correos']);
+  const wantsWebsite = anyIncludes(text, ['pagina web', 'sitio web', 'landing', 'web corporativa', 'tienda online', 'ecommerce', 'rediseño web', 'redisenar web']);
+  const wantsIntegration = anyIncludes(text, ['integracion', 'integrar', 'api', 'conectar sistemas', 'base de datos', 'sql server', 'sap', 'erp existente']);
+  const wantsSupport = anyIncludes(text, ['soporte', 'mantencion', 'error', 'problema', 'bug', 'no funciona', 'caido', 'lento']);
+  const wantsFleetDispatch = anyIncludes(text, ['flota', 'camion', 'camiones', 'despacho', 'despachos', 'ruta', 'rutas', 'conductores', 'choferes', 'gps', 'tracking', 'seguimiento vehicular', 'materiales radioactivos', 'materiales radiactivos', 'carga peligrosa', 'mercancia peligrosa', 'sustancias peligrosas']);
+  const asksCapability = anyIncludes(text, ['que haces', 'que pueden hacer', 'servicios', 'como me ayudas', 'que ofrecen', 'que venden']);
+  const asksSecurity = anyIncludes(text, ['seguridad', 'permisos', 'roles', 'usuarios', 'auditoria', 'accesos']);
+  const asksProductDetail = anyIncludes(text, ['modulo', 'modulos', 'area', 'areas', 'que hace', 'para que sirve', 'funcionalidad', 'funcionalidades', 'beneficio', 'beneficios', 'industria', 'industrias']);
+  const asksDate = anyIncludes(text, ['que dia es', 'que fecha es', 'dia es hoy', 'fecha de hoy', 'hoy que dia']);
+  const asksTime = anyIncludes(text, ['que hora es', 'hora actual', 'hora es']);
+  const saysThanks = anyIncludes(text, ['gracias', 'muchas gracias', 'te pasaste', 'vale', 'ok gracias']);
+  const saysConfused = anyIncludes(text, ['no entiendo', 'no entendi', 'explicame mejor', 'mas simple', 'en simple']);
+  const isFrustrated = anyIncludes(text, ['malo', 'pesimo', 'inutil', 'no sirve', 'penca', 'estupido', 'ordinario', 'frustrante']);
+  const asksFollowUpProduct = asksProductDetail && previousIntent === 'producto_detalle';
+
+  const actions = [];
+  if (settings.whatsappNumber) actions.push({ type: 'link', label: 'Hablar por WhatsApp', url: buildChatbotWhatsApp(settings, text) });
+  actions.push({ type: 'lead', label: 'Dejar mis datos' });
+
+  if (openAiConfigured()) {
+    try {
+      const aiAnswer = await chatbotAnswerWithAI({ message: text, state, settings, products, posts });
+      if (aiAnswer) return aiAnswer;
+    } catch (error) {
+      console.error('Chatbot IA no disponible, usando reglas locales:', error.message);
+    }
+  }
+
+  if (asksDate) {
+    return {
+      ok: true,
+      intent: previousIntent || 'casual',
+      lead: false,
+      answer: `Hoy es ${todayInChile()}.`,
+      suggestions: ['Volver a productos', 'Qué hace PERSEUS', 'Ver servicios', 'Hablar por WhatsApp'],
+      actions: settings.whatsappNumber ? [{ type: 'link', label: 'Hablar por WhatsApp', url: buildChatbotWhatsApp(settings, text) }] : [],
+      state: { intent: previousIntent || 'casual', leadHint }
+    };
+  }
+
+  if (asksTime) {
+    return {
+      ok: true,
+      intent: previousIntent || 'casual',
+      lead: false,
+      answer: `En Chile son aproximadamente las ${timeInChile()}.`,
+      suggestions: ['Volver a productos', 'Qué hace Zebbra', 'Ver servicios', 'Hablar por WhatsApp'],
+      actions: settings.whatsappNumber ? [{ type: 'link', label: 'Hablar por WhatsApp', url: buildChatbotWhatsApp(settings, text) }] : [],
+      state: { intent: previousIntent || 'casual', leadHint }
+    };
+  }
+
+  if (saysThanks) {
+    return {
+      ok: true,
+      intent: previousIntent || 'thanks',
+      lead: false,
+      answer: 'De nada. Si quieres, seguimos con una pregunta concreta sobre un software, módulos, áreas, precios referenciales o una posible demo.',
+      suggestions: ['Qué hace PERSEUS', 'Qué hace Zebbra', 'Quiero una demo', 'Hablar por WhatsApp'],
+      actions,
+      state: { intent: previousIntent || 'thanks', leadHint }
+    };
+  }
+
+  if (isFrustrated || saysConfused) {
+    return {
+      ok: true,
+      intent: previousIntent || 'clarificacion',
+      lead: false,
+      answer: 'Tienes razón, lo explico más simple. Dime el nombre del software o el problema que tienes, y te respondo directo: qué hace, módulos, áreas donde aplica y primer paso recomendado. Ejemplo: “PERSEUS módulos” o “necesito controlar reportes DGA”.',
+      suggestions: ['PERSEUS módulos', 'Zebbra reportes', 'Power BI datos', 'Hablar con humano'],
+      actions,
+      state: { intent: previousIntent || 'clarificacion', leadHint }
+    };
+  }
+
+  if (wantsInventory) {
+    const perseus = products.find(product => product.slug === 'perseus-erp');
+    const bi = products.find(product => product.slug === 'bi-powerbi');
+    const inventoryActions = [
+      perseus ? { type: 'link', label: 'Ver PERSEUS ERP', url: `/productos/${perseus.slug}` } : null,
+      ...actions
+    ].filter(Boolean);
+    return {
+      ok: true,
+      intent: 'inventario',
+      lead: false,
+      answer: [
+        'Para resolver inventario en una empresa, partiría por ordenar tres cosas: entradas/salidas, stock por bodega y trazabilidad por producto o lote.',
+        perseus ? `La opción más cercana es ${perseus.name}: usa módulos como ${(perseus.modules || []).filter(module => anyIncludes(module, ['stock', 'almacen', 'bodega', 'compras', 'produccion', 'ventas', 'reportes'])).slice(0, 6).join(', ') || 'Stock, Almacén y Bodegas, Compras, Producción y Reportes'}.` : '',
+        'El flujo recomendado sería: registrar productos y bodegas, definir responsables, controlar movimientos, conectar compras/producción/ventas y después sacar reportes de diferencias, rotación y stock crítico.',
+        bi ? 'Si ya tienes datos en planillas o sistemas separados, Power BI puede complementar con dashboards de stock, quiebres, rotación y valorización.' : ''
+      ].filter(Boolean).join('\n\n'),
+      suggestions: ['Módulos de inventario', 'Control por bodega', 'Reportes de stock', 'Quiero una demo'],
+      actions: inventoryActions,
+      state: { intent: 'inventario', leadHint: text, lastProductSlug: perseus?.slug || 'perseus-erp' }
+    };
+  }
+
+  if (wantsFleetDispatch) {
+    return {
+      ok: true,
+      intent: 'flota_despacho',
+      lead: false,
+      answer: [
+        'Para una empresa de despacho de materiales sensibles o peligrosos, no recomendaría un chatbot ni una solución genérica. Recomendaría una plataforma operacional a medida para control de flota, trazabilidad y cumplimiento.',
+        'El sistema debería cubrir: vehículos, conductores, rutas autorizadas, órdenes de despacho, estados del viaje, evidencias, incidentes, alertas, permisos, documentos del material y reportes para supervisión.',
+        'Si el material es radiactivo o regulado, lo crítico es trazabilidad completa: quién despacha, qué unidad transporta, ruta, horarios, responsable, documentación, evidencias y cierre conforme.',
+        'Como base técnica, se puede combinar software a medida con módulos tipo trazabilidad/operación de PERSEUS y tableros Power BI para monitorear viajes, tiempos, incidentes y cumplimiento.'
+      ].join('\n\n'),
+      suggestions: ['Control de flota', 'Trazabilidad de despachos', 'Alertas e incidentes', 'Quiero una demo'],
+      actions: [
+        { type: 'link', label: 'Ver productos', url: '/productos' },
+        ...actions
+      ],
+      state: { intent: 'flota_despacho', leadHint: text }
+    };
+  }
+
+  if (asksFollowUpProduct && state.lastProductSlug) {
+    const product = products.find(item => item.slug === state.lastProductSlug);
+    if (product) {
+      return {
+        ok: true,
+        intent: 'producto_detalle',
+        lead: false,
+        answer: `${productContextText(product, { detailed: true })}\n\nSi quieres, también puedo separarlo por módulos críticos para partir una implementación.`,
+        suggestions: ['Módulos críticos', 'Áreas que lo usan', 'Beneficios principales', 'Quiero una demo'],
+        actions: [{ type: 'link', label: `Ver ${product.name}`, url: `/productos/${product.slug}` }, ...actions],
+        state: { intent: 'producto_detalle', leadHint: text, lastProductSlug: product.slug }
+      };
+    }
+  }
+
+  if (isGreeting || clean === 'inicio' || clean === 'menu') {
+    return {
+      ok: true,
+      intent: 'welcome',
+      lead: false,
+      answer: settings.chatbotWelcome || 'Hola, soy el asistente de ITESICWS. ¿En qué te podemos ayudar hoy? Elige una opción o cuéntame tu caso con tus palabras.',
+      suggestions: ['Consultoría IA', 'Software a medida', 'Power BI / Datos', 'Automatización', 'Chatbot inteligente'],
+      cards: ['Consultoría IA', 'Software a medida', 'Power BI / Datos', 'Automatización', 'Chatbot inteligente', 'Hablar con humano'],
+      actions: [{ type: 'link', label: 'Ver productos', url: '/productos' }, { type: 'link', label: 'Consultoría IA', url: '/consultoria-ia' }],
+      state: { intent: 'welcome', leadHint }
+    };
+  }
+
+  if (focusedProducts.length && (asksProductDetail || productExactMatches.length)) {
+    const detailed = focusedProducts.length === 1;
+    const answer = focusedProducts.map(product => productContextText(product, { detailed })).join('\n\n');
+    const suggestions = focusedProducts.length === 1
+      ? ['Qué módulos tiene', 'Qué áreas lo usan', 'Beneficios principales', 'Quiero una demo']
+      : focusedProducts.map(product => `Ver ${product.name}`).slice(0, 3).concat(['Quiero una demo']);
+    return {
+      ok: true,
+      intent: 'producto_detalle',
+      lead: false,
+      answer: `${answer}\n\nSi me dices tu área o proceso, puedo recomendarte qué módulos aplicar primero.`,
+      suggestions,
+      actions: [{ type: 'link', label: `Ver ${focusedProducts[0].name}`, url: `/productos/${focusedProducts[0].slug}` }, ...actions],
+      state: { intent: 'producto_detalle', leadHint: text, lastProductSlug: focusedProducts[0].slug }
+    };
+  }
+
+  if (asksCapability) {
+    return {
+      ok: true,
+      intent: 'servicios',
+      lead: false,
+      answer: 'Podemos ayudarte en cuatro líneas: software a medida para procesos internos, IA aplicada a documentos y atención, dashboards/Power BI con datos confiables, e integración entre sistemas para eliminar doble digitación. Si me cuentas tu problema en una frase, te digo qué camino conviene y qué primer paso tomar.',
+      suggestions: ['Tengo un proceso en Excel', 'Quiero IA en mi empresa', 'Necesito reportes', 'Conectar sistemas'],
+      cards: ['Software a medida', 'Consultoría IA', 'Power BI / Datos', 'Automatización', 'Hablar con humano'],
+      actions: [{ type: 'link', label: 'Ver productos', url: '/productos' }, ...actions],
+      state: { intent: 'servicios', leadHint }
+    };
+  }
+
+  if (wantsSupport) {
+    return {
+      ok: true,
+      intent: 'soporte',
+      lead: false,
+      answer: 'Si necesitas soporte, lo más rápido es identificar sistema afectado, usuario o área, mensaje de error y desde cuándo ocurre. Si es una plataforma crítica, conviene escalar directo por WhatsApp con esos datos para priorizarlo.',
+      suggestions: ['Sistema caído', 'Error de usuario', 'Problema de reportes', 'Hablar por WhatsApp'],
+      actions,
+      state: { intent: 'soporte', leadHint: text }
+    };
+  }
+
+  if (wantsHuman || wantsQuote || previousIntent === 'qualification') {
+    return {
+      ok: true,
+      intent: 'lead',
+      lead: false,
+      answer: 'Perfecto. Para orientarte antes de derivarte: ¿qué proceso quieres resolver, cuántas personas lo usarían y si hoy lo manejan con Excel, correos u otro sistema? Con eso puedo recomendarte el camino correcto.',
+      suggestions: ['Lo usamos 8 personas', 'Hoy usamos Excel', 'Necesito integrar sistemas', 'Dejar mis datos'],
+      actions,
+      state: { intent: 'lead', leadHint }
+    };
+  }
+
+  if (wantsSoftware) {
+    return {
+      ok: true,
+      intent: 'software',
+      lead: false,
+      answer: 'Para software a medida conviene partir dibujando el proceso: usuarios, roles, estados, permisos, reportes e integraciones. Con eso se define un MVP rápido y después se escala sin llenar todo de parches.',
+      suggestions: ['Tengo un proceso en Excel', 'Necesito usuarios y permisos', 'Quiero una demo', 'Hablar con humano'],
+      actions: [{ type: 'link', label: 'Ver productos', url: '/productos' }, ...actions],
+      state: { intent: 'software', leadHint: text }
+    };
+  }
+
+  if (wantsWebsite) {
+    return {
+      ok: true,
+      intent: 'web',
+      lead: false,
+      answer: 'Para una página web seria no basta con que se vea bonita: debe explicar rápido la oferta, cargar bien en móvil, capturar oportunidades, medir conversiones y quedar administrable. Podemos trabajar una web corporativa, landing comercial, blog administrable o rediseño orientado a leads.',
+      suggestions: ['Web corporativa', 'Landing para leads', 'Blog administrable', 'Quiero cotizar'],
+      actions: [{ type: 'link', label: 'Ver blog', url: '/blog' }, ...actions],
+      state: { intent: 'web', leadHint: text }
+    };
+  }
+
+  if (wantsIntegration) {
+    return {
+      ok: true,
+      intent: 'integraciones',
+      lead: false,
+      answer: 'Para integrar sistemas revisamos qué plataformas deben conversar, qué datos se mueven, frecuencia, reglas de validación y trazabilidad de errores. El objetivo es dejar un flujo estable, monitoreable y sin depender de copiar datos a mano.',
+      suggestions: ['Conectar APIs', 'Integrar base de datos', 'Evitar doble digitación', 'Quiero una reunión'],
+      actions,
+      state: { intent: 'integraciones', leadHint: text }
+    };
+  }
+
+  if (wantsAutomation) {
+    return {
+      ok: true,
+      intent: 'automatizacion',
+      lead: false,
+      answer: 'Para automatización miramos tareas repetitivas, doble digitación, planillas, correos y aprobaciones. Normalmente el mejor primer paso es elegir un flujo pequeño pero doloroso y convertirlo en un proceso medible.',
+      suggestions: ['Automatizar Excel', 'Digitalizar aprobaciones', 'Integrar sistemas', 'Quiero cotizar'],
+      actions,
+      state: { intent: 'automatizacion', leadHint: text }
+    };
+  }
+
+  if (wantsChatbot) {
+    return {
+      ok: true,
+      intent: 'chatbot',
+      lead: false,
+      answer: 'Un buen chatbot no debe ser solo un formulario: debe saludar, entender intención, hacer preguntas de calificación, responder FAQs, recomendar servicios y derivar a humano cuando corresponde. Para ITESICWS se puede conectar a contenidos del sitio, productos, blog y luego escalar a una IA real con base documental o API.',
+      suggestions: ['Que responda FAQs', 'Que derive a WhatsApp', 'Conectar con documentos', 'Quiero cotizar'],
+      actions: [{ type: 'link', label: 'Ver consultoría IA', url: '/consultoria-ia' }, ...actions],
+      state: { intent: 'chatbot', leadHint: text }
+    };
+  }
+
+  if (wantsAI) {
+    return {
+      ok: true,
+      intent: 'ia',
+      lead: false,
+      answer: 'Para IA conviene partir por un caso concreto: consultas sobre documentos, automatización de reportes, clasificación de solicitudes, asistentes internos o integración con sistemas. El objetivo es que la IA trabaje con datos reales del negocio y no solo responda generalidades.',
+      suggestions: ['IA para documentos', 'Automatizar reportes', 'Asistente interno'],
+      actions: [{ type: 'link', label: 'Ver consultoría IA', url: '/consultoria-ia' }, ...actions],
+      state: { intent: 'ia', leadHint: text }
+    };
+  }
+
+  if (wantsAdminBlog) {
+    return {
+      ok: true,
+      intent: 'blog',
+      lead: false,
+      answer: 'El blog administrable sirve para publicar artículos, categorías, destacados, imágenes, FAQs y contenido SEO. Lo importante es que el admin permita escribir rápido, filtrar, guardar borradores, destacar publicaciones y medir qué temas generan leads.',
+      suggestions: ['Cómo mejorar SEO', 'Quiero publicar artículos', 'Necesito admin más cómodo'],
+      actions: [{ type: 'link', label: 'Ver blog', url: '/blog' }, { type: 'lead', label: 'Quiero mejorarlo' }],
+      state: { intent: 'blog', leadHint: text }
+    };
+  }
+
+  if (wantsBI) {
+    return {
+      ok: true,
+      intent: 'bi',
+      lead: false,
+      answer: 'En datos y Power BI podemos ayudarte a ordenar fuentes, limpiar información, crear indicadores, automatizar reportes y construir dashboards para gerencia u operación. La clave es partir por las decisiones que quieres tomar, no solo por gráficos bonitos.',
+      suggestions: ['Dashboard ejecutivo', 'Automatizar Excel', 'Conectar bases de datos'],
+      actions,
+      state: { intent: 'bi', leadHint: text }
+    };
+  }
+
+  if (wantsERP) {
+    return {
+      ok: true,
+      intent: 'operacional',
+      lead: false,
+      answer: 'Para procesos operacionales se puede construir una plataforma con usuarios, estados, trazabilidad, evidencias, reportes y alertas. Esto aplica a producción, stock, calibraciones, bitácoras, formularios y seguimiento de tareas.',
+      suggestions: ['Sistema para producción', 'Digitalizar formularios', 'Trazabilidad y reportes'],
+      actions,
+      state: { intent: 'operacional', leadHint: text }
+    };
+  }
+
+  if (asksSecurity) {
+    return {
+      ok: true,
+      intent: 'seguridad',
+      lead: false,
+      answer: 'En sistemas empresariales trabajamos con usuarios, roles, permisos por módulo, auditoría de acciones y separación de responsabilidades. Para definirlo bien hay que mapear perfiles: quién registra, quién revisa, quién aprueba y quién solo consulta reportes.',
+      suggestions: ['Roles y permisos', 'Auditoría', 'Usuarios por área', 'Software a medida'],
+      actions,
+      state: { intent: 'seguridad', leadHint: text }
+    };
+  }
+
+  if (productMatches.length) {
+    const lines = productMatches.map(product => `• ${product.name}: ${compactText(product.summary || product.description, 145)} Módulos: ${(product.modules || []).slice(0, 4).join(', ')}.`).join('\n');
+    return {
+      ok: true,
+      intent: 'producto',
+      lead: false,
+      answer: `Encontré soluciones relacionadas:\n${lines}\n\n¿Quieres que te recomiende cuál calza mejor según tu proceso?`,
+      suggestions: ['Recomiéndame una opción', 'Quiero demo', 'Hablar con el equipo'],
+      actions: [{ type: 'link', label: `Ver ${productMatches[0].name}`, url: `/productos/${productMatches[0].slug}` }, ...actions],
+      state: { intent: 'producto', leadHint: text, lastProductSlug: productMatches[0].slug }
+    };
+  }
+
+  if (blogMatches.length) {
+    const lines = blogMatches.map(post => `• ${post.title}: ${compactText(post.excerpt || post.content, 130)}`).join('\n');
+    return {
+      ok: true,
+      intent: 'blog_match',
+      lead: false,
+      answer: `Tengo contenido relacionado en el blog:\n${lines}\n\nPuedo orientarte o derivarte al equipo si quieres implementar algo parecido.`,
+      suggestions: ['Quiero implementar esto', 'Ver productos', 'Hablar por WhatsApp'],
+      actions: [{ type: 'link', label: 'Leer artículo', url: `/blog/${blogMatches[0].slug}` }, ...actions],
+      state: { intent: 'blog_match', leadHint: text }
+    };
+  }
+
+  if (isGreeting) {
+    return {
+      ok: true,
+      intent: 'welcome',
+      lead: false,
+      answer: settings.chatbotWelcome || 'Hola, soy el asistente de ITESICWS. Puedo orientarte sobre software a medida, IA, Power BI, ERP, formularios digitales, blog o demos.',
+      suggestions: ['Necesito software a medida', 'Quiero un chatbot IA', 'Quiero una demo', 'Ver productos'],
+      actions: [{ type: 'link', label: 'Ver productos', url: '/productos' }, { type: 'link', label: 'Consultoría IA', url: '/consultoria-ia' }],
+      state: { intent: 'welcome', leadHint }
+    };
+  }
+
+  return {
+    ok: true,
+    intent: 'fallback',
+    lead: false,
+    answer: 'No quiero inventarte una respuesta genérica. Para orientarte bien, dime qué necesitas resolver y en qué contexto: operación interna, página web, reportes, IA, integración de sistemas o atención de clientes. Con una frase basta y te respondo con una recomendación concreta.',
+    suggestions: ['Página web', 'Software a medida', 'Consultoría IA', 'Power BI / Datos', 'Conectar sistemas'],
+    cards: ['Consultoría IA', 'Software a medida', 'Power BI / Datos', 'Automatización', 'Chatbot inteligente', 'Hablar con humano'],
+    actions,
+    state: { intent: 'fallback', leadHint: text || leadHint }
+  };
+}
+
 function requireAuth(req, res, next) {
   if (!req.session.user) return res.redirect('/admin/login');
   next();
@@ -107,6 +745,11 @@ function requireAuth(req, res, next) {
 function splitLines(value) {
   if (Array.isArray(value)) return value;
   return (value || '').split('\n').map(x => x.trim()).filter(Boolean);
+}
+
+function chatbotQuickReplies(settings) {
+  return splitLines(settings.chatbotQuickReplies || '')
+    .slice(0, 6);
 }
 
 function splitFaqs(value) {
@@ -120,6 +763,19 @@ function splitFaqs(value) {
 
 function formatDate(date) {
   return new Intl.DateTimeFormat('es-CL', { day: '2-digit', month: 'long', year: 'numeric' }).format(new Date(date));
+}
+
+function statusLabel(status) {
+  return ({ NEW: 'Nuevo', CONTACTED: 'Contactado', IN_PROGRESS: 'En gestión', CLOSED: 'Cerrado' })[status] || status;
+}
+
+function statusClass(status) {
+  return ({ NEW: 'info', CONTACTED: 'warning', IN_PROGRESS: 'success', CLOSED: 'muted' })[status] || '';
+}
+
+function csvCell(value) {
+  const text = String(value ?? '').replace(/"/g, '""');
+  return `"${text}"`;
 }
 
 function paragraphs(value) {
@@ -258,22 +914,34 @@ app.get('/', async (req, res) => {
     prisma.product.findMany({ where: { published: true }, orderBy: [{ featured: 'desc' }, { sortOrder: 'asc' }] }),
     prisma.blogPost.findMany({ where: { published: true }, include: { category: true }, orderBy: { publishedAt: 'desc' }, take: 3 })
   ]);
-  res.render('home', { products, latestPosts });
+  res.render('home', { products, latestPosts, pageTitle: `${res.locals.settings.siteName} - Software, datos e IA para empresas`, pageDescription: res.locals.settings.heroSubtitle });
 });
 
 app.get('/productos', async (req, res) => {
   const products = await prisma.product.findMany({ where: { published: true }, orderBy: { sortOrder: 'asc' } });
-  res.render('products', { products });
+  res.render('products', { products, pageTitle: `Productos - ${res.locals.settings.siteName}`, pageDescription: 'Soluciones empresariales de software, ERP, Power BI, formularios digitales, IA e integración de sistemas.' });
 });
 
 app.get('/productos/:slug', async (req, res) => {
   const product = await prisma.product.findUnique({ where: { slug: req.params.slug }, include: { faqs: true } });
   if (!product || !product.published) return res.status(404).render('404');
-  res.render('product-detail', { product });
+  res.render('product-detail', { product, pageTitle: `${productTitle(product)} - ${res.locals.settings.siteName}`, pageDescription: product.summary || product.description });
 });
 
 app.get('/blog', async (req, res) => {
-  const selectedCategory = req.query.categoria || '';
+  const selectedCategory = String(req.query.categoria || '').trim();
+  const search = String(req.query.q || '').trim();
+  const where = {
+    published: true,
+    ...(selectedCategory ? { category: { slug: selectedCategory } } : {}),
+    ...(search ? {
+      OR: [
+        { title: { contains: search, mode: 'insensitive' } },
+        { excerpt: { contains: search, mode: 'insensitive' } },
+        { content: { contains: search, mode: 'insensitive' } }
+      ]
+    } : {})
+  };
   const [categories, featuredPost, posts] = await Promise.all([
     prisma.blogCategory.findMany({ orderBy: [{ sortOrder: 'asc' }, { name: 'asc' }] }),
     prisma.blogPost.findFirst({
@@ -282,15 +950,12 @@ app.get('/blog', async (req, res) => {
       orderBy: { publishedAt: 'desc' }
     }),
     prisma.blogPost.findMany({
-      where: {
-        published: true,
-        ...(selectedCategory ? { category: { slug: selectedCategory } } : {})
-      },
+      where,
       include: { category: true },
       orderBy: { publishedAt: 'desc' }
     })
   ]);
-  res.render('blog', { categories, featuredPost, posts, selectedCategory });
+  res.render('blog', { categories, featuredPost, posts, selectedCategory, search, pageTitle: `Blog - ${res.locals.settings.siteName}`, pageDescription: 'Noticias, guías y análisis sobre IA, software empresarial, automatización, Power BI y transformación digital.' });
 });
 
 app.get('/blog/:slug', async (req, res) => {
@@ -305,7 +970,31 @@ app.get('/blog/:slug', async (req, res) => {
     orderBy: { publishedAt: 'desc' },
     take: 3
   });
-  res.render('blog-detail', { post, relatedPosts });
+  res.render('blog-detail', { post, relatedPosts, pageTitle: `${post.title} - Blog ${res.locals.settings.siteName}`, pageDescription: post.excerpt || `Artículo de ${post.category.name}` });
+});
+
+app.get('/robots.txt', (req, res) => {
+  res.type('text/plain').send('User-agent: *\nAllow: /\nSitemap: ' + `${req.protocol}://${req.get('host')}/sitemap.xml` + '\n');
+});
+
+app.get('/sitemap.xml', async (req, res) => {
+  const base = `${req.protocol}://${req.get('host')}`;
+  const [products, posts] = await Promise.all([
+    prisma.product.findMany({ where: { published: true }, select: { slug: true, updatedAt: true } }),
+    prisma.blogPost.findMany({ where: { published: true }, select: { slug: true, updatedAt: true } })
+  ]);
+  const urls = [
+    ['/', new Date()],
+    ['/productos', new Date()],
+    ['/consultoria-ia', new Date()],
+    ['/blog', new Date()],
+    ...products.map(p => [`/productos/${p.slug}`, p.updatedAt]),
+    ...posts.map(post => [`/blog/${post.slug}`, post.updatedAt])
+  ];
+  res.type('application/xml').send(`<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urls.map(([url, updatedAt]) => `  <url><loc>${base}${url}</loc><lastmod>${new Date(updatedAt).toISOString()}</lastmod></url>`).join('\n')}
+</urlset>`);
 });
 
 app.get('/consultoria-ia', async (req, res) => {
@@ -336,6 +1025,52 @@ app.post('/leads', async (req, res) => {
   res.render('lead-thanks', { lead, whatsapp, emailResult });
 });
 
+
+
+app.post('/api/chatbot/message', async (req, res) => {
+  try {
+    const message = String(req.body.message || '').trim();
+    const state = req.body.state && typeof req.body.state === 'object' ? req.body.state : {};
+    if (!message) return res.status(400).json({ ok: false, error: 'Escribe una consulta para responderte.' });
+    const result = await chatbotAnswer(message, state);
+    res.json(result);
+  } catch (error) {
+    console.error('Chatbot error:', error);
+    res.status(500).json({ ok: false, error: 'No pude responder ahora. Puedes dejar tus datos o escribir por WhatsApp.' });
+  }
+});
+
+app.post('/api/chatbot/lead', async (req, res) => {
+  try {
+    const settings = await getSettings();
+    const name = String(req.body.name || '').trim();
+    const email = String(req.body.email || '').trim();
+    const phone = String(req.body.phone || '').trim();
+    const message = String(req.body.message || '').trim();
+    const interest = String(req.body.interest || 'Chatbot del sitio').trim();
+    if (!name || !email || !message) {
+      return res.status(400).json({ ok: false, error: 'Nombre, correo y mensaje son obligatorios.' });
+    }
+    const lead = await prisma.lead.create({ data: {
+      name,
+      company: req.body.company || null,
+      role: req.body.role || null,
+      email,
+      phone: phone || null,
+      interest,
+      message
+    }});
+    let emailResult = null;
+    if ([DeliveryMode.EMAIL, DeliveryMode.EMAIL_AND_WHATSAPP].includes(settings.leadDeliveryMode)) {
+      try { emailResult = await sendLeadEmail(settings, lead); } catch (e) { emailResult = { sent: false, reason: e.message }; }
+    }
+    const whatsapp = whatsappUrl(settings.whatsappNumber, `${settings.whatsappMessage}\n\nNombre: ${lead.name}\nEmail: ${lead.email}\nInterés: ${lead.interest}\nMensaje: ${lead.message}`);
+    res.json({ ok: true, message: 'Solicitud recibida. Te contactaremos pronto.', whatsapp, emailResult });
+  } catch (error) {
+    res.status(500).json({ ok: false, error: 'No se pudo guardar la solicitud. Intenta nuevamente.' });
+  }
+});
+
 app.get('/admin/login', (req, res) => res.render('admin/login', { error: null }));
 app.post('/admin/login', async (req, res) => {
   const user = await prisma.user.findUnique({ where: { email: req.body.email } });
@@ -346,18 +1081,44 @@ app.post('/admin/login', async (req, res) => {
 app.post('/admin/logout', (req, res) => req.session.destroy(() => res.redirect('/')));
 
 app.get('/admin', requireAuth, async (req, res) => {
-  const [productCount, leadCount, blogCount, latestLeads] = await Promise.all([
+  const since = new Date(Date.now() - 1000 * 60 * 60 * 24 * 7);
+  const [productCount, publishedProductCount, leadCount, newLeadCount, blogCount, publishedBlogCount, draftBlogCount, latestLeads, latestPosts, leadStatusGroups] = await Promise.all([
     prisma.product.count(),
+    prisma.product.count({ where: { published: true } }),
     prisma.lead.count(),
+    prisma.lead.count({ where: { createdAt: { gte: since } } }),
     prisma.blogPost.count(),
-    prisma.lead.findMany({ orderBy: { createdAt: 'desc' }, take: 5 })
+    prisma.blogPost.count({ where: { published: true } }),
+    prisma.blogPost.count({ where: { published: false } }),
+    prisma.lead.findMany({ orderBy: { createdAt: 'desc' }, take: 6 }),
+    prisma.blogPost.findMany({ include: { category: true }, orderBy: { updatedAt: 'desc' }, take: 5 }),
+    prisma.lead.groupBy({ by: ['status'], _count: { status: true } })
   ]);
-  res.render('admin/dashboard', { productCount, leadCount, blogCount, latestLeads });
+  const leadStatusCounts = leadStatusGroups.reduce((acc, item) => ({ ...acc, [item.status]: item._count.status }), {});
+  res.render('admin/dashboard', { productCount, publishedProductCount, leadCount, newLeadCount, blogCount, publishedBlogCount, draftBlogCount, latestLeads, latestPosts, leadStatusCounts });
 });
 
 app.get('/admin/products', requireAuth, async (req, res) => {
-  const products = await prisma.product.findMany({ orderBy: { sortOrder: 'asc' } });
-  res.render('admin/products', { products });
+  const q = String(req.query.q || '').trim();
+  const status = String(req.query.status || '').trim();
+  const category = String(req.query.category || '').trim();
+  const where = {
+    ...(q ? { OR: [
+      { name: { contains: q, mode: 'insensitive' } },
+      { summary: { contains: q, mode: 'insensitive' } },
+      { description: { contains: q, mode: 'insensitive' } },
+      { slug: { contains: q, mode: 'insensitive' } }
+    ] } : {}),
+    ...(status === 'published' ? { published: true } : {}),
+    ...(status === 'draft' ? { published: false } : {}),
+    ...(status === 'featured' ? { featured: true } : {}),
+    ...(category ? { category } : {})
+  };
+  const [products, categories] = await Promise.all([
+    prisma.product.findMany({ where, orderBy: [{ sortOrder: 'asc' }, { name: 'asc' }] }),
+    prisma.product.findMany({ select: { category: true }, distinct: ['category'], orderBy: { category: 'asc' } })
+  ]);
+  res.render('admin/products', { products, categories: categories.map(x => x.category).filter(Boolean), filters: { q, status, category } });
 });
 app.post('/admin/upload-image', requireAuth, upload.single('imageFile'), (req, res) => {
   if (!req.file) {
@@ -390,14 +1151,46 @@ app.post('/admin/products/:id', requireAuth, async (req, res) => {
   }});
   res.redirect('/admin/products');
 });
+app.post('/admin/products/:id/toggle-published', requireAuth, async (req, res) => {
+  const product = await prisma.product.findUnique({ where: { id: req.params.id } });
+  if (product) await prisma.product.update({ where: { id: product.id }, data: { published: !product.published } });
+  res.redirect('/admin/products');
+});
+app.post('/admin/products/:id/duplicate', requireAuth, async (req, res) => {
+  const product = await prisma.product.findUnique({ where: { id: req.params.id } });
+  if (product) {
+    const copySlug = `${product.slug}-copia-${Date.now().toString().slice(-4)}`;
+    await prisma.product.create({ data: {
+      name: `${product.name} copia`, slug: copySlug, category: product.category, summary: product.summary, description: product.description,
+      problem: product.problem, benefits: product.benefits, modules: product.modules, industries: product.industries, image: product.image,
+      cta: product.cta, published: false, featured: false, sortOrder: product.sortOrder + 1
+    }});
+  }
+  res.redirect('/admin/products');
+});
 app.post('/admin/products/:id/delete', requireAuth, async (req, res) => { await prisma.product.delete({ where: { id: req.params.id } }); res.redirect('/admin/products'); });
 
 app.get('/admin/blog', requireAuth, async (req, res) => {
+  const q = String(req.query.q || '').trim();
+  const status = String(req.query.status || '').trim();
+  const categoryId = String(req.query.categoryId || '').trim();
+  const where = {
+    ...(q ? { OR: [
+      { title: { contains: q, mode: 'insensitive' } },
+      { excerpt: { contains: q, mode: 'insensitive' } },
+      { content: { contains: q, mode: 'insensitive' } }
+    ] } : {}),
+    ...(status === 'published' ? { published: true } : {}),
+    ...(status === 'draft' ? { published: false } : {}),
+    ...(status === 'featured' ? { featured: true } : {}),
+    ...(categoryId ? { categoryId } : {})
+  };
   const [posts, categories] = await Promise.all([
-    prisma.blogPost.findMany({ include: { category: true }, orderBy: { publishedAt: 'desc' } }),
-    prisma.blogCategory.findMany({ orderBy: [{ sortOrder: 'asc' }, { name: 'asc' }] })
+    prisma.blogPost.findMany({ where, include: { category: true }, orderBy: { publishedAt: 'desc' } }),
+    prisma.blogCategory.findMany({ include: { _count: { select: { posts: true } } }, orderBy: [{ sortOrder: 'asc' }, { name: 'asc' }] })
   ]);
-  res.render('admin/blog', { posts, categories });
+  const counters = { total: await prisma.blogPost.count(), published: await prisma.blogPost.count({ where: { published: true } }), draft: await prisma.blogPost.count({ where: { published: false } }), featured: await prisma.blogPost.count({ where: { featured: true } }) };
+  res.render('admin/blog', { posts, categories, filters: { q, status, categoryId }, counters });
 });
 
 app.get('/admin/blog/new', requireAuth, async (req, res) => {
@@ -455,6 +1248,31 @@ app.post('/admin/blog/:id', requireAuth, async (req, res) => {
   res.redirect('/admin/blog');
 });
 
+app.post('/admin/blog/:id/toggle-published', requireAuth, async (req, res) => {
+  const post = await prisma.blogPost.findUnique({ where: { id: req.params.id } });
+  if (post) await prisma.blogPost.update({ where: { id: post.id }, data: { published: !post.published } });
+  res.redirect('/admin/blog');
+});
+
+app.post('/admin/blog/:id/toggle-featured', requireAuth, async (req, res) => {
+  const post = await prisma.blogPost.findUnique({ where: { id: req.params.id } });
+  if (post) await prisma.blogPost.update({ where: { id: post.id }, data: { featured: !post.featured } });
+  res.redirect('/admin/blog');
+});
+
+app.post('/admin/blog/:id/duplicate', requireAuth, async (req, res) => {
+  const post = await prisma.blogPost.findUnique({ where: { id: req.params.id }, include: { faqs: true } });
+  if (post) {
+    const copy = await prisma.blogPost.create({ data: {
+      title: `${post.title} copia`, slug: `${post.slug}-copia-${Date.now().toString().slice(-4)}`, categoryId: post.categoryId,
+      excerpt: post.excerpt, content: post.content, image: post.image, author: post.author,
+      readMinutes: post.readMinutes, published: false, featured: false, publishedAt: new Date()
+    }});
+    if (post.faqs.length) await prisma.blogFAQ.createMany({ data: post.faqs.map(f => ({ question: f.question, answer: f.answer, postId: copy.id })) });
+  }
+  res.redirect('/admin/blog');
+});
+
 app.post('/admin/blog/:id/delete', requireAuth, async (req, res) => {
   await prisma.blogPost.delete({ where: { id: req.params.id } });
   res.redirect('/admin/blog');
@@ -486,11 +1304,40 @@ app.post('/admin/blog/categories/:id/delete', requireAuth, async (req, res) => {
 });
 
 app.get('/admin/leads', requireAuth, async (req, res) => {
+  const q = String(req.query.q || '').trim();
+  const status = String(req.query.status || '').trim();
+  const where = {
+    ...(q ? { OR: [
+      { name: { contains: q, mode: 'insensitive' } },
+      { email: { contains: q, mode: 'insensitive' } },
+      { company: { contains: q, mode: 'insensitive' } },
+      { interest: { contains: q, mode: 'insensitive' } },
+      { message: { contains: q, mode: 'insensitive' } }
+    ] } : {}),
+    ...(status ? { status } : {})
+  };
+  const [leads, groups] = await Promise.all([
+    prisma.lead.findMany({ where, orderBy: { createdAt: 'desc' } }),
+    prisma.lead.groupBy({ by: ['status'], _count: { status: true } })
+  ]);
+  const counts = groups.reduce((acc, item) => ({ ...acc, [item.status]: item._count.status }), {});
+  res.render('admin/leads', { leads, filters: { q, status }, counts });
+});
+
+app.get('/admin/leads/export.csv', requireAuth, async (req, res) => {
   const leads = await prisma.lead.findMany({ orderBy: { createdAt: 'desc' } });
-  res.render('admin/leads', { leads });
+  const header = ['Fecha','Nombre','Empresa','Cargo','Email','Telefono','Interes','Estado','Mensaje','Notas'];
+  const rows = leads.map(l => [l.createdAt.toISOString(), l.name, l.company, l.role, l.email, l.phone, l.interest, l.status, l.message, l.notes].map(csvCell).join(','));
+  res.header('Content-Type', 'text/csv; charset=utf-8');
+  res.attachment('leads-itesicws.csv');
+  res.send([header.map(csvCell).join(','), ...rows].join('\n'));
 });
 app.post('/admin/leads/:id', requireAuth, async (req, res) => {
   await prisma.lead.update({ where: { id: req.params.id }, data: { status: req.body.status, notes: req.body.notes || null } });
+  res.redirect('/admin/leads');
+});
+app.post('/admin/leads/:id/delete', requireAuth, async (req, res) => {
+  await prisma.lead.delete({ where: { id: req.params.id } });
   res.redirect('/admin/leads');
 });
 
@@ -509,7 +1356,12 @@ app.post('/admin/settings', requireAuth, async (req, res) => {
     smtpFrom: req.body.smtpFrom || null,
     smtpSecure: !!req.body.smtpSecure,
     heroTitle: req.body.heroTitle,
-    heroSubtitle: req.body.heroSubtitle
+    heroSubtitle: req.body.heroSubtitle,
+    chatbotEnabled: !!req.body.chatbotEnabled,
+    chatbotTitle: req.body.chatbotTitle || 'Asistente ITESICWS',
+    chatbotWelcome: req.body.chatbotWelcome || 'Hola, soy el asistente de ITESICWS. ¿En qué te puedo ayudar?',
+    chatbotQuickReplies: req.body.chatbotQuickReplies || '',
+    chatbotFallback: req.body.chatbotFallback || ''
   }});
   res.redirect('/admin/settings?saved=1');
 });

@@ -1,14 +1,62 @@
   </main>
+  <% if (path.startsWith('/admin')) { %>
+    <script src="/js/app.js"></script>
+  </body>
+  </html>
+  <% } else { %>
   <footer class="footer">
     <div><b>ITESICWS</b><p>Software, datos e inteligencia artificial para procesos reales.</p></div>
     <div><b>Navegación</b><a href="/productos">Productos</a><a href="/consultoria-ia">Consultoría IA</a><a href="/blog">Blog</a><a href="/admin/login">Admin</a></div>
-    <div><b>Hablemos</b><a href="mailto:<%= primaryContactEmail(settings) %>"><%= primaryContactEmail(settings) %></a><a href="https://wa.me/<%= settings.whatsappNumber %>" target="_blank">WhatsApp</a></div>
+    <div><b>Hablemos</b><a href="mailto:<%= primaryContactEmail(settings) %>"><%= primaryContactEmail(settings) %></a><a href="<%= whatsappUrl(settings.whatsappNumber, settings.whatsappMessage) %>" target="_blank" rel="noopener">WhatsApp</a></div>
   </footer>
+
+  <% if (settings.chatbotEnabled) { %>
+    <section class="site-chatbot" data-chatbot aria-live="polite">
+      <div class="chatbot-nudge" data-chatbot-nudge role="button" tabindex="0" hidden>
+        <span>Asistente ITESICWS</span>
+        <b>Hola 👋 ¿En qué te podemos ayudar?</b>
+      </div>
+      <button class="chatbot-toggle" type="button" data-chatbot-toggle aria-label="Abrir asistente del sitio">
+        <span class="chatbot-toggle-dot"></span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4 4.75A3.75 3.75 0 0 1 7.75 1h8.5A3.75 3.75 0 0 1 20 4.75v7.5A3.75 3.75 0 0 1 16.25 16H10l-4.9 4.08A.75.75 0 0 1 4 19.5V16.1A3.75 3.75 0 0 1 .25 12.35v-7.6Zm3.75-2.25A2.25 2.25 0 0 0 5.5 4.75v14.1l3.74-3.11A.75.75 0 0 1 9.72 15h6.53a2.25 2.25 0 0 0 2.25-2.25v-8A2.25 2.25 0 0 0 16.25 2.5h-8.5Z"/></svg>
+      </button>
+      <div class="chatbot-panel" data-chatbot-panel hidden>
+        <div class="chatbot-head">
+          <div>
+            <b><%= settings.chatbotTitle %></b>
+            <span data-chatbot-status>Asistente inteligente en línea</span>
+          </div>
+          <button class="chatbot-close" type="button" data-chatbot-close aria-label="Cerrar chatbot">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div class="chatbot-messages" data-chatbot-messages></div>
+        <div class="chatbot-actions" data-chatbot-actions></div>
+        <div class="chatbot-quick" data-chatbot-quick></div>
+        <div class="chatbot-composer" data-chatbot-composer>
+          <textarea data-chatbot-input rows="1" placeholder="Escribe tu consulta..." aria-label="Escribe tu consulta"></textarea>
+          <button type="button" data-chatbot-send aria-label="Enviar mensaje">
+            <span>Enviar</span>
+          </button>
+        </div>
+      </div>
+      <script type="application/json" id="chatbot-config"><%- JSON.stringify({
+        title: settings.chatbotTitle,
+        welcome: settings.chatbotWelcome,
+        fallback: settings.chatbotFallback,
+        quickReplies: chatbotQuickReplies(settings),
+        whatsapp: whatsappUrl(settings.whatsappNumber, settings.whatsappMessage),
+        contactEmail: primaryContactEmail(settings)
+      }) %></script>
+    </section>
+  <% } %>
+
   <% if (settings.whatsappNumber) { %>
     <a class="whatsapp-float" href="<%= whatsappUrl(settings.whatsappNumber, settings.whatsappMessage) %>" target="_blank" rel="noopener" aria-label="Contactar por WhatsApp">
-      <img src="/images/logos/logo-whatsapp.png" alt="">
+      <img src="/images/logos/logo-whatsapp.png" alt="" aria-hidden="true">
     </a>
   <% } %>
   <script src="/js/app.js"></script>
 </body>
 </html>
+<% } %>

@@ -6,11 +6,8 @@ until node scripts/wait-db.js; do
   sleep 2
 done
 
-echo "Generando Prisma Client local fijo..."
-./node_modules/.bin/prisma generate
-
 echo "Sincronizando schema con PostgreSQL..."
-./node_modules/.bin/prisma db push --accept-data-loss
+./node_modules/.bin/prisma db push --accept-data-loss --skip-generate
 
 echo "Cargando seed inicial..."
 node prisma/seed.js

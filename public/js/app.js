@@ -94,3 +94,441 @@ function applyContactInterest() {
 }
 
 applyContactInterest();
+
+function initSiteChatbot() {
+  const shell = document.querySelector('[data-chatbot]');
+  const configEl = document.getElementById('chatbot-config');
+  if (!shell || !configEl) return;
+
+  let config = {};
+  try { config = JSON.parse(configEl.textContent || '{}'); } catch (_) { config = {}; }
+
+  const panel = shell.querySelector('[data-chatbot-panel]');
+  const toggle = shell.querySelector('[data-chatbot-toggle]');
+  const close = shell.querySelector('[data-chatbot-close]');
+  const messages = shell.querySelector('[data-chatbot-messages]');
+  const quick = shell.querySelector('[data-chatbot-quick]');
+  const form = shell.querySelector('[data-chatbot-form]');
+  const leadForm = shell.querySelector('[data-chatbot-lead-form]');
+  const status = shell.querySelector('[data-chatbot-status]');
+  const actions = shell.querySelector('[data-chatbot-actions]');
+  const leadCancel = shell.querySelector('[data-chatbot-lead-cancel]');
+  const nudge = shell.querySelector('[data-chatbot-nudge]');
+  const composerInput = shell.querySelector('[data-chatbot-input]');
+  const composerSend = shell.querySelector('[data-chatbot-send]');
+  const state = { intent: '', leadHint: '', history: [], qualified: false };
+  const storageKey = 'itesicws_chatbot_conversation_v1';
+  let conversationMessages = [];
+  let restoringConversation = false;
+  let pingPlayed = false;
+  let nudgeShown = false;
+
+  const serviceOptions = [
+    { icon: '🤖', label: 'Consultoría IA', desc: 'Agentes, documentos, automatización y asistentes internos.', prompt: 'Quiero consultoría IA para mi empresa' },
+    { icon: '🧩', label: 'Software a medida', desc: 'Sistemas web para ordenar procesos, usuarios y estados.', prompt: 'Necesito software a medida para un proceso interno' },
+    { icon: '📊', label: 'Power BI / Datos', desc: 'Dashboards, KPIs, reportes y limpieza de información.', prompt: 'Necesito ayuda con Power BI y reportes' },
+    { icon: '⚙️', label: 'Automatización', desc: 'Menos Excel, menos doble digitación y flujos más rápidos.', prompt: 'Quiero automatizar un proceso de mi empresa' },
+    { icon: '💬', label: 'Chatbot inteligente', desc: 'Atención web, FAQs, derivación y captura de oportunidades.', prompt: 'Quiero un chatbot inteligente para mi sitio web' },
+    { icon: '👤', label: 'Hablar con humano', desc: 'Derivación directa por WhatsApp o solicitud de contacto.', prompt: 'Quiero hablar con una persona del equipo' }
+  ];
+
+  const defaultSuggestions = config.quickReplies && config.quickReplies.length
+    ? config.quickReplies
+    : ['Consultoría IA', 'Software a medida', 'Power BI / Datos', 'Automatización', 'Chatbot inteligente'];
+
+  function normalize(value) {
+    return String(value || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  }
+
+  function setStatus(text) {
+    if (status) status.textContent = text || 'En línea';
+  }
+
+  function playPing() {
+    if (pingPlayed) return;
+    pingPlayed = true;
+    try {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContext) return;
+      const ctx = new AudioContext();
+      if (ctx.state === 'suspended') {
+        ctx.close?.();
+        return;
+      }
+      const now = ctx.currentTime;
+      const gain = ctx.createGain();
+      const osc = ctx.createOscillator();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(740, now);
+      osc.frequency.exponentialRampToValueAtTime(980, now + 0.09);
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.exponentialRampToValueAtTime(0.07, now + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.18);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.2);
+      setTimeout(() => ctx.close?.(), 260);
+    } catch (_) {}
+  }
+
+  function saveConversation() {
+    try {
+      sessionStorage.setItem(storageKey, JSON.stringify({
+        state,
+        messages: conversationMessages.slice(-40),
+        started: !!messages.dataset.started,
+        savedAt: new Date().toISOString()
+      }));
+    } catch (_) {}
+  }
+
+  function restoreConversation() {
+    try {
+      const saved = JSON.parse(sessionStorage.getItem(storageKey) || '{}');
+      if (!saved || !Array.isArray(saved.messages) || !saved.messages.length) return;
+      restoringConversation = true;
+      Object.assign(state, saved.state || {});
+      conversationMessages = saved.messages.slice(-40);
+      conversationMessages.forEach(item => addMessage(item.text, item.from, { skipPersist: true }));
+      messages.dataset.started = 'true';
+      setStatus(state.intent === 'lead' ? 'Listo para derivar' : 'En línea');
+      restoringConversation = false;
+    } catch (_) {
+      restoringConversation = false;
+    }
+  }
+
+  function addMessage(text, from = 'bot', options = {}) {
+    const bubble = document.createElement('div');
+    bubble.className = `chatbot-bubble ${from}`;
+    String(text || '').split('\n').filter(Boolean).forEach((line, index) => {
+      if (index) bubble.appendChild(document.createElement('br'));
+      bubble.appendChild(document.createTextNode(line));
+    });
+    messages.appendChild(bubble);
+    messages.scrollTop = messages.scrollHeight;
+    if (!options.skipPersist && !restoringConversation) {
+      conversationMessages.push({ text: String(text || ''), from, at: new Date().toISOString() });
+      saveConversation();
+    }
+    return bubble;
+  }
+
+  function addOptionChips(items = serviceOptions) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'chatbot-option-chips';
+    items.slice(0, 6).forEach(item => {
+      const chip = document.createElement('button');
+      chip.type = 'button';
+      chip.className = 'chatbot-option-chip';
+      chip.innerHTML = `<span></span><b></b>`;
+      chip.querySelector('span').textContent = item.icon || '•';
+      chip.querySelector('b').textContent = item.label;
+      chip.title = item.desc || item.label;
+      chip.addEventListener('click', () => sendUserMessage(item.prompt || item.label));
+      wrapper.appendChild(chip);
+    });
+    messages.appendChild(wrapper);
+    messages.scrollTop = messages.scrollHeight;
+  }
+
+  function showTyping() {
+    const bubble = document.createElement('div');
+    bubble.className = 'chatbot-bubble bot typing';
+    bubble.innerHTML = '<span></span><span></span><span></span>';
+    messages.appendChild(bubble);
+    messages.scrollTop = messages.scrollHeight;
+    setStatus('Escribiendo...');
+    return bubble;
+  }
+
+  function clearNode(node) {
+    if (!node) return;
+    while (node.firstChild) node.removeChild(node.firstChild);
+  }
+
+  function makeButton(label, onClick, className = '') {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = className;
+    btn.textContent = label;
+    btn.addEventListener('click', onClick);
+    return btn;
+  }
+
+  function renderSuggestions(items = defaultSuggestions) {
+    clearNode(quick);
+    const visible = items.slice(0, 6);
+    quick.hidden = !visible.length;
+    visible.forEach(label => {
+      quick.appendChild(makeButton(label, () => sendUserMessage(label)));
+    });
+  }
+
+  function resizeComposer() {
+    if (!composerInput) return;
+    composerInput.style.height = 'auto';
+    composerInput.style.height = `${Math.min(composerInput.scrollHeight, 92)}px`;
+  }
+
+  function showLeadForm(prefill = '') {
+    shell.classList.remove('lead-open');
+    const context = String(prefill || state.leadHint || '').trim();
+    addMessage('Perfecto. Para dejar tus datos y conversar con el equipo, te derivo por WhatsApp o correo. Así no llenas formularios dentro del chat.', 'bot note');
+    const items = [];
+    if (config.whatsapp) items.push({ type: 'link', label: 'Abrir WhatsApp', url: config.whatsapp });
+    if (config.contactEmail) items.push({ type: 'link', label: 'Enviar correo', url: `mailto:${config.contactEmail}?subject=Contacto desde chatbot&body=${encodeURIComponent(context || 'Hola, quiero conversar con el equipo de ITESICWS.')}` });
+    renderActions(items);
+  }
+
+  function hideLeadForm() {
+    shell.classList.remove('lead-open');
+  }
+
+  function renderActions(items = []) {
+    clearNode(actions);
+    const filtered = items.slice(0, 4);
+    actions.hidden = !filtered.length;
+    filtered.forEach(action => {
+      if (action.type === 'link' && action.url) {
+        const link = document.createElement('a');
+        link.href = action.url;
+        link.textContent = action.label || 'Abrir';
+        link.className = 'chatbot-action';
+        if (action.url.startsWith('http')) {
+          link.target = '_blank';
+          link.rel = 'noopener';
+        }
+        actions.appendChild(link);
+        return;
+      }
+      if (action.type === 'lead') {
+        actions.appendChild(makeButton(action.label || 'Dejar mis datos', () => showLeadForm(state.leadHint || state.history.map(item => item.text).join('\n')), 'chatbot-action'));
+      }
+    });
+  }
+
+  async function askBot(value) {
+    const typing = showTyping();
+    if (composerSend) composerSend.disabled = true;
+    try {
+      const response = await fetch('/api/chatbot/message', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: value, state })
+      });
+      const data = await response.json();
+      if (!response.ok || !data.ok) throw new Error(data.error || 'No pude responder ahora.');
+      typing.remove();
+      setStatus(data.intent === 'lead' ? 'Listo para derivar' : 'En línea');
+      state.intent = data.state?.intent || data.intent || state.intent;
+      state.leadHint = data.state?.leadHint || state.leadHint || value;
+      if (data.state?.lastProductSlug) state.lastProductSlug = data.state.lastProductSlug;
+      addMessage(data.answer || 'Te puedo orientar con gusto.');
+      if (data.cards) addOptionChips(serviceOptions.filter(item => data.cards.includes(item.label)));
+      renderSuggestions(data.suggestions || defaultSuggestions);
+      renderActions(data.actions || []);
+      if (data.lead) {
+        addMessage('Cuando quieras, puedo pedirte los datos mínimos para que te contacte el equipo. Mientras tanto seguimos conversando.', 'bot note');
+      }
+      saveConversation();
+    } catch (error) {
+      typing.remove();
+      setStatus('Derivación disponible');
+      addMessage(error.message || 'No pude responder ahora. Puedes dejar tus datos o escribir por WhatsApp.');
+      renderActions(config.whatsapp ? [{ type: 'link', label: 'WhatsApp', url: config.whatsapp }, { type: 'lead', label: 'Dejar mis datos' }] : [{ type: 'lead', label: 'Dejar mis datos' }]);
+    } finally {
+      if (composerSend) composerSend.disabled = false;
+    }
+  }
+
+  function sendUserMessage(value) {
+    const clean = String(value || '').trim();
+    if (!clean) return;
+    openPanel({ source: 'user' });
+    state.history.push({ from: 'user', text: clean, at: new Date().toISOString() });
+    addMessage(clean, 'user');
+    saveConversation();
+    const normalized = normalize(clean);
+    if (normalized.includes('whatsapp') && config.whatsapp) {
+      window.open(config.whatsapp, '_blank', 'noopener');
+      addMessage('Perfecto, abrí WhatsApp para que puedas conversar directo con el equipo. También puedo seguir orientándote por acá.');
+      return;
+    }
+    if (normalized.includes('dejar mis datos') || normalized.includes('contactarme') || normalized.includes('enviar solicitud')) {
+      addMessage('Claro. Te pido solo lo necesario para que el equipo pueda responderte bien.');
+      showLeadForm(state.leadHint || state.history.map(item => item.text).join('\n'));
+      return;
+    }
+    askBot(clean);
+  }
+
+  function openPanel(options = {}) {
+    panel.hidden = false;
+    panel.style.display = '';
+    shell.classList.add('open');
+    shell.classList.remove('has-nudge');
+    if (nudge) nudge.hidden = true;
+    if (!messages.dataset.started) {
+      messages.dataset.started = 'true';
+      setStatus('En línea');
+      addMessage('Hola 👋 ¿En qué te podemos ayudar?');
+      addOptionChips();
+      renderSuggestions(defaultSuggestions);
+      renderActions(config.whatsapp ? [{ type: 'link', label: 'WhatsApp', url: config.whatsapp }, { type: 'lead', label: 'Dejar mis datos' }] : [{ type: 'lead', label: 'Dejar mis datos' }]);
+    }
+  }
+
+  function closePanel() {
+    panel.hidden = true;
+    panel.style.display = 'none';
+    shell.classList.remove('open');
+    hideLeadForm();
+  }
+
+  function showNudge() {
+    if (nudgeShown || !panel.hidden || document.visibilityState !== 'visible') return;
+    nudgeShown = true;
+    shell.classList.add('has-nudge');
+    if (nudge) nudge.hidden = false;
+    playPing();
+  }
+
+  restoreConversation();
+  renderSuggestions(defaultSuggestions);
+  toggle.addEventListener('click', () => panel.hidden ? openPanel({ source: 'toggle' }) : closePanel());
+  nudge?.addEventListener('click', () => openPanel({ source: 'nudge' }));
+  nudge?.addEventListener('keydown', event => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      openPanel({ source: 'nudge' });
+    }
+  });
+  close?.addEventListener('click', event => {
+    event.preventDefault();
+    event.stopPropagation();
+    closePanel();
+  });
+  document.addEventListener('click', event => {
+    if (!event.target.closest('[data-chatbot-close]')) return;
+    event.preventDefault();
+    event.stopPropagation();
+    closePanel();
+  }, true);
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && !panel.hidden) closePanel();
+  });
+  leadCancel?.addEventListener('click', hideLeadForm);
+
+  form?.addEventListener('submit', event => {
+    event.preventDefault();
+    const input = form.elements.message;
+    const value = input.value.trim();
+    if (!value) return;
+    input.value = '';
+    sendUserMessage(value);
+  });
+
+  function submitComposer() {
+    const value = composerInput?.value.trim();
+    if (!value) return;
+    composerInput.value = '';
+    resizeComposer();
+    sendUserMessage(value);
+  }
+
+  composerSend?.addEventListener('click', submitComposer);
+  composerInput?.addEventListener('input', resizeComposer);
+  composerInput?.addEventListener('keydown', event => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      submitComposer();
+    }
+  });
+
+  leadForm?.addEventListener('submit', event => {
+    event.preventDefault();
+    const button = leadForm.querySelector('button[type="submit"]');
+    const original = button.textContent;
+    button.disabled = true;
+    button.textContent = 'Enviando...';
+    const payload = Object.fromEntries(new FormData(leadForm).entries());
+    payload.interest = state.intent ? `Chatbot - ${state.intent}` : 'Chatbot del sitio';
+    payload.message = `${payload.message || ''}\n\nContexto conversacional:\n${state.history.map(item => `- ${item.text}`).join('\n')}`.trim();
+    fetch('/api/chatbot/lead', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    })
+      .then(response => response.json().then(data => ({ ok: response.ok, data })))
+      .then(({ ok, data }) => {
+        if (!ok || !data.ok) throw new Error(data.error || 'Error');
+        addMessage(data.message || 'Solicitud recibida. Te contactaremos pronto.');
+        if (data.whatsapp) renderActions([{ type: 'link', label: 'Continuar por WhatsApp', url: data.whatsapp }]);
+        leadForm.reset();
+        hideLeadForm();
+      })
+      .catch(error => addMessage(error.message || 'No se pudo enviar. Intenta por WhatsApp o correo.'))
+      .finally(() => {
+        button.disabled = false;
+        button.textContent = original;
+      });
+  });
+
+  window.addEventListener('load', () => setTimeout(showNudge, 3000 + Math.random() * 2000), { once: true });
+}
+
+initSiteChatbot();
+
+// Mejoras UX globales: menú móvil, progreso de lectura, tabla de contenidos y copiado de enlaces.
+document.querySelectorAll('[data-mobile-nav]').forEach(button => {
+  const nav = document.querySelector('.site-header nav');
+  if (!nav) return;
+  button.addEventListener('click', () => {
+    nav.classList.toggle('open');
+    button.setAttribute('aria-expanded', nav.classList.contains('open') ? 'true' : 'false');
+  });
+  nav.querySelectorAll('a').forEach(link => link.addEventListener('click', () => nav.classList.remove('open')));
+});
+
+const readingProgress = document.querySelector('[data-reading-progress]');
+if (readingProgress) {
+  const updateProgress = () => {
+    const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+    readingProgress.style.transform = `scaleX(${Math.min(1, window.scrollY / max)})`;
+  };
+  updateProgress();
+  window.addEventListener('scroll', updateProgress, { passive: true });
+}
+
+const articleBody = document.querySelector('[data-article-body]');
+const articleToc = document.querySelector('[data-article-toc]');
+if (articleBody && articleToc) {
+  const headings = Array.from(articleBody.querySelectorAll('h2, h3')).slice(0, 8);
+  if (headings.length) {
+    headings.forEach((heading, index) => {
+      heading.id = heading.id || `seccion-${index + 1}`;
+      const link = document.createElement('a');
+      link.href = `#${heading.id}`;
+      link.textContent = heading.textContent;
+      link.className = heading.tagName.toLowerCase();
+      articleToc.appendChild(link);
+    });
+  } else {
+    articleToc.innerHTML = '<span>Lectura rápida y sin secciones extensas.</span>';
+  }
+}
+
+document.querySelectorAll('[data-copy-link]').forEach(button => {
+  button.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      const original = button.textContent;
+      button.textContent = 'Enlace copiado';
+      setTimeout(() => { button.textContent = original; }, 1800);
+    } catch (_) {
+      alert('No se pudo copiar automáticamente. Copia la URL desde el navegador.');
+    }
+  });
+});

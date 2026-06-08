@@ -7,37 +7,71 @@
     <a href="/admin/blog">Blog</a>
     <a class="active" href="/admin/leads">Leads</a>
     <a href="/admin/settings">Configuración</a>
+    <form method="post" action="/admin/logout"><button type="submit">Cerrar sesión</button></form>
   </aside>
   <div class="admin-content">
-    <div class="admin-page-head">
-      <div><span class="eyebrow">Solicitudes</span><h1>Leads</h1><p>Contactos recibidos desde el formulario del sitio. Puedes cambiar estado y dejar notas internas.</p></div>
-      <a class="btn ghost" href="/admin/settings"><span>Configurar correos</span></a>
+    <div class="admin-page-head admin-hero-panel">
+      <div><span class="eyebrow">Solicitudes</span><h1>CRM simple de leads</h1><p>Filtra contactos, cambia estado, deja notas internas, exporta CSV y responde rápido por correo o WhatsApp.</p></div>
+      <div class="admin-head-actions">
+        <a class="btn ghost" href="/admin/leads/export.csv"><span>Exportar CSV</span></a>
+        <a class="btn ghost" href="/admin/settings"><span>Configurar correos</span></a>
+      </div>
     </div>
+
+    <div class="pipeline-board lead-status-board">
+      <% ['NEW','CONTACTED','IN_PROGRESS','CLOSED'].forEach(status => { %>
+        <a href="/admin/leads?status=<%= status %>" class="pipeline-card <%= filters?.status === status ? 'active' : '' %>">
+          <span class="status-pill <%= statusClass(status) %>"><%= statusLabel(status) %></span>
+          <b><%= counts?.[status] || 0 %></b>
+        </a>
+      <% }) %>
+    </div>
+
+    <section class="settings-card">
+      <form class="form admin-form form-grid compact-grid blog-admin-filters" method="get" action="/admin/leads">
+        <input name="q" value="<%= filters?.q || '' %>" placeholder="Buscar por nombre, empresa, correo, interés o mensaje">
+        <select name="status">
+          <option value="" <%= !filters?.status ? 'selected' : '' %>>Todos los estados</option>
+          <% ['NEW','CONTACTED','IN_PROGRESS','CLOSED'].forEach(s=>{ %>
+            <option value="<%= s %>" <%= filters?.status === s ? 'selected' : '' %>><%= statusLabel(s) %></option>
+          <% }) %>
+        </select>
+        <button class="btn primary" type="submit"><span>Filtrar</span></button>
+        <a class="btn ghost" href="/admin/leads"><span>Limpiar</span></a>
+      </form>
+    </section>
+
     <div class="lead-list modern-leads">
       <% leads.forEach(l=>{ %>
-        <article class="lead-card">
+        <article class="lead-card enhanced-lead-card">
           <div class="lead-head">
-            <div><h3><%= l.name %></h3><span><%= l.interest %></span></div>
-            <span class="status-pill"><%= l.status %></span>
+            <div><h3><%= l.name %></h3><span><%= l.interest %> · <%= formatDate(l.createdAt) %></span></div>
+            <span class="status-pill <%= statusClass(l.status) %>"><%= statusLabel(l.status) %></span>
           </div>
           <div class="lead-meta">
-            <span><b>Email</b><%= l.email %></span>
+            <span><b>Email</b><a href="mailto:<%= l.email %>"><%= l.email %></a></span>
             <span><b>Teléfono</b><%= l.phone || '-' %></span>
             <span><b>Empresa</b><%= l.company || '-' %></span>
+            <span><b>Cargo</b><%= l.role || '-' %></span>
           </div>
           <p><%= l.message %></p>
+          <div class="lead-actions-row">
+            <a class="btn ghost" href="mailto:<%= l.email %>?subject=Sobre tu solicitud en ITESICWS&body=Hola <%= encodeURIComponent(l.name) %>,%0A%0AGracias por escribirnos. Te contacto por tu solicitud sobre <%= encodeURIComponent(l.interest) %>."><span>Responder email</span></a>
+            <% if (l.phone) { %><a class="btn ghost" target="_blank" rel="noopener" href="<%= whatsappUrl(l.phone, 'Hola ' + l.name + ', te contacto por tu solicitud sobre ' + l.interest + '.') %>"><span>WhatsApp</span></a><% } %>
+          </div>
           <form class="lead-form" method="post" action="/admin/leads/<%= l.id %>">
             <select name="status">
               <% ['NEW','CONTACTED','IN_PROGRESS','CLOSED'].forEach(s=>{ %>
-                <option value="<%= s %>" <%= l.status===s?'selected':'' %>><%= s %></option>
+                <option value="<%= s %>" <%= l.status===s?'selected':'' %>><%= statusLabel(s) %></option>
               <% }) %>
             </select>
             <textarea name="notes" placeholder="Notas internas"><%= l.notes || '' %></textarea>
             <button class="btn primary" type="submit"><span>Actualizar</span></button>
+            <button type="submit" formaction="/admin/leads/<%= l.id %>/delete" onclick="return confirm('¿Eliminar lead?')">Eliminar</button>
           </form>
         </article>
       <% }) %>
-      <% if (!leads.length) { %><p class="notice">Todavía no hay leads registrados.</p><% } %>
+      <% if (!leads.length) { %><p class="notice">No hay leads con esos filtros.</p><% } %>
     </div>
   </div>
 </section>

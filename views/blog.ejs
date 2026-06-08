@@ -4,7 +4,7 @@
   <div class="blog-hero-copy reveal">
     <span class="eyebrow">Blog</span>
     <h1>Noticias de IA, lanzamientos y guías para empresas.</h1>
-    <p>Un espacio editorial con novedades tecnológicas, análisis de lanzamientos, chatbots, agentes, automatización y preguntas frecuentes.</p>
+    <p>Un espacio editorial administrable con novedades tecnológicas, análisis, guías, chatbots, agentes, automatización y preguntas frecuentes.</p>
     <div class="blog-hero-actions">
       <a class="btn primary" href="#entradas"><span>Últimas entradas</span></a>
       <a class="btn ghost" href="/consultoria-ia"><span>Consultoría IA</span></a>
@@ -43,10 +43,16 @@
       <h2>Explora el contenido</h2>
     </div>
   </div>
+  <form class="blog-search-form" method="get" action="/blog">
+    <% if (selectedCategory) { %><input type="hidden" name="categoria" value="<%= selectedCategory %>"><% } %>
+    <input type="search" name="q" value="<%= search || '' %>" placeholder="Buscar artículos, IA, chatbots, Power BI...">
+    <button class="btn primary" type="submit"><span>Buscar</span></button>
+    <% if (search) { %><a class="btn ghost" href="/blog<%= selectedCategory ? '?categoria=' + selectedCategory : '' %>"><span>Limpiar</span></a><% } %>
+  </form>
   <div class="blog-category-tabs">
-    <a class="<%= !selectedCategory ? 'active' : '' %>" href="/blog">Todo</a>
+    <a class="<%= !selectedCategory ? 'active' : '' %>" href="/blog<%= search ? '?q=' + encodeURIComponent(search) : '' %>">Todo</a>
     <% categories.forEach(category => { %>
-      <a class="<%= selectedCategory === category.slug ? 'active' : '' %>" href="/blog?categoria=<%= category.slug %>"><%= category.name %></a>
+      <a class="<%= selectedCategory === category.slug ? 'active' : '' %>" href="/blog?categoria=<%= category.slug %><%= search ? '&q=' + encodeURIComponent(search) : '' %>"><%= category.name %></a>
     <% }) %>
   </div>
   <div class="blog-grid">
@@ -60,7 +66,7 @@
       </a>
     <% }) %>
     <% if (!posts.length) { %>
-      <p class="notice">Todavía no hay entradas publicadas en esta categoría.</p>
+      <p class="notice">No encontramos entradas con esos filtros. Prueba con otra búsqueda o crea una nueva publicación desde el administrador.</p>
     <% } %>
   </div>
 </section>

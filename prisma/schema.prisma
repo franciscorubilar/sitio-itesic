@@ -1,6 +1,6 @@
 generator client {
   provider      = "prisma-client-js"
-  binaryTargets = ["native", "debian-openssl-3.0.x"]
+  binaryTargets = ["native", "debian-openssl-3.0.x", "linux-arm64-openssl-3.0.x"]
 }
 
 datasource db {
@@ -131,6 +131,11 @@ model SiteSetting {
   smtpSecure          Boolean      @default(false)
   heroTitle           String       @default("Desarrollamos software. Construimos inteligencia.")
   heroSubtitle        String       @default("Creamos aplicaciones empresariales, plataformas operacionales, soluciones de integración y consultoría en inteligencia artificial para transformar procesos críticos en sistemas inteligentes, trazables y escalables.")
+  chatbotEnabled      Boolean      @default(true)
+  chatbotTitle        String       @default("Asistente ITESICWS")
+  chatbotWelcome      String       @default("Hola, soy el asistente de ITESICWS. Te puedo orientar sobre software a medida, IA, Power BI, ERP, formularios digitales y demos.")
+  chatbotQuickReplies String       @default("Quiero una demo\nNecesito un chatbot IA\nQuiero mejorar mi blog\nHablar por WhatsApp") @db.Text
+  chatbotFallback     String       @default("Puedo ayudarte con información inicial y derivarte al equipo. Déjame tu nombre, correo y mensaje, o escríbenos por WhatsApp para una respuesta más rápida.") @db.Text
   createdAt           DateTime     @default(now())
   updatedAt           DateTime     @updatedAt
 }
