@@ -115,6 +115,50 @@ function normalizeText(value) {
     .trim();
 }
 
+// Fuzzy matching: Levenshtein distance for typo tolerance
+function levenshteinDistance(a, b) {
+  const matrix = [];
+  for (let i = 0; i <= b.length; i++) {
+    matrix[i] = [i];
+  }
+  for (let j = 0; j <= a.length; j++) {
+    matrix[0][j] = j;
+  }
+  for (let i = 1; i <= b.length; i++) {
+    for (let j = 1; j <= a.length; j++) {
+      if (b.charAt(i - 1) === a.charAt(j - 1)) {
+        matrix[i][j] = matrix[i - 1][j - 1];
+      } else {
+        matrix[i][j] = Math.min(
+          matrix[i - 1][j - 1] + 1,
+          matrix[i][j - 1] + 1,
+          matrix[i - 1][j] + 1
+        );
+      }
+    }
+  }
+  return matrix[b.length][a.length];
+}
+
+function fuzzyMatch(text, term, threshold = 0.8) {
+  const clean = normalizeText(text);
+  const normalizedTerm = normalizeText(term);
+  if (!normalizedTerm) return false;
+  
+  const maxDist = Math.ceil(normalizedTerm.length * (1 - threshold));
+  const words = clean.split(' ');
+  
+  // Exact match in phrase
+  if (clean.includes(normalizedTerm)) return true;
+  
+  // Fuzzy match any word
+  for (const word of words) {
+    const dist = levenshteinDistance(word, normalizedTerm);
+    if (dist <= maxDist) return true;
+  }
+  return false;
+}
+
 function anyIncludes(text, terms) {
   const clean = normalizeText(text);
   const words = clean.split(' ').filter(Boolean);
@@ -122,9 +166,9 @@ function anyIncludes(text, terms) {
     const normalizedTerm = normalizeText(term);
     if (!normalizedTerm) return false;
     if (normalizedTerm.length <= 3 && !normalizedTerm.includes(' ')) {
-      return words.includes(normalizedTerm);
+      return words.includes(normalizedTerm) || fuzzyMatch(text, term, 0.75);
     }
-    return clean.includes(normalizedTerm);
+    return fuzzyMatch(text, term);
   });
 }
 
@@ -424,7 +468,7 @@ async function chatbotAnswer(message, state = {}) {
       intent: previousIntent || 'thanks',
       lead: false,
       answer: '¡Gracias por escribir! Estoy listo para seguir ayudándote. Si quieres, puedo darte una recomendación concreta para tu caso o derivarte con el equipo.',
-      suggestions: ['Qué hace PERSEUS', 'Qué hace Zebbra', 'Quiero una demo', 'Hablar por WhatsApp'],
+      suggestions: ['Qué hace PERSEUS', 'Qué hace Zebbra', 'Revisar una solución similar', 'Hablar por WhatsApp'],
       actions,
       state: { intent: previousIntent || 'thanks', leadHint }
     };
@@ -459,7 +503,7 @@ async function chatbotAnswer(message, state = {}) {
         'El flujo recomendado sería: registrar productos y bodegas, definir responsables, controlar movimientos, conectar compras/producción/ventas y después sacar reportes de diferencias, rotación y stock crítico.',
         bi ? 'Si ya tienes datos en planillas o sistemas separados, Power BI puede complementar con dashboards de stock, quiebres, rotación y valorización.' : ''
       ].filter(Boolean).join('\n\n'),
-      suggestions: ['Módulos de inventario', 'Control por bodega', 'Reportes de stock', 'Quiero una demo'],
+      suggestions: ['Módulos de inventario', 'Control por bodega', 'Reportes de stock', 'Ver solución similar'],
       actions: inventoryActions,
       state: { intent: 'inventario', leadHint: text, lastProductSlug: perseus?.slug || 'perseus-erp' }
     };
@@ -476,7 +520,7 @@ async function chatbotAnswer(message, state = {}) {
         'Si el material es radiactivo o regulado, lo crítico es trazabilidad completa: quién despacha, qué unidad transporta, ruta, horarios, responsable, documentación, evidencias y cierre conforme.',
         'Como base técnica, se puede combinar software a medida con módulos tipo trazabilidad/operación de PERSEUS y tableros Power BI para monitorear viajes, tiempos, incidentes y cumplimiento.'
       ].join('\n\n'),
-      suggestions: ['Control de flota', 'Trazabilidad de despachos', 'Alertas e incidentes', 'Quiero una demo'],
+      suggestions: ['Control de flota', 'Trazabilidad de despachos', 'Alertas e incidentes', 'Ver una solución similar'],
       actions: [
         { type: 'link', label: 'Ver productos', url: '/productos' },
         ...actions
@@ -493,7 +537,7 @@ async function chatbotAnswer(message, state = {}) {
         intent: 'producto_detalle',
         lead: false,
         answer: `${productContextText(product, { detailed: true })}\n\nSi quieres, también puedo separarlo por módulos críticos para partir una implementación.`,
-        suggestions: ['Módulos críticos', 'Áreas que lo usan', 'Beneficios principales', 'Quiero una demo'],
+        suggestions: ['Módulos críticos', 'Áreas que lo usan', 'Beneficios principales', 'Ver un caso similar'],
         actions: [{ type: 'link', label: `Ver ${product.name}`, url: `/productos/${product.slug}` }, ...actions],
         state: { intent: 'producto_detalle', leadHint: text, lastProductSlug: product.slug }
       };
@@ -517,8 +561,8 @@ async function chatbotAnswer(message, state = {}) {
     const detailed = focusedProducts.length === 1;
     const answer = focusedProducts.map(product => productContextText(product, { detailed })).join('\n\n');
     const suggestions = focusedProducts.length === 1
-      ? ['Qué módulos tiene', 'Qué áreas lo usan', 'Beneficios principales', 'Quiero una demo']
-      : focusedProducts.map(product => `Ver ${product.name}`).slice(0, 3).concat(['Quiero una demo']);
+      ? ['Qué módulos tiene', 'Qué áreas lo usan', 'Beneficios principales', 'Ver un caso similar']
+      : focusedProducts.map(product => `Ver ${product.name}`).slice(0, 3).concat(['Ver un caso similar']);
     return {
       ok: true,
       intent: 'producto_detalle',
@@ -573,7 +617,7 @@ async function chatbotAnswer(message, state = {}) {
       intent: 'software',
       lead: false,
       answer: 'Perfecto, vamos con una solución práctica. Primero entiendo tu proceso y quién lo usa, luego propongo una versión mínima que funcione rápido y que puedas escalar sin complicaciones.',
-      suggestions: ['Tengo un proceso en Excel', 'Necesito usuarios y permisos', 'Quiero una demo', 'Hablar con humano'],
+      suggestions: ['Tengo un proceso en Excel', 'Necesito usuarios y permisos', 'Ver una solución práctica', 'Hablar con humano'],
       actions: [{ type: 'link', label: 'Ver productos', url: '/productos' }, ...actions],
       state: { intent: 'software', leadHint: text }
     };
@@ -694,7 +738,7 @@ async function chatbotAnswer(message, state = {}) {
       intent: 'producto',
       lead: false,
       answer: `Encontré soluciones relacionadas:\n${lines}\n\n¿Quieres que te recomiende cuál calza mejor según tu proceso?`,
-      suggestions: ['Recomiéndame una opción', 'Quiero demo', 'Hablar con el equipo'],
+      suggestions: ['Recomiéndame una opción', 'Ver una solución similar', 'Hablar con el equipo'],
       actions: [{ type: 'link', label: `Ver ${productMatches[0].name}`, url: `/productos/${productMatches[0].slug}` }, ...actions],
       state: { intent: 'producto', leadHint: text, lastProductSlug: productMatches[0].slug }
     };
@@ -718,8 +762,8 @@ async function chatbotAnswer(message, state = {}) {
       ok: true,
       intent: 'welcome',
       lead: false,
-      answer: settings.chatbotWelcome || 'Hola, soy el asistente de ITESICWS. Puedo orientarte sobre software a medida, IA, Power BI, ERP, formularios digitales, blog o demos.',
-      suggestions: ['Necesito software a medida', 'Quiero un chatbot IA', 'Quiero una demo', 'Ver productos'],
+      answer: settings.chatbotWelcome || 'Hola, soy el asistente de ITESICWS. Puedo orientarte sobre software a medida, IA, Power BI, ERP, formularios digitales o soluciones operativas.',
+      suggestions: ['Necesito software a medida', 'Quiero un asistente inteligente', 'Ver una solución concreta', 'Ver productos'],
       actions: [{ type: 'link', label: 'Ver productos', url: '/productos' }, { type: 'link', label: 'Consultoría IA', url: '/consultoria-ia' }],
       state: { intent: 'welcome', leadHint }
     };
@@ -1134,7 +1178,7 @@ app.post('/admin/products', requireAuth, async (req, res) => {
     name: req.body.name, slug, category: req.body.category || 'General', summary: req.body.summary || '',
     description: req.body.description || '', problem: req.body.problem || '', image: req.body.image || '/images/product-ai.svg',
     benefits: splitLines(req.body.benefits), modules: splitLines(req.body.modules), industries: splitLines(req.body.industries),
-    cta: req.body.cta || 'Solicitar demo', published: !!req.body.published, featured: !!req.body.featured, sortOrder: Number(req.body.sortOrder || 0)
+    cta: req.body.cta || 'Solicitar consultoría', published: !!req.body.published, featured: !!req.body.featured, sortOrder: Number(req.body.sortOrder || 0)
   }});
   res.redirect('/admin/products');
 });
@@ -1147,7 +1191,7 @@ app.post('/admin/products/:id', requireAuth, async (req, res) => {
     name: req.body.name, slug: req.body.slug || slugify(req.body.name, { lower: true, strict: true }), category: req.body.category || 'General',
     summary: req.body.summary || '', description: req.body.description || '', problem: req.body.problem || '', image: req.body.image || '/images/product-ai.svg',
     benefits: splitLines(req.body.benefits), modules: splitLines(req.body.modules), industries: splitLines(req.body.industries),
-    cta: req.body.cta || 'Solicitar demo', published: !!req.body.published, featured: !!req.body.featured, sortOrder: Number(req.body.sortOrder || 0)
+    cta: req.body.cta || 'Solicitar consultoría', published: !!req.body.published, featured: !!req.body.featured, sortOrder: Number(req.body.sortOrder || 0)
   }});
   res.redirect('/admin/products');
 });

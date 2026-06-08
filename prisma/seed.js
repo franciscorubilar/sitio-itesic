@@ -237,7 +237,7 @@ Un buen chatbot IA se disena como un sistema: contenido, permisos, tono, limites
     image: '/images/blog/ai-news-timeline.png',
     publishedAt: '2026-04-18T10:00:00.000Z',
     excerpt: 'No toda noticia de IA merece implementarse. Revisa seguridad, integraciones, costos, soporte y valor operativo antes de mover procesos.',
-    content: `Cada semana aparecen herramientas nuevas de IA. Algunas son brillantes, otras son demos bonitas sin base operacional. Para una empresa, la pregunta no es si la herramienta sorprende, sino si mejora un proceso real.
+    content: `Cada semana aparecen herramientas nuevas de IA. Algunas son brillantes, otras son muestras bonitas sin base operacional. Para una empresa, la pregunta no es si la herramienta sorprende, sino si mejora un proceso real.
 
 ## Criterios de evaluacion
 

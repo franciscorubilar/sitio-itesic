@@ -168,7 +168,7 @@ No se agregaron modelos nuevos de base de datos en esta mejora, por lo que norma
 Esta versión reemplaza el capturador tipo formulario por un asistente conversacional real:
 
 - Endpoint `POST /api/chatbot/message` para responder desde el servidor.
-- Detección de intención: demo, cotización, humano, IA, chatbot, blog/SEO, Power BI, ERP/operación y productos.
+- Detección de intención: cotización/consultoría, humano, IA, chatbot, blog/SEO, Power BI, ERP/operación y productos.
 - Respuestas alimentadas por productos y artículos publicados en la base de datos.
 - Sugerencias dinámicas después de cada respuesta.
 - Acciones contextuales: ver producto, leer artículo, consultoría IA, WhatsApp o dejar datos.

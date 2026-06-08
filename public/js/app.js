@@ -70,7 +70,7 @@ const contactExamples = {
 };
 
 function contactExampleFor(interest) {
-  return contactExamples[interest] || `Ej: Me interesa conversar sobre ${interest}. Queremos revisar alcance, implementación y una posible demo.`;
+  return contactExamples[interest] || `Ej: Me interesa conversar sobre ${interest}. Queremos revisar alcance, implementación y una posible propuesta.`;
 }
 
 function applyContactInterest() {
