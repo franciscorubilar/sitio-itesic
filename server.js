@@ -423,7 +423,7 @@ async function chatbotAnswer(message, state = {}) {
       ok: true,
       intent: previousIntent || 'thanks',
       lead: false,
-      answer: '¡Gracias a ti! Estoy aquí para ayudarte cuando quieras. Si te parece, podemos seguir con una pregunta concreta sobre un software, un proceso o una demo.',
+      answer: '¡Gracias por escribir! Estoy listo para seguir ayudándote. Si quieres, puedo darte una recomendación concreta para tu caso o derivarte con el equipo.',
       suggestions: ['Qué hace PERSEUS', 'Qué hace Zebbra', 'Quiero una demo', 'Hablar por WhatsApp'],
       actions,
       state: { intent: previousIntent || 'thanks', leadHint }
@@ -535,7 +535,7 @@ async function chatbotAnswer(message, state = {}) {
       ok: true,
       intent: 'servicios',
       lead: false,
-      answer: 'Podemos ayudarte en cuatro líneas: software a medida para procesos internos, IA aplicada a documentos y atención, dashboards/Power BI con datos confiables, e integración entre sistemas para eliminar doble digitación. Si me cuentas tu problema en una frase, te digo qué camino conviene y qué primer paso tomar.',
+      answer: 'Estoy listo para ayudarte con tu caso concreto. Si me cuentas tu problema en una frase, te digo qué camino conviene y cuál es el primer paso más práctico para avanzar.',
       suggestions: ['Tengo un proceso en Excel', 'Quiero IA en mi empresa', 'Necesito reportes', 'Conectar sistemas'],
       cards: ['Software a medida', 'Consultoría IA', 'Power BI / Datos', 'Automatización', 'Hablar con humano'],
       actions: [{ type: 'link', label: 'Ver productos', url: '/productos' }, ...actions],
@@ -548,7 +548,7 @@ async function chatbotAnswer(message, state = {}) {
       ok: true,
       intent: 'soporte',
       lead: false,
-      answer: 'Si necesitas soporte, lo más rápido es identificar sistema afectado, usuario o área, mensaje de error y desde cuándo ocurre. Si es una plataforma crítica, conviene escalar directo por WhatsApp con esos datos para priorizarlo.',
+      answer: 'Si necesitas soporte, dime qué sistema está afectado, qué error ves y desde cuándo ocurre. Si quieres, te ayudo a preparar el mensaje y también puedo recomendarte la vía más rápida para priorizarlo.',
       suggestions: ['Sistema caído', 'Error de usuario', 'Problema de reportes', 'Hablar por WhatsApp'],
       actions,
       state: { intent: 'soporte', leadHint: text }
@@ -560,7 +560,7 @@ async function chatbotAnswer(message, state = {}) {
       ok: true,
       intent: 'lead',
       lead: false,
-      answer: 'Perfecto, te acompaño. Dime qué proceso quieres resolver, cuántas personas participan y si hoy lo manejan con Excel, correos u otro sistema. Así puedo recomendarte el mejor camino para tu caso.',
+      answer: 'Perfecto, te acompaño. Cuéntame qué proceso quieres resolver, cuántas personas lo usan y si hoy lo manejan con Excel, correos u otro sistema. Así te recomiendo la mejor forma de avanzar.',
       suggestions: ['Lo usamos 8 personas', 'Hoy usamos Excel', 'Necesito integrar sistemas', 'Dejar mis datos'],
       actions,
       state: { intent: 'lead', leadHint }
@@ -572,7 +572,7 @@ async function chatbotAnswer(message, state = {}) {
       ok: true,
       intent: 'software',
       lead: false,
-      answer: 'Perfecto, para software a medida lo primero es entender tu proceso y quién lo usa. Con eso se arma una solución práctica, sin sobrecargarla, y luego la escalas cuando ya funciona.',
+      answer: 'Perfecto, vamos con una solución práctica. Primero entiendo tu proceso y quién lo usa, luego propongo una versión mínima que funcione rápido y que puedas escalar sin complicaciones.',
       suggestions: ['Tengo un proceso en Excel', 'Necesito usuarios y permisos', 'Quiero una demo', 'Hablar con humano'],
       actions: [{ type: 'link', label: 'Ver productos', url: '/productos' }, ...actions],
       state: { intent: 'software', leadHint: text }
@@ -584,7 +584,7 @@ async function chatbotAnswer(message, state = {}) {
       ok: true,
       intent: 'web',
       lead: false,
-      answer: 'Para una página web seria no basta con que se vea bonita: debe explicar rápido la oferta, cargar bien en móvil, capturar oportunidades, medir conversiones y quedar administrable. Podemos trabajar una web corporativa, landing comercial, blog administrable o rediseño orientado a leads.',
+      answer: 'Para una web efectiva no basta con que se vea bien: debe generar consultas, funcionar rápido en móvil y ser fácil de actualizar. Puedo ayudarte a definir un sitio claro y orientado a clientes, no solo a diseño.',
       suggestions: ['Web corporativa', 'Landing para leads', 'Blog administrable', 'Quiero cotizar'],
       actions: [{ type: 'link', label: 'Ver blog', url: '/blog' }, ...actions],
       state: { intent: 'web', leadHint: text }
@@ -608,7 +608,7 @@ async function chatbotAnswer(message, state = {}) {
       ok: true,
       intent: 'automatizacion',
       lead: false,
-      answer: 'Para automatización miramos tareas repetitivas, doble digitación, planillas, correos y aprobaciones. Normalmente el mejor primer paso es elegir un flujo pequeño pero doloroso y convertirlo en un proceso medible.',
+      answer: 'Para automatizar bien conviene empezar por una tarea que te quite tiempo todos los días. Dime qué parte de tu trabajo es lenta y te digo qué automatizar primero para que se note rápido.',
       suggestions: ['Automatizar Excel', 'Digitalizar aprobaciones', 'Integrar sistemas', 'Quiero cotizar'],
       actions,
       state: { intent: 'automatizacion', leadHint: text }
@@ -620,7 +620,7 @@ async function chatbotAnswer(message, state = {}) {
       ok: true,
       intent: 'chatbot',
       lead: false,
-      answer: 'Un chatbot útil es un asistente que responde directo y deriva cuando es necesario. Empieza por lo básico: saludo, preguntas claras y una ruta para resolver tu necesidad. Aquí podemos hacerlo con el contenido del sitio y luego ampliar con datos propios.',
+      answer: 'Un chatbot casi siempre funciona mejor si se diseña como un asistente. Debe responder claro, entender lo que buscas y derivar al equipo cuando haga falta. Aquí podemos partir con el contenido del sitio y luego hacerlo más inteligente con tus datos.',
       suggestions: ['Que responda FAQs', 'Que derive a WhatsApp', 'Conectar con documentos', 'Quiero cotizar'],
       actions: [{ type: 'link', label: 'Ver consultoría IA', url: '/consultoria-ia' }, ...actions],
       state: { intent: 'chatbot', leadHint: text }
@@ -632,7 +632,7 @@ async function chatbotAnswer(message, state = {}) {
       ok: true,
       intent: 'ia',
       lead: false,
-      answer: 'Para IA conviene partir por un caso concreto: consultas sobre documentos, automatización de reportes, clasificación de solicitudes, asistentes internos o integración con sistemas. El objetivo es que la IA trabaje con datos reales del negocio y no solo responda generalidades.',
+      answer: 'Para IA prefiero hablar de un caso real y práctico. Dime qué proceso o documento quieres mejorar y te siento una ruta clara para que no quede en teoría.',
       suggestions: ['IA para documentos', 'Automatizar reportes', 'Asistente interno'],
       actions: [{ type: 'link', label: 'Ver consultoría IA', url: '/consultoria-ia' }, ...actions],
       state: { intent: 'ia', leadHint: text }
@@ -656,7 +656,7 @@ async function chatbotAnswer(message, state = {}) {
       ok: true,
       intent: 'bi',
       lead: false,
-      answer: 'En datos y Power BI podemos ayudarte a ordenar fuentes, limpiar información, crear indicadores, automatizar reportes y construir dashboards para gerencia u operación. La clave es partir por las decisiones que quieres tomar, no solo por gráficos bonitos.',
+      answer: 'Si tienes datos, te ayudo a convertirlos en decisiones claras y no en gráficos bonitos. Cuéntame qué necesitas ver con urgencia y te sugiero el dashboard más útil para empezar.',
       suggestions: ['Dashboard ejecutivo', 'Automatizar Excel', 'Conectar bases de datos'],
       actions,
       state: { intent: 'bi', leadHint: text }
@@ -729,7 +729,7 @@ async function chatbotAnswer(message, state = {}) {
     ok: true,
     intent: 'fallback',
     lead: false,
-    answer: 'Prefiero darte algo útil. Cuéntame con palabras sencillas qué quieres mejorar, qué te complica o qué resultado esperas. Yo te ayudo a definir el mejor camino.',
+    answer: 'No quiero darte una respuesta genérica. Cuéntame con palabras simples qué quieres mejorar, qué te complica o qué resultado buscas, y te doy una sugerencia práctica y clara.',
     suggestions: ['Página web', 'Software a medida', 'Consultoría IA', 'Power BI / Datos', 'Conectar sistemas'],
     cards: ['Consultoría IA', 'Software a medida', 'Power BI / Datos', 'Automatización', 'Chatbot inteligente', 'Hablar con humano'],
     actions,

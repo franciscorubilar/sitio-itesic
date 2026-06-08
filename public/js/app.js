@@ -275,7 +275,7 @@ function initSiteChatbot() {
   function showLeadForm(prefill = '') {
     shell.classList.remove('lead-open');
     const context = String(prefill || state.leadHint || '').trim();
-    addMessage('Perfecto, con esto puedo entregar tu mensaje al equipo y avanzar rápido. Si prefieres, sigo aquí para orientarte antes de derivarte.', 'bot note');
+    addMessage('Perfecto, con esto puedo entregar tu mensaje al equipo y avanzar rápido. Si quieres, también sigo aquí para ayudarte a preparar tu consulta antes de derivarte.', 'bot note');
     const items = [];
     if (config.whatsapp) items.push({ type: 'link', label: 'Abrir WhatsApp', url: config.whatsapp });
     if (config.contactEmail) items.push({ type: 'link', label: 'Enviar correo', url: `mailto:${config.contactEmail}?subject=Contacto desde chatbot&body=${encodeURIComponent(context || 'Hola, quiero conversar con el equipo de ITESICWS.')}` });
@@ -336,7 +336,7 @@ function initSiteChatbot() {
     } catch (error) {
       typing.remove();
       setStatus('Derivación disponible');
-      addMessage(error.message || 'Ups, no pude responder ahora. Te dejo opciones para seguir y puedo derivarte al equipo si quieres.');
+      addMessage(error.message || 'Vaya, se me cortó la respuesta. Intentemos de nuevo o te paso directo al equipo si prefieres.');
       renderActions(config.whatsapp ? [{ type: 'link', label: 'WhatsApp', url: config.whatsapp }, { type: 'lead', label: 'Dejar mis datos' }] : [{ type: 'lead', label: 'Dejar mis datos' }]);
     } finally {
       if (composerSend) composerSend.disabled = false;
@@ -353,7 +353,7 @@ function initSiteChatbot() {
     const normalized = normalize(clean);
     if (normalized.includes('whatsapp') && config.whatsapp) {
       window.open(config.whatsapp, '_blank', 'noopener');
-      addMessage('Perfecto, abrí WhatsApp para que puedas conversar directo con el equipo. También puedo seguir orientándote por acá.');
+      addMessage('Genial, abrí WhatsApp para que puedas hablar con el equipo en vivo. Si quieres, sigo aquí para ayudarte a preparar la consulta.');
       return;
     }
     if (normalized.includes('dejar mis datos') || normalized.includes('contactarme') || normalized.includes('enviar solicitud')) {
@@ -373,7 +373,7 @@ function initSiteChatbot() {
     if (!messages.dataset.started) {
       messages.dataset.started = 'true';
       setStatus('En línea');
-      addMessage('¡Hola 👋 Soy tu asistente del sitio. Estoy aquí para ayudarte con lo que necesitas: sistemas, datos, IA o contacto directo. Cuéntame tu caso y te acompaño paso a paso.');
+      addMessage('¡Hola 👋 Soy tu asistente amigo de ITESICWS. Estoy para ayudarte con tu consulta, paso a paso y sin tecnicismos. Cuéntame qué necesitas y vamos directo al punto.');
       addOptionChips();
       renderSuggestions(defaultSuggestions);
       renderActions(config.whatsapp ? [{ type: 'link', label: 'WhatsApp', url: config.whatsapp }, { type: 'lead', label: 'Dejar mis datos' }] : [{ type: 'lead', label: 'Dejar mis datos' }]);
