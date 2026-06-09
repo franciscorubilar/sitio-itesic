@@ -33,6 +33,17 @@
         <div class="chatbot-messages" data-chatbot-messages></div>
         <div class="chatbot-actions" data-chatbot-actions></div>
         <div class="chatbot-quick" data-chatbot-quick></div>
+        <form class="chatbot-lead-form" data-chatbot-lead-form hidden>
+          <div class="chatbot-lead-title">Dejar mis datos de contacto</div>
+          <input type="text" name="name" placeholder="Tu nombre *" required>
+          <input type="email" name="email" placeholder="Tu correo electrónico *" required>
+          <input type="tel" name="phone" placeholder="Tu teléfono (opcional)">
+          <textarea name="message" placeholder="¿En qué te podemos ayudar? *" required></textarea>
+          <div class="chatbot-lead-actions">
+            <button type="submit">Enviar solicitud</button>
+            <button type="button" class="ghost" data-chatbot-lead-cancel>Cancelar</button>
+          </div>
+        </form>
         <div class="chatbot-composer" data-chatbot-composer>
           <textarea data-chatbot-input rows="1" placeholder="Escribe tu consulta..." aria-label="Escribe tu consulta"></textarea>
           <button type="button" data-chatbot-send aria-label="Enviar mensaje">

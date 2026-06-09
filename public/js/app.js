@@ -273,17 +273,22 @@ function initSiteChatbot() {
   }
 
   function showLeadForm(prefill = '') {
-    shell.classList.remove('lead-open');
-    const context = String(prefill || state.leadHint || '').trim();
-    addMessage('Perfecto, con esto puedo entregar tu mensaje al equipo y avanzar rápido. Si quieres, también sigo aquí para ayudarte a preparar tu consulta antes de derivarte.', 'bot note');
-    const items = [];
-    if (config.whatsapp) items.push({ type: 'link', label: 'Abrir WhatsApp', url: config.whatsapp });
-    if (config.contactEmail) items.push({ type: 'link', label: 'Enviar correo', url: `mailto:${config.contactEmail}?subject=Contacto desde chatbot&body=${encodeURIComponent(context || 'Hola, quiero conversar con el equipo de ITESICWS.')}` });
-    renderActions(items);
+    if (leadForm) {
+      leadForm.hidden = false;
+      const messageInput = leadForm.querySelector('[name="message"]');
+      if (messageInput) {
+        messageInput.value = prefill || state.leadHint || '';
+      }
+    }
+    shell.classList.add('lead-open');
+    addMessage('Perfecto, con esto puedo entregar tu mensaje al equipo y avanzar rápido. Por favor, ingresa tus datos en el formulario.', 'bot note');
   }
 
   function hideLeadForm() {
     shell.classList.remove('lead-open');
+    if (leadForm) {
+      leadForm.hidden = true;
+    }
   }
 
   function renderActions(items = []) {
@@ -351,14 +356,14 @@ function initSiteChatbot() {
     addMessage(clean, 'user');
     saveConversation();
     const normalized = normalize(clean);
-    if (normalized.includes('whatsapp') && config.whatsapp) {
-      window.open(config.whatsapp, '_blank', 'noopener');
-      addMessage('Genial, abrí WhatsApp para que puedas hablar con el equipo en vivo. Si quieres, sigo aquí para ayudarte a preparar la consulta.');
-      return;
-    }
-    if (normalized.includes('dejar mis datos') || normalized.includes('contactarme') || normalized.includes('enviar solicitud')) {
+    if ((normalized === 'dejar mis datos' || normalized === 'dar mis datos' || normalized === 'dejar datos')) {
       addMessage('Claro. Te pido solo lo necesario para que el equipo pueda responderte bien.');
       showLeadForm(state.leadHint || state.history.map(item => item.text).join('\n'));
+      return;
+    }
+    if (normalized === 'whatsapp' && config.whatsapp) {
+      window.open(config.whatsapp, '_blank', 'noopener');
+      addMessage('Genial, abrí WhatsApp para que puedas hablar con el equipo en vivo. Si quieres, sigo aquí para ayudarte a preparar la consulta.');
       return;
     }
     askBot(clean);

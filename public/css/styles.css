@@ -2293,8 +2293,9 @@ nav a.active,nav a:hover{color:var(--primary)}
   min-height:110px;
 }
 .site-chatbot.lead-open .chatbot-quick,
-.site-chatbot.lead-open .chatbot-actions{
-  display:none;
+.site-chatbot.lead-open .chatbot-actions,
+.site-chatbot.lead-open .chatbot-composer{
+  display:none !important;
 }
 .whatsapp-float{
   z-index:89;
