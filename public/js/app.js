@@ -537,3 +537,153 @@ document.querySelectorAll('[data-copy-link]').forEach(button => {
     }
   });
 });
+
+function initProductUsecases() {
+  const usecaseLayout = document.querySelector('.usecase-layout');
+  if (!usecaseLayout) return;
+
+  const conceptFlow = usecaseLayout.querySelector('.concept-flow');
+  if (!conceptFlow) return;
+  const conceptSteps = Array.from(conceptFlow.querySelectorAll('ol li'));
+  const cards = usecaseLayout.querySelectorAll('.usecase-card');
+
+  // Normalize string for fuzzy matching
+  function cleanStr(str) {
+    return str.toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9ñ]/g, '');
+  }
+
+  // Find if two texts share any matching keyword of length >= 4
+  function isMatch(textA, textB) {
+    const cleanA = cleanStr(textA);
+    const cleanB = cleanStr(textB);
+    
+    // Exact or contains match
+    if (cleanA.includes(cleanB) || cleanB.includes(cleanA)) return true;
+    
+    // Word list match (if at least one word of length >= 4 matches)
+    const wordsA = textA.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').split(/\s+/).filter(w => w.length >= 4);
+    const wordsB = textB.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').split(/\s+/).filter(w => w.length >= 4);
+    
+    return wordsA.some(wa => wordsB.some(wb => wa.includes(wb) || wb.includes(wa)));
+  }
+
+  function highlightSteps(targetSteps = []) {
+    if (targetSteps.length === 0) {
+      conceptFlow.classList.remove('has-active');
+      conceptSteps.forEach(li => {
+        li.classList.remove('highlighted', 'dimmed');
+      });
+      return;
+    }
+
+    conceptFlow.classList.add('has-active');
+    conceptSteps.forEach(li => {
+      const liText = li.textContent.trim();
+      const match = targetSteps.some(stepText => isMatch(liText, stepText));
+      if (match) {
+        li.classList.add('highlighted');
+        li.classList.remove('dimmed');
+      } else {
+        li.classList.add('dimmed');
+        li.classList.remove('highlighted');
+      }
+    });
+  }
+
+  cards.forEach(card => {
+    const cardSteps = Array.from(card.querySelectorAll('.usecase-mini-flow b')).map(b => b.textContent.trim());
+
+    // When hovering a usecase card, highlight all its steps
+    card.addEventListener('mouseenter', () => {
+      highlightSteps(cardSteps);
+    });
+
+    card.addEventListener('mouseleave', () => {
+      highlightSteps([]);
+    });
+
+    // Also support hover over individual steps in the mini flow to focus on that step only
+    card.querySelectorAll('.usecase-mini-flow b').forEach(b => {
+      const stepText = b.textContent.trim();
+      
+      b.addEventListener('mouseenter', (e) => {
+        e.stopPropagation(); // prevent card level hover
+        highlightSteps([stepText]);
+      });
+      
+      b.addEventListener('mouseleave', (e) => {
+        e.stopPropagation();
+        highlightSteps(cardSteps); // return to card level highlight
+      });
+    });
+  });
+
+  // Bidirectional interaction: hover over concept flow step highlights cards
+  conceptSteps.forEach(li => {
+    const liText = li.textContent.trim();
+
+    li.addEventListener('mouseenter', () => {
+      // Dim other concept flow steps
+      conceptFlow.classList.add('has-active');
+      conceptSteps.forEach(item => {
+        if (item === li) {
+          item.classList.add('highlighted');
+          item.classList.remove('dimmed');
+        } else {
+          item.classList.add('dimmed');
+          item.classList.remove('highlighted');
+        }
+      });
+
+      // Highlight matching steps inside usecase cards
+      cards.forEach(card => {
+        const flowBubbles = Array.from(card.querySelectorAll('.usecase-mini-flow b'));
+        const hasMatch = flowBubbles.some(b => isMatch(liText, b.textContent.trim()));
+        if (hasMatch) {
+          card.style.transform = 'translateY(-4px)';
+          card.style.borderColor = 'var(--primary)';
+          card.style.boxShadow = 'var(--heavy)';
+          
+          flowBubbles.forEach(b => {
+            if (isMatch(liText, b.textContent.trim())) {
+              b.style.background = 'var(--primary)';
+              b.style.color = 'white';
+              b.style.transform = 'scale(1.08)';
+            }
+          });
+        } else {
+          card.style.opacity = '0.4';
+          card.style.transform = 'scale(0.98)';
+        }
+      });
+    });
+
+    li.addEventListener('mouseleave', () => {
+      // Reset concept flow steps
+      conceptFlow.classList.remove('has-active');
+      conceptSteps.forEach(item => {
+        item.classList.remove('highlighted', 'dimmed');
+      });
+
+      // Reset cards
+      cards.forEach(card => {
+        card.style.transform = '';
+        card.style.borderColor = '';
+        card.style.boxShadow = '';
+        card.style.opacity = '';
+        
+        card.querySelectorAll('.usecase-mini-flow b').forEach(b => {
+          b.style.background = '';
+          b.style.color = '';
+          b.style.transform = '';
+        });
+      });
+    });
+  });
+}
+
+// Initialize usecase diagrams interaction
+initProductUsecases();

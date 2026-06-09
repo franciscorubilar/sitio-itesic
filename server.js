@@ -567,14 +567,14 @@ async function chatbotAnswerWithAI({ message, state, settings, products, posts }
 
     const systemPrompt = [
       'Eres el asistente comercial y técnico de ITESICWS.',
-      'Responde en español chileno, claro, útil y coherente.',
-      'No vendas humo. Si el usuario pregunta algo casual, responde casual y breve.',
-      'Si pregunta por una necesidad empresarial, recomienda una ruta concreta.',
-      'Si no existe un software exacto, di que conviene software a medida.',
+      'Responde en español chileno, directo, práctico y sin rodeos.',
+      'REGLA CRÍTICA: Si el usuario describe un caso de negocio real (empresa, proceso, industria), responde SIEMPRE con: (1) diagnóstico en 1-2 líneas, (2) qué producto o solución ITESICWS aplica mejor, (3) qué módulos o capacidades concretas resolver primero. NUNCA respondas con artículos del blog.',
+      'REGLA CRÍTICA: Si el usuario pregunta cómo contactar, comunicarse o hablar con alguien, SIEMPRE ofrece WhatsApp y el formulario de contacto. Nunca respondas con blog ni con preguntas genéricas.',
+      'Si no existe un producto exacto para la necesidad, recomienda software a medida y explica brevemente qué cubriría.',
       'No inventes certificaciones, normas legales ni precios.',
-      'Sé amigable y directo.',
-      'Si el usuario plantea un caso específico, responde con diagnóstico, recomendación y módulos concretos.',
-      'Usa el contexto de productos, módulos, beneficios, industrias, FAQs y blog. No ignores el contexto.',
+      'Si el caso es manufactura, madera, producción industrial, importación o exportación: recomienda PERSEUS ERP o software a medida con trazabilidad de lotes, stock, despacho y reportes.',
+      'Si pregunta por IA o automatización: sé específico, no filosófico. Di qué proceso exacto se puede automatizar con IA en su caso.',
+      'Nunca uses el blog para responder necesidades de negocio. El blog es solo referencia informativa.',
       'Devuelve SOLO JSON válido, sin markdown, con estas claves: answer, suggestions, actions, intent, leadHint, lastProductSlug.',
       'actions debe ser un arreglo de objetos {type:"link", label, url} o {type:"lead", label}.'
     ].join('\n');
@@ -693,13 +693,13 @@ async function chatbotAnswer(message, state = {}) {
     .map(item => item.post);
 
   const isGreeting = anyIncludes(text, ['hola', 'buenas', 'buen dia', 'buenas tardes', 'necesito ayuda', 'ayuda']);
-  const wantsHuman = anyIncludes(text, ['humano', 'ejecutivo', 'vendedor', 'contacto', 'llamar', 'telefono', 'whatsapp', 'hablar con alguien']);
+  const wantsHuman = anyIncludes(text, ['humano', 'ejecutivo', 'vendedor', 'contacto', 'llamar', 'telefono', 'whatsapp', 'hablar con alguien', 'comunicarme', 'comunico', 'contactarme', 'hablar con ustedes', 'comunicarme con ustedes', 'como los contacto', 'como me comunico', 'como los llamo', 'hablar con una persona', 'un asesor', 'correo']);
   const wantsQuote = anyIncludes(text, ['cotizacion', 'cotizar', 'precio', 'valor', 'cuanto cuesta', 'presupuesto', 'demo', 'reunion', 'agendar']);
   const wantsChatbot = anyIncludes(text, ['chatbot', 'bot', 'asistente virtual', 'atencion automatica', 'whatsapp bot', 'ia conversacional']);
   const wantsAI = anyIncludes(text, ['ia', 'inteligencia artificial', 'agente', 'rag', 'documentos', 'automatizar', 'automatizacion']);
   const wantsAdminBlog = anyIncludes(text, ['blog', 'seo', 'contenido', 'articulos', 'noticias', 'admin', 'administrar']);
   const wantsBI = anyIncludes(text, ['power bi', 'dashboard', 'tablero', 'indicador', 'reporte', 'datos']);
-  const wantsERP = anyIncludes(text, ['erp', 'stock', 'produccion', 'trazabilidad', 'calibracion', 'formularios', 'operacion', 'operacional']);
+  const wantsERP = anyIncludes(text, ['erp', 'stock', 'produccion', 'trazabilidad', 'calibracion', 'formularios', 'operacion', 'operacional', 'fabricacion', 'manufactura', 'manufactur', 'madera', 'maderera', 'tablero', 'tableros', 'planta', 'lote', 'lotes', 'control de produccion', 'importacion', 'exportacion', 'despacho internacional', 'planta productiva', 'proceso productivo']);
   const wantsInventory = anyIncludes(text, ['inventario', 'stock', 'bodega', 'bodegas', 'almacen', 'almacenes', 'existencias', 'control de materiales']);
   const wantsSoftware = anyIncludes(text, ['software a medida', 'sistema web', 'aplicacion web', 'plataforma', 'desarrollo', 'app interna']);
   const wantsAutomation = anyIncludes(text, ['automatizacion', 'automatizar', 'flujo', 'workflow', 'doble digitacion', 'excel', 'correos']);
@@ -890,15 +890,33 @@ async function chatbotAnswer(message, state = {}) {
     };
   }
 
-  if (wantsHuman || wantsQuote || previousIntent === 'qualification') {
+  if (wantsHuman) {
+    const whatsappUrl = settings.whatsappNumber
+      ? `https://wa.me/${String(settings.whatsappNumber).replace(/[^0-9]/g, '')}`
+      : 'https://wa.me/56900000000';
     return {
       ok: true,
-      intent: 'lead',
+      intent: 'contacto',
       lead: false,
-      answer: 'Perfecto, te acompaño. Cuéntame qué proceso quieres resolver, cuántas personas lo usan y si hoy lo manejan con Excel, correos u otro sistema. Así te recomiendo la mejor forma de avanzar.',
-      suggestions: ['Lo usamos 8 personas', 'Hoy usamos Excel', 'Necesito integrar sistemas', 'Dejar mis datos'],
+      answer: 'Para hablar directamente con el equipo tienes dos opciones:\n\n📱 **WhatsApp**: respuesta rápida, te atienden en horario comercial.\n📋 **Formulario**: déjanos tus datos y te llamamos o escribimos.',
+      suggestions: ['Dejar mis datos', 'Tengo una pregunta técnica', 'Quiero una cotización'],
+      actions: [
+        { type: 'link', label: '💬 Ir a WhatsApp', url: whatsappUrl },
+        { type: 'lead', label: '📋 Dejar mis datos' }
+      ],
+      state: { intent: 'contacto', leadHint }
+    };
+  }
+
+  if (wantsQuote || previousIntent === 'qualification') {
+    return {
+      ok: true,
+      intent: 'cotizacion',
+      lead: false,
+      answer: 'Para darte una cotización útil necesito entender bien tu caso. Cuéntame:\n\n1. ¿Qué proceso o problema quieres resolver?\n2. ¿Cuántas personas lo usarían?\n3. ¿Hoy cómo lo manejas (Excel, papel, otro sistema)?\n\nCon eso puedo orientarte mucho mejor y darte un estimado real.',
+      suggestions: ['Lo usamos 5 personas', 'Hoy usamos Excel', 'Tengo varios procesos', 'Dejar mis datos'],
       actions,
-      state: { intent: 'lead', leadHint }
+      state: { intent: 'cotizacion', leadHint }
     };
   }
 
@@ -963,12 +981,32 @@ async function chatbotAnswer(message, state = {}) {
   }
 
   if (wantsAI) {
+    // Try to detect specific AI use case from the message
+    const aiUseCases = [];
+    if (anyIncludes(text, ['documento', 'documentos', 'pdf', 'contrato', 'contratos', 'ficha', 'informe'])) {
+      aiUseCases.push('Extracción y clasificación automática de documentos (contratos, informes, fichas) con IA que lee, resume y extrae datos clave.');
+    }
+    if (anyIncludes(text, ['atencion', 'cliente', 'clientes', 'consultas', 'preguntas frecuentes', 'soporte'])) {
+      aiUseCases.push('Chatbot inteligente para atención de clientes que responde 24/7 con contexto real de tu empresa.');
+    }
+    if (anyIncludes(text, ['reporte', 'reportes', 'datos', 'analisis', 'excel', 'planilla'])) {
+      aiUseCases.push('IA para analizar planillas y reportes automáticamente: detecta patrones, anomalías y genera resúmenes ejecutivos.');
+    }
+    if (anyIncludes(text, ['email', 'correo', 'correos', 'responder', 'clasificar'])) {
+      aiUseCases.push('Clasificación y respuesta automática de correos según prioridad, tipo de consulta y área responsable.');
+    }
+    if (anyIncludes(text, ['proceso', 'flujo', 'aprobacion', 'formulario', 'digitacion'])) {
+      aiUseCases.push('Automatización de flujos: digitalizar formularios, eliminar doble digitación y automatizar aprobaciones.');
+    }
+    const aiAnswer = aiUseCases.length
+      ? `Para tu caso, la IA puede aplicarse de forma concreta:\n\n${aiUseCases.map(uc => `• ${uc}`).join('\n\n')}\n\nEl primer paso es siempre mapear el proceso exacto y los datos que ya tienes. ¿Quieres que avancemos en eso?`
+      : 'Con IA se pueden automatizar cosas muy concretas: leer documentos, responder clientes, clasificar correos, analizar planillas y eliminar trabajo repetitivo. La clave es partir por un proceso específico que hoy te quite tiempo. ¿Cuál sería el primero?';
     return {
       ok: true,
       intent: 'ia',
       lead: false,
-      answer: 'Para IA prefiero hablar de un caso real y práctico. Dime qué proceso o documento quieres mejorar y te siento una ruta clara para que no quede en teoría.',
-      suggestions: ['IA para documentos', 'Automatizar reportes', 'Asistente interno'],
+      answer: aiAnswer,
+      suggestions: ['IA para documentos', 'Chatbot para clientes', 'Automatizar reportes', 'Asistente interno con mis datos'],
       actions: [{ type: 'link', label: 'Ver consultoría IA', url: '/consultoria-ia' }, ...actions],
       state: { intent: 'ia', leadHint: text }
     };
@@ -999,14 +1037,37 @@ async function chatbotAnswer(message, state = {}) {
   }
 
   if (wantsERP) {
+    const perseus = products.find(p => p.slug === 'perseus-erp');
+    const perseusModules = (perseus?.modules || []).slice(0, 6).join(', ') || 'Stock, Producción, Compras, Ventas, Despacho, Reportes';
+
+    // Build a contextual diagnosis based on what the user actually said
+    const diagnosis = [];
+    if (anyIncludes(text, ['madera', 'maderera', 'tablero', 'tableros', 'importa', 'exporta', 'importacion', 'exportacion'])) {
+      diagnosis.push('Para una empresa que importa o exporta productos físicos (como tableros de madera), el control clave es: trazabilidad de lotes desde recepción hasta despacho, stock por bodega y alertas de stock crítico.');
+      diagnosis.push('Con eso puedes saber en tiempo real cuánto tienes, qué está en tránsito, cuándo vence o rota y qué despachar primero.');
+    } else if (anyIncludes(text, ['produccion', 'planta', 'fabricacion', 'manufactura', 'proceso productivo'])) {
+      diagnosis.push('Para una planta de producción lo más crítico es: trazabilidad de órdenes, control de materias primas, estados de producción por etapa y reportes de eficiencia.');
+    } else if (anyIncludes(text, ['inventario', 'stock', 'bodega', 'existencias'])) {
+      diagnosis.push('Para control de inventario conviene partir por definir bodegas, movimientos de entrada/salida y alertas de stock mínimo. Después conectar compras y ventas para cerrar el ciclo.');
+    } else {
+      diagnosis.push('Para procesos operacionales conviene una plataforma con usuarios por rol, estados de avance, trazabilidad de cada acción y reportes automáticos.');
+    }
+
+    const perseusText = perseus
+      ? `\n\n**${perseus.name}** es la solución más cercana: tiene módulos de ${perseusModules}. Se puede adaptar a tu industria.`
+      : '\n\n**PERSEUS ERP** o un software a medida pueden cubrir este tipo de operación.';
+
     return {
       ok: true,
       intent: 'operacional',
       lead: false,
-      answer: 'Para procesos operacionales se puede construir una plataforma con usuarios, estados, trazabilidad, evidencias, reportes y alertas. Esto aplica a producción, stock, calibraciones, bitácoras, formularios y seguimiento de tareas.',
-      suggestions: ['Sistema para producción', 'Digitalizar formularios', 'Trazabilidad y reportes'],
-      actions,
-      state: { intent: 'operacional', leadHint: text }
+      answer: diagnosis.join('\n\n') + perseusText + '\n\n¿Quieres que te cuente cómo sería el primer módulo para tu caso?',
+      suggestions: ['Trazabilidad de lotes', 'Control de bodegas', 'Reportes de producción', 'Quiero una cotización'],
+      actions: [
+        perseus ? { type: 'link', label: `Ver ${perseus.name}`, url: `/productos/${perseus.slug}` } : { type: 'link', label: 'Ver productos', url: '/productos' },
+        ...actions
+      ],
+      state: { intent: 'operacional', leadHint: text, lastProductSlug: perseus?.slug || 'perseus-erp' }
     };
   }
 
@@ -1035,14 +1096,17 @@ async function chatbotAnswer(message, state = {}) {
     };
   }
 
-  if (blogMatches.length) {
+  // Blog matches are only shown as supplementary when the intent is clearly informational
+  // and there is no detected business/product/contact intent
+  const hasBusinessIntent = wantsHuman || wantsQuote || wantsERP || wantsBI || wantsSoftware || wantsAI || wantsAutomation || wantsIntegration || wantsSupport || wantsChatbot || wantsInventory || wantsFleetDispatch || wantsWebsite;
+  if (blogMatches.length && !hasBusinessIntent && !isGreeting) {
     const lines = blogMatches.map(post => `• ${post.title}: ${compactText(post.excerpt || post.content, 130)}`).join('\n');
     return {
       ok: true,
       intent: 'blog_match',
       lead: false,
-      answer: `Tengo contenido relacionado en el blog:\n${lines}\n\nPuedo orientarte o derivarte al equipo si quieres implementar algo parecido.`,
-      suggestions: ['Quiero implementar esto', 'Ver productos'],
+      answer: `Encontré un artículo que puede orientarte:\n${lines}\n\n¿Tienes un proceso específico que quieras mejorar? Cuéntame y te doy una recomendación concreta.`,
+      suggestions: ['Quiero implementar algo parecido', 'Ver productos', 'Hablar con el equipo'],
       actions: [{ type: 'link', label: 'Leer artículo', url: `/blog/${blogMatches[0].slug}` }, ...actions],
       state: { intent: 'blog_match', leadHint: text }
     };
@@ -1060,12 +1124,45 @@ async function chatbotAnswer(message, state = {}) {
     };
   }
 
+  // Smart contextual analysis: extract industry/process keywords and map to best product
+  const industryMap = [
+    { keywords: ['restaurant', 'restaurante', 'gastronomia', 'cocina', 'pedidos', 'mesas', 'carta'], intent: 'software', answer: 'Para un restaurante o negocio gastronómico, lo más útil es un sistema de pedidos, control de inventario de insumos y reportes de ventas. Podemos construirlo a medida según tu operación.' },
+    { keywords: ['salud', 'clinica', 'medico', 'paciente', 'ficha', 'agenda', 'hora medica', 'doctor'], intent: 'software', answer: 'Para el área de salud lo clave es gestión de fichas, agenda de horas y trazabilidad de atenciones. Un sistema a medida puede cubrir todo eso respetando la privacidad de datos.' },
+    { keywords: ['transporte', 'logistica', 'camion', 'despacho', 'entrega', 'carga', 'flete'], intent: 'flota_despacho', answer: 'Para transporte y logística la prioridad es control de flota, órdenes de despacho, estados de entrega y evidencias. Podemos armar una plataforma operacional con toda esa trazabilidad.' },
+    { keywords: ['construccion', 'obra', 'proyecto', 'faena', 'materiales', 'subcontrato'], intent: 'software', answer: 'Para construcción lo más útil es control de avance por proyecto, materiales en obra, subcontratos y reportes de costos. Un sistema a medida puede cubrir estas áreas.' },
+    { keywords: ['mineria', 'mina', 'mineral', 'extraccion', 'seguridad industrial', 'epp', 'turno'], intent: 'software', answer: 'Para minería lo crítico es trazabilidad de equipos, control de turnos, seguridad industrial y reportes de producción. Podemos construir una plataforma operacional a medida.' },
+    { keywords: ['retail', 'tienda', 'punto de venta', 'caja', 'pos', 'venta minorista', 'ecommerce'], intent: 'software', answer: 'Para retail y tiendas lo clave es punto de venta, control de stock, ventas y reportes por producto. Podemos integrar todo en una plataforma que funcione online y offline.' },
+    { keywords: ['agricola', 'agricola', 'campo', 'cosecha', 'fruta', 'verdura', 'temporada'], intent: 'software', answer: 'Para el sector agrícola lo útil es control de temporadas, producción por campo, despachos y trazabilidad de lotes. Un sistema a medida puede cubrir esto sin complicar la operación.' },
+    { keywords: ['banco', 'finanzas', 'credito', 'prestamo', 'cobranza', 'contabilidad', 'factura'], intent: 'software', answer: 'Para procesos financieros lo clave es trazabilidad de transacciones, reportes automáticos y alertas de vencimiento. Podemos conectar eso con Power BI para que el equipo directivo tenga visibilidad en tiempo real.' },
+    { keywords: ['municipal', 'municipio', 'gobierno', 'tramite', 'formulario', 'ciudadano', 'ventanilla'], intent: 'software', answer: 'Para entidades públicas lo prioritario es digitalizar trámites, formularios y flujos de aprobación para reducir tiempo de respuesta y mejorar la atención al ciudadano.' }
+  ];
+
+  for (const map of industryMap) {
+    if (anyIncludes(text, map.keywords)) {
+      const relatedProduct = products.find(p =>
+        map.keywords.some(kw => normalizeText(p.name + ' ' + p.industries.join(' ')).includes(kw))
+      ) || products[0];
+      return {
+        ok: true,
+        intent: map.intent,
+        lead: false,
+        answer: map.answer + '\n\n¿Quieres que te cuente cómo lo haríamos para tu caso específico?',
+        suggestions: ['Sí, cuéntame más', 'Quiero una cotización', 'Ver productos similares', 'Dejar mis datos'],
+        actions: [
+          relatedProduct ? { type: 'link', label: 'Ver productos', url: '/productos' } : null,
+          ...actions
+        ].filter(Boolean),
+        state: { intent: map.intent, leadHint: text }
+      };
+    }
+  }
+
   return {
     ok: true,
     intent: 'fallback',
     lead: false,
-    answer: 'No quiero darte una respuesta genérica. Cuéntame con palabras simples qué quieres mejorar, qué te complica o qué resultado buscas, y te doy una sugerencia práctica y clara.',
-    suggestions: ['Página web', 'Software a medida', 'Consultoría IA', 'Power BI / Datos', 'Conectar sistemas'],
+    answer: 'Cuéntame con tus palabras qué quieres mejorar o qué te complica hoy. Por ejemplo: "tenemos muchos Excel", "perdemos trazabilidad", "necesito reportes automáticos". Con eso te doy una recomendación concreta.',
+    suggestions: ['Tengo procesos en Excel', 'Quiero IA en mi empresa', 'Necesito control de inventario', 'Conectar mis sistemas'],
     cards: ['Consultoría IA', 'Software a medida', 'Power BI / Datos', 'Automatización', 'Chatbot inteligente', 'Hablar con humano'],
     actions,
     state: { intent: 'fallback', leadHint: text || leadHint }

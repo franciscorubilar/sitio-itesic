@@ -1576,6 +1576,50 @@ nav a.active,nav a:hover{color:var(--primary)}
   height: 13px;
   background: var(--primary);
   opacity: 0.3;
+  transition: all 0.3s ease;
+}
+.concept-flow.has-active li.highlighted:not(:last-child)::after {
+  opacity: 1;
+  box-shadow: 0 0 8px var(--primary);
+}
+.concept-flow li {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+.concept-flow.has-active li.highlighted {
+  border-color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 8%, var(--surface));
+  transform: scale(1.04) translateX(6px);
+  box-shadow: 0 8px 20px color-mix(in srgb, var(--primary) 20%, transparent);
+  z-index: 2;
+}
+.concept-flow.has-active li.dimmed {
+  opacity: 0.35;
+  transform: scale(0.96) translateX(-2px);
+}
+.concept-flow.has-active li.highlighted::before {
+  animation: pulse-border-step 1.5s infinite alternate;
+}
+@keyframes pulse-border-step {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--primary) 50%, transparent);
+  }
+  100% {
+    box-shadow: 0 0 0 8px color-mix(in srgb, var(--primary) 10%, transparent);
+  }
+}
+.usecase-card {
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.usecase-mini-flow b {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+.usecase-mini-flow b:hover {
+  background: var(--primary) !important;
+  color: white !important;
+  transform: scale(1.08);
 }
 .solution-implementation {
   margin: 34px clamp(18px, 5vw, 72px);
