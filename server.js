@@ -613,9 +613,6 @@ async function chatbotAnswerWithAI({ message, state, settings, products, posts }
     }
 
     const actions = Array.isArray(parsed.actions) ? parsed.actions.slice(0, 4) : [];
-    if (!actions.some(action => action.type === 'link' && /whatsapp/i.test(action.label || '')) && settings.whatsappNumber) {
-      actions.push({ type: 'link', label: 'Hablar por WhatsApp', url: buildChatbotWhatsApp(settings, message) });
-    }
     if (!actions.some(action => action.type === 'lead')) actions.push({ type: 'lead', label: 'Dejar mis datos' });
 
     return {
@@ -721,7 +718,6 @@ async function chatbotAnswer(message, state = {}) {
   const asksFollowUpProduct = asksProductDetail && previousIntent === 'producto_detalle';
 
   const actions = [];
-  if (settings.whatsappNumber) actions.push({ type: 'link', label: 'Hablar por WhatsApp', url: buildChatbotWhatsApp(settings, text) });
   actions.push({ type: 'lead', label: 'Dejar mis datos' });
 
   if (openAiConfigured()) {
@@ -739,8 +735,8 @@ async function chatbotAnswer(message, state = {}) {
       intent: previousIntent || 'casual',
       lead: false,
       answer: `Hoy es ${todayInChile()}.`,
-      suggestions: ['Volver a productos', 'Qué hace PERSEUS', 'Ver servicios', 'Hablar por WhatsApp'],
-      actions: settings.whatsappNumber ? [{ type: 'link', label: 'Hablar por WhatsApp', url: buildChatbotWhatsApp(settings, text) }] : [],
+      suggestions: ['Volver a productos', 'Qué hace PERSEUS', 'Ver servicios'],
+      actions: [],
       state: { intent: previousIntent || 'casual', leadHint }
     };
   }
@@ -751,8 +747,8 @@ async function chatbotAnswer(message, state = {}) {
       intent: previousIntent || 'casual',
       lead: false,
       answer: `En Chile son aproximadamente las ${timeInChile()}.`,
-      suggestions: ['Volver a productos', 'Qué hace Zebbra', 'Ver servicios', 'Hablar por WhatsApp'],
-      actions: settings.whatsappNumber ? [{ type: 'link', label: 'Hablar por WhatsApp', url: buildChatbotWhatsApp(settings, text) }] : [],
+      suggestions: ['Volver a productos', 'Qué hace Zebbra', 'Ver servicios'],
+      actions: [],
       state: { intent: previousIntent || 'casual', leadHint }
     };
   }
@@ -763,7 +759,7 @@ async function chatbotAnswer(message, state = {}) {
       intent: previousIntent || 'thanks',
       lead: false,
       answer: '¡Gracias por escribir! Estoy listo para seguir ayudándote. Si quieres, puedo darte una recomendación concreta para tu caso o derivarte con el equipo.',
-      suggestions: ['Qué hace PERSEUS', 'Qué hace Zebbra', 'Revisar una solución similar', 'Hablar por WhatsApp'],
+      suggestions: ['Qué hace PERSEUS', 'Qué hace Zebbra', 'Revisar una solución similar'],
       actions,
       state: { intent: previousIntent || 'thanks', leadHint }
     };
@@ -888,7 +884,7 @@ async function chatbotAnswer(message, state = {}) {
       intent: 'soporte',
       lead: false,
       answer: 'Si necesitas soporte, dime qué sistema está afectado, qué error ves y desde cuándo ocurre. Si quieres, te ayudo a preparar el mensaje y también puedo recomendarte la vía más rápida para priorizarlo.',
-      suggestions: ['Sistema caído', 'Error de usuario', 'Problema de reportes', 'Hablar por WhatsApp'],
+      suggestions: ['Sistema caído', 'Error de usuario', 'Problema de reportes'],
       actions,
       state: { intent: 'soporte', leadHint: text }
     };
@@ -1046,7 +1042,7 @@ async function chatbotAnswer(message, state = {}) {
       intent: 'blog_match',
       lead: false,
       answer: `Tengo contenido relacionado en el blog:\n${lines}\n\nPuedo orientarte o derivarte al equipo si quieres implementar algo parecido.`,
-      suggestions: ['Quiero implementar esto', 'Ver productos', 'Hablar por WhatsApp'],
+      suggestions: ['Quiero implementar esto', 'Ver productos'],
       actions: [{ type: 'link', label: 'Leer artículo', url: `/blog/${blogMatches[0].slug}` }, ...actions],
       state: { intent: 'blog_match', leadHint: text }
     };
@@ -1087,7 +1083,9 @@ function splitLines(value) {
 }
 
 function chatbotQuickReplies(settings) {
+  const unwanted = ['quiero una demo', 'necesito un chatbot ia', 'quiero mejorar mi blog', 'hablar por whatsapp'];
   return splitLines(settings.chatbotQuickReplies || '')
+    .filter(line => !unwanted.includes(line.toLowerCase().trim()))
     .slice(0, 6);
 }
 

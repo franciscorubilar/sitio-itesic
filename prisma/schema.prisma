@@ -134,7 +134,7 @@ model SiteSetting {
   chatbotEnabled      Boolean      @default(true)
   chatbotTitle        String       @default("Asistente ITESICWS")
   chatbotWelcome      String       @default("Hola, soy el asistente de ITESICWS. Te puedo orientar sobre software a medida, IA, Power BI, ERP y soluciones digitales.")
-  chatbotQuickReplies String       @default("Quiero una solución concreta\nNecesito un chatbot IA\nQuiero mejorar mi blog\nHablar por WhatsApp") @db.Text
+  chatbotQuickReplies String       @default("Quiero una solución concreta\nRevisar una solución similar\nDejar mis datos") @db.Text
   chatbotFallback     String       @default("Puedo ayudarte con información inicial y derivarte al equipo. Déjame tu nombre, correo y mensaje, o escríbenos por WhatsApp para una respuesta más rápida.") @db.Text
   createdAt           DateTime     @default(now())
   updatedAt           DateTime     @updatedAt

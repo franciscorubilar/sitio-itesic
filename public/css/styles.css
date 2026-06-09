@@ -1442,49 +1442,67 @@ nav a.active,nav a:hover{color:var(--primary)}
 .usecase-card {
   border: 1px solid var(--line);
   background: var(--surface);
-  border-radius: 18px;
-  padding: 22px;
+  border-radius: 20px;
+  padding: 32px;
   box-shadow: var(--shadow);
+  transition: all 0.3s ease;
+}
+.usecase-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--primary);
+  box-shadow: var(--heavy);
 }
 .usecase-card span {
   display: inline-grid;
   place-items: center;
-  width: 42px;
-  height: 42px;
-  border-radius: 12px;
-  background: var(--soft);
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--primary) 12%, transparent);
   color: var(--primary);
   font-weight: 900;
-  margin-bottom: 14px;
+  font-size: 18px;
+  margin-bottom: 20px;
 }
 .usecase-card h3 {
-  font-size: 20px;
-  margin-bottom: 8px;
+  font-size: 22px;
+  margin-bottom: 12px;
+  color: var(--text);
 }
 .usecase-card p {
   color: var(--muted);
-  margin-bottom: 14px;
+  font-size: 15.5px;
+  line-height: 1.6;
+  margin-bottom: 20px;
 }
 .usecase-card strong {
   display: block;
-  color: var(--text);
-  font-size: 15px;
+  color: var(--primary);
+  font-size: 16px;
+  font-weight: 800;
   line-height: 1.55;
-  margin-top: 14px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px dashed var(--line);
 }
 .usecase-mini-flow {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 10px;
+  background: var(--bg);
+  padding: 16px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
 }
 .usecase-mini-flow b {
-  border: 1px solid var(--line);
-  background: var(--bg);
+  border: 1px solid color-mix(in srgb, var(--primary) 30%, transparent);
+  background: color-mix(in srgb, var(--primary) 5%, transparent);
   border-radius: 999px;
-  padding: 8px 11px;
+  padding: 8px 14px;
   color: var(--text);
-  font-size: 13px;
+  font-size: 13.5px;
+  font-weight: 700;
   line-height: 1;
 }
 .usecase-mini-flow i {
@@ -1495,15 +1513,16 @@ nav a.active,nav a:hover{color:var(--primary)}
 .concept-flow {
   position: sticky;
   top: 112px;
-  border: 1px solid var(--line);
-  background: var(--surface);
-  border-radius: 18px;
-  padding: 24px;
-  box-shadow: var(--shadow);
+  border: 1px solid var(--primary);
+  background: color-mix(in srgb, var(--primary) 3%, var(--surface));
+  border-radius: 20px;
+  padding: 32px;
+  box-shadow: 0 12px 32px color-mix(in srgb, var(--primary) 15%, transparent);
 }
 .concept-flow h3 {
-  font-size: 24px;
-  margin: 6px 0 18px;
+  font-size: 26px;
+  margin: 8px 0 24px;
+  color: var(--text);
 }
 .concept-flow ol {
   list-style: none;
@@ -1515,39 +1534,48 @@ nav a.active,nav a:hover{color:var(--primary)}
 }
 .concept-flow li {
   position: relative;
-  min-height: 54px;
+  min-height: 60px;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
   border: 1px solid var(--line);
-  background: var(--bg);
-  border-radius: 14px;
-  padding: 13px 14px;
+  background: var(--surface);
+  border-radius: 16px;
+  padding: 14px 18px;
   color: var(--text);
   font-weight: 800;
+  font-size: 15.5px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+  transition: all 0.3s ease;
+}
+.concept-flow li:hover {
+  border-color: var(--primary);
+  transform: translateX(4px);
 }
 .concept-flow li::before {
   counter-increment: concept-step;
   content: counter(concept-step, decimal-leading-zero);
   display: inline-grid;
   place-items: center;
-  flex: 0 0 38px;
-  width: 38px;
-  height: 38px;
-  border-radius: 11px;
+  flex: 0 0 42px;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
   background: var(--primary);
   color: white;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 900;
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--primary) 40%, transparent);
 }
 .concept-flow li:not(:last-child)::after {
   content: "";
   position: absolute;
-  left: 32px;
+  left: 38px;
   bottom: -13px;
   width: 2px;
   height: 13px;
-  background: var(--line);
+  background: var(--primary);
+  opacity: 0.3;
 }
 .solution-implementation {
   margin: 34px clamp(18px, 5vw, 72px);
