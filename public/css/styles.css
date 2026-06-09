@@ -1423,204 +1423,273 @@ nav a.active,nav a:hover{color:var(--primary)}
   font-size: 16px;
   font-weight: 700;
 }
+/* ═══════════════════════════════════════
+   USE CASES — Premium Bento Redesign
+═══════════════════════════════════════ */
 .solution-usecases {
-  background:
-    linear-gradient(180deg, rgba(47, 107, 255, 0.05), rgba(255, 255, 255, 0)),
-    var(--bg);
+  background: linear-gradient(160deg, var(--bg) 0%, color-mix(in srgb, var(--primary) 5%, var(--bg)) 100%);
+  border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
 }
-.usecase-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(300px, .85fr);
-  gap: 24px;
-  align-items: start;
+.uc-header {
+  max-width: 620px;
+  margin-bottom: 56px;
 }
-.usecase-list {
-  display: grid;
-  gap: 16px;
-}
-.usecase-card {
-  border: 1px solid var(--line);
-  background: var(--surface);
-  border-radius: 20px;
-  padding: 32px;
-  box-shadow: var(--shadow);
-  transition: all 0.3s ease;
-}
-.usecase-card:hover {
-  transform: translateY(-4px);
-  border-color: var(--primary);
-  box-shadow: var(--heavy);
-}
-.usecase-card span {
-  display: inline-grid;
-  place-items: center;
-  width: 48px;
-  height: 48px;
-  border-radius: 14px;
-  background: color-mix(in srgb, var(--primary) 12%, transparent);
-  color: var(--primary);
-  font-weight: 900;
-  font-size: 18px;
-  margin-bottom: 20px;
-}
-.usecase-card h3 {
-  font-size: 22px;
-  margin-bottom: 12px;
+.uc-header h2 {
+  font-size: clamp(28px, 4vw, 42px);
+  margin: 10px 0 14px;
   color: var(--text);
+  line-height: 1.2;
 }
-.usecase-card p {
+.uc-header p {
   color: var(--muted);
-  font-size: 15.5px;
-  line-height: 1.6;
-  margin-bottom: 20px;
+  font-size: 16.5px;
+  line-height: 1.65;
 }
-.usecase-card strong {
+
+/* ── Bento grid ── */
+.uc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
+  gap: 20px;
+  margin-bottom: 56px;
+}
+
+/* ── Individual card ── */
+.uc-card {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), box-shadow 0.35s ease, border-color 0.25s ease;
+  animation: uc-fade-in 0.55s calc(var(--card-index, 0) * 0.1s) both ease-out;
+}
+@keyframes uc-fade-in {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.uc-card::before {
+  content: '';
   display: block;
-  color: var(--primary);
-  font-size: 16px;
-  font-weight: 800;
-  line-height: 1.55;
-  margin-top: 20px;
-  padding-top: 16px;
-  border-top: 1px dashed var(--line);
+  height: 5px;
+  background: linear-gradient(90deg, var(--primary), color-mix(in srgb, var(--primary) 50%, #a855f7));
+  transform-origin: left;
+  transform: scaleX(0);
+  transition: transform 0.4s cubic-bezier(0.22,1,0.36,1);
 }
-.usecase-mini-flow {
+.uc-card:hover {
+  transform: translateY(-6px);
+  border-color: color-mix(in srgb, var(--primary) 40%, transparent);
+  box-shadow: 0 20px 50px color-mix(in srgb, var(--primary) 12%, transparent);
+}
+.uc-card:hover::before {
+  transform: scaleX(1);
+}
+
+/* ── Card top (number + title + context) ── */
+.uc-card-top {
+  padding: 28px 28px 20px;
+  flex: 1;
+}
+.uc-num {
+  display: block;
+  font-size: 72px;
+  font-weight: 900;
+  line-height: 1;
+  color: color-mix(in srgb, var(--primary) 15%, transparent);
+  letter-spacing: -4px;
+  margin-bottom: 12px;
+  user-select: none;
+  transition: color 0.3s ease;
+}
+.uc-card:hover .uc-num {
+  color: color-mix(in srgb, var(--primary) 30%, transparent);
+}
+.uc-card-top h3 {
+  font-size: 19px;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 10px;
+  line-height: 1.3;
+}
+.uc-card-top p {
+  color: var(--muted);
+  font-size: 14.5px;
+  line-height: 1.65;
+  margin: 0;
+}
+
+/* ── Vertical step flow ── */
+.uc-flow {
+  padding: 0 28px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.uc-step {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 10px;
-  background: var(--bg);
-  padding: 16px;
-  border-radius: 14px;
-  border: 1px solid var(--line);
+  gap: 14px;
 }
-.usecase-mini-flow b {
-  border: 1px solid color-mix(in srgb, var(--primary) 30%, transparent);
-  background: color-mix(in srgb, var(--primary) 5%, transparent);
-  border-radius: 999px;
-  padding: 8px 14px;
-  color: var(--text);
+.uc-step-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--primary);
+  flex-shrink: 0;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 20%, transparent);
+  transition: transform 0.2s ease;
+}
+.uc-card:hover .uc-step-dot {
+  transform: scale(1.3);
+}
+.uc-step b {
   font-size: 13.5px;
   font-weight: 700;
+  color: var(--text);
+  background: color-mix(in srgb, var(--primary) 6%, var(--bg));
+  border: 1px solid color-mix(in srgb, var(--primary) 18%, transparent);
+  border-radius: 8px;
+  padding: 7px 13px;
+  line-height: 1.3;
+  flex: 1;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+.uc-card:hover .uc-step b {
+  background: color-mix(in srgb, var(--primary) 10%, var(--bg));
+  border-color: color-mix(in srgb, var(--primary) 30%, transparent);
+}
+.uc-step-arrow {
+  text-align: left;
+  padding: 2px 0 2px 23px;
+  color: color-mix(in srgb, var(--primary) 55%, transparent);
+  font-size: 16px;
   line-height: 1;
 }
-.usecase-mini-flow i {
-  color: var(--primary);
-  font-style: normal;
-  font-weight: 900;
-}
-.concept-flow {
-  position: sticky;
-  top: 112px;
-  border: 1px solid var(--primary);
-  background: color-mix(in srgb, var(--primary) 3%, var(--surface));
-  border-radius: 20px;
-  padding: 32px;
-  box-shadow: 0 12px 32px color-mix(in srgb, var(--primary) 15%, transparent);
-}
-.concept-flow h3 {
-  font-size: 26px;
-  margin: 8px 0 24px;
-  color: var(--text);
-}
-.concept-flow ol {
-  list-style: none;
-  counter-reset: concept-step;
-  display: grid;
-  gap: 12px;
-  margin: 0;
-  padding: 0;
-}
-.concept-flow li {
-  position: relative;
-  min-height: 60px;
+
+/* ── Result row ── */
+.uc-result {
   display: flex;
-  align-items: center;
-  gap: 16px;
-  border: 1px solid var(--line);
-  background: var(--surface);
-  border-radius: 16px;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 0 20px 20px;
   padding: 14px 18px;
-  color: var(--text);
-  font-weight: 800;
-  font-size: 15.5px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.02);
-  transition: all 0.3s ease;
+  background: color-mix(in srgb, var(--primary) 8%, var(--bg));
+  border: 1px solid color-mix(in srgb, var(--primary) 25%, transparent);
+  border-radius: 14px;
+  transition: background 0.3s ease;
 }
-.concept-flow li:hover {
-  border-color: var(--primary);
-  transform: translateX(4px);
+.uc-card:hover .uc-result {
+  background: color-mix(in srgb, var(--primary) 14%, var(--bg));
 }
-.concept-flow li::before {
-  counter-increment: concept-step;
-  content: counter(concept-step, decimal-leading-zero);
-  display: inline-grid;
+.uc-result-icon {
+  display: grid;
   place-items: center;
-  flex: 0 0 42px;
-  width: 42px;
-  height: 42px;
-  border-radius: 12px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
   background: var(--primary);
   color: white;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 900;
-  box-shadow: 0 4px 12px color-mix(in srgb, var(--primary) 40%, transparent);
+  flex-shrink: 0;
+  margin-top: 1px;
 }
-.concept-flow li:not(:last-child)::after {
-  content: "";
-  position: absolute;
-  left: 38px;
-  bottom: -13px;
-  width: 2px;
-  height: 13px;
+.uc-result strong {
+  display: block;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+/* ══ Concept-flow / Timeline ══ */
+.uc-timeline-wrap {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 40px 56px;
+  align-items: start;
+  border-top: 1px solid var(--line);
+  padding-top: 48px;
+  margin-top: 8px;
+}
+.uc-timeline-label h3 {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--text);
+  margin: 8px 0 0;
+  line-height: 1.2;
+}
+.uc-timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 0;
+  position: relative;
+}
+.uc-tl-item {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 16px 28px 16px 0;
+  flex: 1 1 200px;
+  animation: uc-tl-in 0.5s calc(var(--tl-i, 0) * 0.08s) both ease-out;
+}
+@keyframes uc-tl-in {
+  from { opacity: 0; transform: translateX(-10px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.uc-tl-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
   background: var(--primary);
+  flex-shrink: 0;
+  margin-top: 4px;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--primary) 20%, transparent);
+  position: relative;
+  z-index: 1;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.uc-tl-item:hover .uc-tl-dot {
+  transform: scale(1.35);
+  box-shadow: 0 0 0 7px color-mix(in srgb, var(--primary) 15%, transparent);
+}
+.uc-tl-item:not(:last-child) .uc-tl-dot::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  transform: translateX(-50%);
+  width: 2px;
+  height: calc(100% + 8px);
+  background: linear-gradient(to bottom, var(--primary), transparent);
   opacity: 0.3;
-  transition: all 0.3s ease;
+  pointer-events: none;
 }
-.concept-flow.has-active li.highlighted:not(:last-child)::after {
-  opacity: 1;
-  box-shadow: 0 0 8px var(--primary);
+.uc-tl-content {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.5;
+  padding: 8px 14px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  flex: 1;
+  transition: border-color 0.25s ease, background 0.25s ease;
 }
-.concept-flow li {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  cursor: pointer;
+.uc-tl-item:hover .uc-tl-content {
+  border-color: color-mix(in srgb, var(--primary) 35%, transparent);
+  background: color-mix(in srgb, var(--primary) 5%, var(--surface));
 }
-.concept-flow.has-active li.highlighted {
-  border-color: var(--primary);
-  background: color-mix(in srgb, var(--primary) 8%, var(--surface));
-  transform: scale(1.04) translateX(6px);
-  box-shadow: 0 8px 20px color-mix(in srgb, var(--primary) 20%, transparent);
-  z-index: 2;
-}
-.concept-flow.has-active li.dimmed {
-  opacity: 0.35;
-  transform: scale(0.96) translateX(-2px);
-}
-.concept-flow.has-active li.highlighted::before {
-  animation: pulse-border-step 1.5s infinite alternate;
-}
-@keyframes pulse-border-step {
-  0% {
-    box-shadow: 0 0 0 0 color-mix(in srgb, var(--primary) 50%, transparent);
-  }
-  100% {
-    box-shadow: 0 0 0 8px color-mix(in srgb, var(--primary) 10%, transparent);
-  }
-}
-.usecase-card {
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.usecase-mini-flow b {
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  cursor: pointer;
-}
-.usecase-mini-flow b:hover {
-  background: var(--primary) !important;
-  color: white !important;
-  transform: scale(1.08);
-}
+
 .solution-implementation {
   margin: 34px clamp(18px, 5vw, 72px);
   padding: 58px clamp(22px, 5vw, 58px);
@@ -1855,8 +1924,10 @@ nav a.active,nav a:hover{color:var(--primary)}
   .product-feature{gap:10px;overflow:hidden}
   .product-carousel,.integration-marquee{max-width:100vw}
   .rated-section,.contact,.detail-hero,.cta,.ai-dark-band,.ai-final-cta,.solution-implementation,.solution-cta{margin:20px 18px;padding:26px}
-  .usecase-card,.concept-flow{padding:18px;border-radius:16px}
-  .usecase-mini-flow{align-items:flex-start}
+  .uc-card{border-radius:16px}
+  .uc-num{font-size:52px}
+  .uc-timeline-wrap{grid-template-columns:1fr;gap:24px}
+  .uc-timeline{flex-direction:column}
   .rated-visual{min-height:250px}
   .quote-card{position:relative;right:auto;bottom:auto;margin-top:14px}
   .app-art{min-height:300px}
