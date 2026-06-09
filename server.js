@@ -74,6 +74,8 @@ app.use(async (req, res, next) => {
   res.locals.settings = await getSettings();
   res.locals.productTitle = productTitle;
   res.locals.productImage = productImage;
+  res.locals.productUseCases = productUseCases;
+  res.locals.productConceptFlow = productConceptFlow;
   res.locals.primaryContactEmail = primaryContactEmail;
   res.locals.whatsappUrl = whatsappUrl;
   res.locals.chatbotQuickReplies = chatbotQuickReplies;
@@ -123,6 +125,258 @@ function productImage(product, variant = '') {
   if (!image) return product.image || '/images/img-opms-caitan.svg';
   if (image.startsWith('/images/')) return image;
   return `/images/${image}${variant ? `-${variant}` : ''}.png`;
+}
+
+function productUseCases(product = {}) {
+  const useCases = {
+    'perseus-erp': [
+      {
+        title: 'Controlar producción y stock por lote',
+        context: 'Una planta necesita saber qué se produjo, qué insumos se usaron, dónde quedó el stock y qué falta despachar.',
+        steps: ['Orden de producción', 'Registro en planta', 'Stock y bodega', 'Despacho trazable'],
+        result: 'La operación deja de depender de planillas sueltas y puede responder rápido ante auditorías, reclamos o diferencias de inventario.'
+      },
+      {
+        title: 'Conectar ventas, documentos y logística',
+        context: 'El equipo comercial vende, administración emite documentos y logística prepara contenedores o despachos.',
+        steps: ['Venta', 'Documento', 'Preparación', 'Entrega'],
+        result: 'Cada área ve el mismo estado del proceso y se reducen errores por doble digitación o información atrasada.'
+      },
+      {
+        title: 'Trazabilidad industrial para jefaturas',
+        context: 'Gerencia necesita indicadores confiables de producción, detenciones, inventario y cumplimiento.',
+        steps: ['Datos operativos', 'Validación', 'Reportes', 'Decisión'],
+        result: 'Los reportes muestran lo que ocurre en planta y permiten priorizar mejoras con evidencia.'
+      }
+    ],
+    'sistema-calibraciones': [
+      {
+        title: 'Plan mensual de calibraciones',
+        context: 'El área técnica debe programar instrumentos por división, responsable y período sin perder vencimientos.',
+        steps: ['Instrumentos', 'Programa mensual', 'Validación', 'Ejecución'],
+        result: 'El ciclo queda ordenado por estado y responsable, con seguimiento claro de pendientes.'
+      },
+      {
+        title: 'Evidencia y revisión para auditoría',
+        context: 'Cada calibración requiere respaldo, revisión final y trazabilidad de quién ejecutó y aprobó.',
+        steps: ['Registro', 'Adjuntos', 'Revisión', 'Auditoría'],
+        result: 'Las evidencias quedan centralizadas y consultables cuando llega una auditoría interna o externa.'
+      },
+      {
+        title: 'Monitoreo de envíos a PI',
+        context: 'La operación necesita confirmar que los datos técnicos llegan correctamente a PI Web API.',
+        steps: ['Ejecución', 'Envío PI', 'Monitor', 'Corrección'],
+        result: 'Los errores se detectan antes y el equipo puede corregir brechas de datos con trazabilidad.'
+      }
+    ],
+    forms: [
+      {
+        title: 'Digitalizar formularios de terreno',
+        context: 'Supervisores o técnicos completan registros en terreno y adjuntan evidencia desde el móvil.',
+        steps: ['Formulario', 'Validación', 'Adjuntos', 'Registro'],
+        result: 'La información entra estructurada, sin papel y lista para revisión o reportabilidad.'
+      },
+      {
+        title: 'Flujos de aprobación internos',
+        context: 'Una solicitud necesita pasar por responsables antes de cerrarse o convertirse en tarea.',
+        steps: ['Solicitud', 'Aprobación', 'Estado', 'Cierre'],
+        result: 'Se sabe quién tiene la responsabilidad y qué solicitudes siguen pendientes.'
+      },
+      {
+        title: 'Datos listos para BI y auditoría',
+        context: 'Los formularios deben alimentar reportes y dejar historial consultable.',
+        steps: ['Captura', 'Historial', 'Exportación', 'Dashboard'],
+        result: 'La empresa obtiene indicadores sin reconstruir datos manualmente al final del mes.'
+      }
+    ],
+    'portal-balances': [
+      {
+        title: 'Monitorear KPIs operacionales',
+        context: 'Gerencia y operación necesitan revisar balances, recuperaciones y consistencia de resultados.',
+        steps: ['Fuentes', 'KPI', 'Comparación', 'Seguimiento'],
+        result: 'Los indicadores críticos se revisan en un portal común y con menor dependencia de reportes manuales.'
+      },
+      {
+        title: 'Controlar calidad de información',
+        context: 'Los datos base o de proceso pueden tener diferencias que afectan el balance final.',
+        steps: ['Dato base', 'Validación', 'Alerta', 'Corrección'],
+        result: 'El equipo identifica brechas antes de tomar decisiones con información incompleta.'
+      },
+      {
+        title: 'Centralizar documentación operacional',
+        context: 'Los usuarios requieren documentos, vistas PI Vision y respaldos en un mismo lugar.',
+        steps: ['Documento', 'Vista PI', 'Consulta', 'Uso'],
+        result: 'La información operacional queda disponible para consulta diaria y auditoría.'
+      }
+    ],
+    bitacoras: [
+      {
+        title: 'Registrar eventos por turno',
+        context: 'Los equipos necesitan dejar novedades, incidentes y acciones realizadas durante cada turno.',
+        steps: ['Turno', 'Evento', 'Responsable', 'Seguimiento'],
+        result: 'El cambio de turno queda documentado y no se pierde información crítica.'
+      },
+      {
+        title: 'Buscar historial operativo',
+        context: 'Cuando ocurre un problema, el equipo necesita revisar antecedentes por fecha, categoría o responsable.',
+        steps: ['Registro', 'Filtro', 'Historial', 'Hallazgo'],
+        result: 'Las causas y acciones previas se encuentran rápido sin revisar cuadernos o planillas.'
+      },
+      {
+        title: 'Seguimiento de compromisos',
+        context: 'Una novedad puede requerir una acción posterior y quedar asignada a un responsable.',
+        steps: ['Novedad', 'Asignación', 'Estado', 'Cierre'],
+        result: 'Las tareas no quedan olvidadas y jefatura puede controlar pendientes.'
+      }
+    ],
+    'plataforma-zebbra': [
+      {
+        title: 'Detectar datos faltantes SMA/DGA',
+        context: 'El área ambiental debe controlar continuidad de datos para reportabilidad regulatoria.',
+        steps: ['Recepción', 'Cobertura', 'Brecha', 'Reporte'],
+        result: 'Las brechas se detectan a tiempo y se reducen riesgos por reportes incompletos.'
+      },
+      {
+        title: 'Controlar errores de recepción y envío',
+        context: 'Los datos pueden fallar al recibirse, procesarse o enviarse a servicios externos.',
+        steps: ['Error', 'Diagnóstico', 'Retransmisión', 'Confirmación'],
+        result: 'El equipo sabe qué falló, cuándo ocurrió y cómo corregirlo.'
+      },
+      {
+        title: 'Dashboards para operación ambiental',
+        context: 'Operación necesita gráficos y reportes claros para revisar estado diario y cumplimiento.',
+        steps: ['Datos', 'Dashboard', 'Reporte', 'Acción'],
+        result: 'La gestión pasa de revisión reactiva a monitoreo continuo.'
+      }
+    ],
+    'venta-pasajes-buses': [
+      {
+        title: 'Venta de pasajes con selección de asiento',
+        context: 'El punto de venta necesita consultar viajes, elegir asiento y emitir ticket sin confusión.',
+        steps: ['Viaje', 'Asiento', 'Pago', 'Ticket'],
+        result: 'La venta queda trazable por servicio, pasajero, asiento y caja.'
+      },
+      {
+        title: 'Control de caja y anulaciones',
+        context: 'Administración necesita revisar ventas, anular boletos y cuadrar caja por punto de venta.',
+        steps: ['Venta', 'Caja', 'Anulación', 'Reporte'],
+        result: 'Se reducen diferencias comerciales y queda respaldo de cada operación.'
+      },
+      {
+        title: 'Administrar servicios, buses y tarifas',
+        context: 'La empresa debe mantener rutas, buses, horarios y precios actualizados.',
+        steps: ['Servicio', 'Bus', 'Tarifa', 'Disponibilidad'],
+        result: 'La operación comercial se mantiene ordenada y visible para boletería.'
+      }
+    ],
+    'perseus-ofa': [
+      {
+        title: 'Planificar y controlar OFA/OFP',
+        context: 'Producción necesita abrir, cerrar y revisar avances de órdenes sin depender de planillas.',
+        steps: ['Planificación', 'Apertura', 'Avance', 'Cierre'],
+        result: 'El avance productivo queda controlado y consultable por fecha, estado y producto.'
+      },
+      {
+        title: 'Gestionar productos principales',
+        context: 'El equipo requiere mantener productos y procesos asociados dentro del ecosistema Perseus.',
+        steps: ['Producto', 'Proceso', 'Registro', 'Exportación'],
+        result: 'La información productiva queda ordenada para análisis y continuidad operacional.'
+      },
+      {
+        title: 'Exportar información operacional',
+        context: 'Jefatura necesita revisar avances y respaldos en formatos simples.',
+        steps: ['Filtro', 'Consulta', 'Excel', 'Revisión'],
+        result: 'Los datos se entregan rápido sin reconstruir reportes manuales.'
+      }
+    ],
+    'opms-caitan': [
+      {
+        title: 'Controlar nominaciones por período',
+        context: 'La empresa gestiona nominaciones anuales, mensuales, semanales o diarias con reglas internas.',
+        steps: ['Período', 'Nominación', 'Validación', 'Reporte'],
+        result: 'Cada nominación queda ordenada, trazable y disponible para revisión.'
+      },
+      {
+        title: 'Administrar proformas y documentos',
+        context: 'El equipo necesita generar, consultar y respaldar documentos asociados al proceso operacional.',
+        steps: ['Datos', 'Proforma', 'Documento', 'Archivo'],
+        result: 'La documentación queda centralizada y con permisos de acceso.'
+      },
+      {
+        title: 'Seguridad por roles y permisos',
+        context: 'Distintos usuarios requieren acceso solo a funciones autorizadas.',
+        steps: ['Usuario', 'Rol', 'Permiso', 'Acción'],
+        result: 'El sistema protege operaciones sensibles y reduce errores por accesos amplios.'
+      }
+    ],
+    'bi-powerbi': [
+      {
+        title: 'Dashboard ejecutivo automático',
+        context: 'Gerencia necesita KPIs confiables sin esperar planillas manuales.',
+        steps: ['Fuente', 'ETL', 'Modelo', 'Dashboard'],
+        result: 'Las decisiones se toman con datos actualizados, comparables y consistentes.'
+      },
+      {
+        title: 'Unificar datos de varios sistemas',
+        context: 'La información vive en ERP, planillas, bases SQL o APIs distintas.',
+        steps: ['Conexión', 'Limpieza', 'Modelo', 'Indicador'],
+        result: 'Los equipos ven una versión común de la información y reducen discusiones por datos distintos.'
+      },
+      {
+        title: 'Alertas e indicadores operacionales',
+        context: 'Operación necesita detectar desviaciones sin revisar manualmente todos los reportes.',
+        steps: ['KPI', 'Umbral', 'Alerta', 'Acción'],
+        result: 'Las desviaciones se atienden antes y con responsables claros.'
+      }
+    ],
+    'consultoria-ia': [
+      {
+        title: 'Asistente interno con documentos',
+        context: 'Los equipos preguntan por manuales, procedimientos, contratos o información interna.',
+        steps: ['Documentos', 'RAG', 'Respuesta', 'Derivación'],
+        result: 'El asistente responde con contexto real y deriva cuando la consulta requiere gestión humana.'
+      },
+      {
+        title: 'Automatizar reportes y clasificación',
+        context: 'La empresa recibe solicitudes, correos o documentos que se revisan manualmente.',
+        steps: ['Entrada', 'Clasificación', 'Extracción', 'Reporte'],
+        result: 'Se reduce trabajo repetitivo y el equipo se enfoca en casos que requieren criterio.'
+      },
+      {
+        title: 'Roadmap IA para procesos reales',
+        context: 'La organización quiere usar IA, pero necesita priorizar casos con datos, impacto y viabilidad.',
+        steps: ['Diagnóstico', 'Priorización', 'Piloto', 'Escalamiento'],
+        result: 'La inversión en IA parte por casos concretos y medibles, no por generalidades.'
+      }
+    ]
+  };
+
+  const fallbackSteps = (product.modules || []).slice(0, 4);
+  return useCases[product.slug] || [
+    {
+      title: `Caso operativo para ${product.name || 'la solución'}`,
+      context: product.problem || 'Proceso operativo con datos dispersos, seguimiento manual y baja visibilidad.',
+      steps: fallbackSteps.length ? fallbackSteps : ['Levantamiento', 'Configuración', 'Operación', 'Reportabilidad'],
+      result: 'El proceso queda trazable, ordenado y listo para reportes o integraciones.'
+    }
+  ];
+}
+
+function productConceptFlow(product = {}) {
+  const flows = {
+    'perseus-erp': ['Producción', 'Lotes', 'Stock', 'Documentos', 'Despacho', 'Reportes'],
+    'sistema-calibraciones': ['Instrumentos', 'Programa mensual', 'Validación', 'Ejecución', 'Evidencias', 'Auditoría'],
+    forms: ['Formulario', 'Captura móvil', 'Validación', 'Aprobación', 'Historial', 'BI'],
+    'portal-balances': ['Fuentes de datos', 'Calidad', 'KPIs', 'Balances', 'PI Vision', 'Decisión'],
+    bitacoras: ['Turno', 'Evento', 'Responsable', 'Seguimiento', 'Historial', 'Reporte'],
+    'plataforma-zebbra': ['Recepción de datos', 'Cobertura', 'Errores', 'Retransmisión', 'SMA/DGA', 'Cumplimiento'],
+    'venta-pasajes-buses': ['Viaje', 'Asientos', 'Pasajero', 'Pago', 'Ticket', 'Caja'],
+    'perseus-ofa': ['Planificación', 'OFA/OFP', 'Avance', 'Cierre', 'Exportación', 'Control'],
+    'opms-caitan': ['Usuarios', 'Permisos', 'Nominaciones', 'Proformas', 'Documentos', 'Reportes'],
+    'bi-powerbi': ['Fuentes', 'ETL', 'Modelo semántico', 'Dashboards', 'Alertas', 'Decisión'],
+    'consultoria-ia': ['Diagnóstico', 'Datos', 'Asistente/RAG', 'Automatización', 'Integración', 'Impacto']
+  };
+  return flows[product.slug] || ['Problema', 'Datos', 'Flujo', 'Módulos', 'Reporte', 'Resultado'];
 }
 
 
@@ -252,6 +506,14 @@ function buildChatbotWhatsApp(settings, text = '') {
 function chatbotKnowledgeBase(products = [], posts = []) {
   const productBlocks = products.map(product => {
     const faqs = (product.faqs || []).map(faq => `FAQ: ${faq.question} -> ${faq.answer}`).join('\n');
+    const useCases = productUseCases(product)
+      .map(useCase => [
+        `${useCase.title}: ${useCase.context}`,
+        `Flujo: ${(useCase.steps || []).join(' -> ')}`,
+        `Resultado: ${useCase.result}`
+      ].filter(Boolean).join(' '))
+      .join('\n');
+    const conceptFlow = productConceptFlow(product).join(' -> ');
     return [
       `SOFTWARE: ${product.name}`,
       `Slug: ${product.slug}`,
@@ -262,6 +524,8 @@ function chatbotKnowledgeBase(products = [], posts = []) {
       `Beneficios: ${(product.benefits || []).join('; ')}`,
       `Modulos: ${(product.modules || []).join('; ')}`,
       `Areas/industrias: ${(product.industries || []).join('; ')}`,
+      `Casos de uso:\n${useCases}`,
+      `Mapa conceptual: ${conceptFlow}`,
       faqs
     ].filter(Boolean).join('\n');
   }).join('\n\n---\n\n');

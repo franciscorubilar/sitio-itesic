@@ -85,6 +85,53 @@
   </div>
 </section>
 
+<% const useCases = productUseCases(product); %>
+<% const conceptFlow = productConceptFlow(product); %>
+<% if ((useCases && useCases.length) || (conceptFlow && conceptFlow.length)) { %>
+  <section class="section solution-usecases reveal">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">Casos de uso</span>
+        <h2>Cómo se aplica <%= product.name %> en una operación real</h2>
+        <p>Ejemplos concretos para entender qué problema aborda, cómo fluye la información y qué resultado espera el equipo.</p>
+      </div>
+    </div>
+
+    <div class="usecase-layout">
+      <div class="usecase-list">
+        <% useCases.forEach((useCase, i) => { %>
+          <article class="usecase-card">
+            <span><%= String(i + 1).padStart(2, '0') %></span>
+            <h3><%= useCase.title %></h3>
+            <p><%= useCase.context %></p>
+            <% if (useCase.steps && useCase.steps.length) { %>
+              <div class="usecase-mini-flow" aria-label="Flujo del caso de uso">
+                <% useCase.steps.forEach((step, stepIndex) => { %>
+                  <b><%= step %></b>
+                  <% if (stepIndex < useCase.steps.length - 1) { %>
+                    <i aria-hidden="true">→</i>
+                  <% } %>
+                <% }) %>
+              </div>
+            <% } %>
+            <strong><%= useCase.result %></strong>
+          </article>
+        <% }) %>
+      </div>
+
+      <aside class="concept-flow" aria-label="Mapa conceptual de la solución">
+        <span class="eyebrow">Mapa conceptual</span>
+        <h3>Del problema al resultado</h3>
+        <ol>
+          <% conceptFlow.forEach(step => { %>
+            <li><%= step %></li>
+          <% }) %>
+        </ol>
+      </aside>
+    </div>
+  </section>
+<% } %>
+
 <section class="solution-implementation reveal">
   <div>
     <span class="eyebrow">Implementación</span>
