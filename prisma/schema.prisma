@@ -32,23 +32,25 @@ model User {
 }
 
 model Product {
-  id          String   @id @default(cuid())
-  name        String
-  slug        String   @unique
-  category    String
-  summary     String
-  description String   @db.Text
-  problem     String   @db.Text
-  benefits    String[] @default([])
-  modules     String[] @default([])
-  industries  String[] @default([])
-  image       String
-  cta         String   @default("Solicitar consultoría")
-  published   Boolean  @default(true)
-  featured    Boolean  @default(false)
-  sortOrder   Int      @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id               String   @id @default(cuid())
+  name             String
+  slug             String   @unique
+  category         String
+  summary          String
+  description      String   @db.Text
+  problem          String   @db.Text
+  benefits         String[] @default([])
+  modules          String[] @default([])
+  industries       String[] @default([])
+  image            String
+  cta              String   @default("Solicitar consultoría")
+  published        Boolean  @default(true)
+  featured         Boolean  @default(false)
+  sortOrder        Int      @default(0)
+  useCasesJson     String   @default("") @db.Text
+  conceptFlowJson  String   @default("") @db.Text
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 
   faqs ProductFAQ[]
 }
