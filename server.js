@@ -13,7 +13,10 @@ const multer = require('multer');
 const prisma = new PrismaClient();
 
 function createChatbotAiRuntime() {
-  const provider = String(process.env.CHATBOT_AI_PROVIDER || (process.env.DEEPSEEK_API_KEY ? 'deepseek' : 'openai')).toLowerCase();
+  const explicitProvider = process.env.CHATBOT_AI_PROVIDER;
+  const hasDeepseekKey = !!process.env.DEEPSEEK_API_KEY;
+  const baseUrlHasDeepseek = String(process.env.OPENAI_BASE_URL || '').toLowerCase().includes('deepseek');
+  const provider = String(explicitProvider || (hasDeepseekKey || baseUrlHasDeepseek ? 'deepseek' : 'openai')).toLowerCase();
   const isDeepseek = provider === 'deepseek';
   const apiKey = isDeepseek
     ? (process.env.DEEPSEEK_API_KEY || process.env.OPENAI_API_KEY)
@@ -23,7 +26,7 @@ function createChatbotAiRuntime() {
   return {
     client: new OpenAI({
       apiKey,
-      baseURL: isDeepseek ? (process.env.DEEPSEEK_BASE_URL || 'https://api.deepseek.com') : (process.env.OPENAI_BASE_URL || undefined)
+      baseURL: isDeepseek ? (process.env.DEEPSEEK_BASE_URL || process.env.OPENAI_BASE_URL || 'https://api.deepseek.com') : (process.env.OPENAI_BASE_URL || undefined)
     }),
     model: isDeepseek ? (process.env.DEEPSEEK_MODEL || 'deepseek-chat') : (process.env.OPENAI_MODEL || 'gpt-4o-mini'),
     provider,
@@ -591,7 +594,7 @@ async function chatbotAnswerWithAI({ message, state, settings, products, posts }
         { role: 'user', content: userContent }
       ],
       temperature: 0.25,
-      response_format: { type: 'json_object' },
+      ...(chatbotAi.isDeepseek ? {} : { response_format: { type: 'json_object' } }),
       max_tokens: 900
     });
 
