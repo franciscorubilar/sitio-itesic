@@ -277,7 +277,14 @@ function initSiteChatbot() {
       leadForm.hidden = false;
       const messageInput = leadForm.querySelector('[name="message"]');
       if (messageInput) {
-        messageInput.value = prefill || state.leadHint || '';
+        // Only pre-fill if prefill is a clean user message (not internal state words)
+        const cleanPrefill = String(prefill || '').replace(/\b(qualified|intent|lead|state|history|true|false)\b/gi, '').trim();
+        messageInput.value = cleanPrefill.length > 10 ? cleanPrefill : '';
+        // Place cursor at end
+        if (messageInput.value) {
+          messageInput.setSelectionRange(messageInput.value.length, messageInput.value.length);
+        }
+        messageInput.focus();
       }
     }
     shell.classList.add('lead-open');
@@ -356,6 +363,14 @@ function initSiteChatbot() {
     addMessage(clean, 'user');
     saveConversation();
     const normalized = normalize(clean);
+
+    // 'Formulario de contacto' opens the inline lead form (there's no /contacto page)
+    if (normalized === 'formulario de contacto' || normalized === 'ir al formulario' || normalized === 'formulario') {
+      addMessage('Claro, te abro el formulario de contacto ahora mismo.');
+      showLeadForm(state.leadHint || '');
+      return;
+    }
+
     if ((normalized === 'dejar mis datos' || normalized === 'dar mis datos' || normalized === 'dejar datos')) {
       addMessage('Claro. Te pido solo lo necesario para que el equipo pueda responderte bien.');
       showLeadForm(state.leadHint || state.history.map(item => item.text).join('\n'));
