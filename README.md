@@ -59,22 +59,27 @@ El chatbot responde con reglas locales del sitio, muestra formulario de lead cua
 
 ### Chatbot IA real con contexto
 
-Para que el asistente deje de responder solo con reglas locales, configura OpenAI:
+Para que el asistente deje de responder solo con reglas locales, configura un proveedor IA. DeepSeek es una opción barata y compatible con el SDK de OpenAI:
 
 ```env
-OPENAI_API_KEY=tu_api_key
-OPENAI_MODEL=gpt-5-mini
-OPENAI_REASONING_EFFORT=low
 CHATBOT_AI_ENABLED=true
+CHATBOT_AI_PROVIDER=deepseek
+DEEPSEEK_API_KEY=tu_api_key_deepseek
+DEEPSEEK_BASE_URL=https://api.deepseek.com
+DEEPSEEK_MODEL=deepseek-chat
 ```
 
-El backend entrega al modelo el contexto de productos, módulos, beneficios, industrias, FAQs y blog. Si además tienes documentos propios, puedes crear un vector store en OpenAI y configurarlo:
+También puedes usar OpenAI:
 
 ```env
-OPENAI_VECTOR_STORE_ID=vs_xxxxxxxxx
+CHATBOT_AI_ENABLED=true
+CHATBOT_AI_PROVIDER=openai
+OPENAI_API_KEY=tu_api_key_openai
+OPENAI_MODEL=gpt-4o-mini
+OPENAI_REASONING_EFFORT=low
 ```
 
-Con eso el chatbot usa Responses API + file search para responder con contexto real. Si falta la API key o hay un error, cae automáticamente a las reglas locales.
+El backend entrega al modelo el contexto de productos, módulos, beneficios, industrias, FAQs, blog e historial reciente de conversación. La respuesta se pide en JSON para que el frontend pueda mostrar texto, chips y acciones. Si falta la API key o hay un error, cae automáticamente a las reglas locales.
 
 ## Configurar formulario
 

@@ -12,15 +12,26 @@ const multer = require('multer');
 
 const prisma = new PrismaClient();
 
-// Detectar si es Deepseek o OpenAI y configurar correctamente
-let openai = null;
-if (process.env.OPENAI_API_KEY) {
-  const isDeepseek = process.env.OPENAI_MODEL?.includes('deepseek');
-  openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-    baseURL: isDeepseek ? 'https://api.deepseek.com/v1' : undefined
-  });
+function createChatbotAiRuntime() {
+  const provider = String(process.env.CHATBOT_AI_PROVIDER || (process.env.DEEPSEEK_API_KEY ? 'deepseek' : 'openai')).toLowerCase();
+  const isDeepseek = provider === 'deepseek';
+  const apiKey = isDeepseek
+    ? (process.env.DEEPSEEK_API_KEY || process.env.OPENAI_API_KEY)
+    : process.env.OPENAI_API_KEY;
+  if (!apiKey) return null;
+
+  return {
+    client: new OpenAI({
+      apiKey,
+      baseURL: isDeepseek ? (process.env.DEEPSEEK_BASE_URL || 'https://api.deepseek.com') : (process.env.OPENAI_BASE_URL || undefined)
+    }),
+    model: isDeepseek ? (process.env.DEEPSEEK_MODEL || 'deepseek-chat') : (process.env.OPENAI_MODEL || 'gpt-4o-mini'),
+    provider,
+    isDeepseek
+  };
 }
+
+const chatbotAi = createChatbotAiRuntime();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -275,14 +286,14 @@ function safeJsonFromText(value) {
 }
 
 function openAiConfigured() {
-  return !!openai && String(process.env.CHATBOT_AI_ENABLED || 'true').toLowerCase() !== 'false';
+  return !!chatbotAi && String(process.env.CHATBOT_AI_ENABLED || 'true').toLowerCase() !== 'false';
 }
 
 async function chatbotAnswerWithAI({ message, state, settings, products, posts }) {
   if (!openAiConfigured()) return null;
 
   try {
-    const isDeepseek = process.env.OPENAI_MODEL?.includes('deepseek');
+    const isDeepseek = chatbotAi.isDeepseek;
     const previousMessages = Array.isArray(state.history)
       ? state.history.slice(-8).map(item => `${item.from || 'user'}: ${item.text}`).join('\n')
       : '';
@@ -294,45 +305,33 @@ async function chatbotAnswerWithAI({ message, state, settings, products, posts }
       'Si pregunta por una necesidad empresarial, recomienda una ruta concreta.',
       'Si no existe un software exacto, di que conviene software a medida.',
       'No inventes certificaciones, normas legales ni precios.',
-      'Sé amigable y directo.'
+      'Sé amigable y directo.',
+      'Si el usuario plantea un caso específico, responde con diagnóstico, recomendación y módulos concretos.',
+      'Usa el contexto de productos, módulos, beneficios, industrias, FAQs y blog. No ignores el contexto.',
+      'Devuelve SOLO JSON válido, sin markdown, con estas claves: answer, suggestions, actions, intent, leadHint, lastProductSlug.',
+      'actions debe ser un arreglo de objetos {type:"link", label, url} o {type:"lead", label}.'
     ].join('\n');
 
     const userContent = [
-      `Fecha: ${todayInChile()}`,
-      `Contexto: ${chatbotKnowledgeBase(products, posts).slice(0, 2000)}`,
-      `Pregunta: ${message}`
-    ].join('\n\n');
+      `Fecha: ${todayInChile()} - Hora Chile: ${timeInChile()}`,
+      `Estado anterior: ${JSON.stringify(state || {})}`,
+      previousMessages ? `Historial reciente:\n${previousMessages}` : '',
+      `Contexto del negocio:\n${chatbotKnowledgeBase(products, posts).slice(0, 9000)}`,
+      `Pregunta del usuario: ${message}`
+    ].filter(Boolean).join('\n\n');
 
-    let response;
+    const response = await chatbotAi.client.chat.completions.create({
+      model: chatbotAi.model,
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userContent }
+      ],
+      temperature: 0.25,
+      response_format: { type: 'json_object' },
+      max_tokens: 900
+    });
 
-    if (isDeepseek) {
-      // Deepseek usa chat.completions.create (API estándar)
-      response = await openai.chat.completions.create({
-        model: process.env.OPENAI_MODEL || 'deepseek-chat',
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: userContent }
-        ],
-        temperature: 0.7,
-        max_tokens: 500
-      });
-    } else {
-      // OpenAI usa responses.create (API avanzada)
-      response = await openai.responses.create({
-        model: process.env.OPENAI_MODEL || 'gpt-4o-mini',
-        reasoning: { effort: process.env.OPENAI_REASONING_EFFORT || 'low' },
-        text: { verbosity: 'low' },
-        input: [
-          { role: 'developer', content: systemPrompt },
-          { role: 'user', content: userContent }
-        ],
-        max_output_tokens: 500
-      });
-    }
-
-    let answer = isDeepseek 
-      ? response.choices[0]?.message?.content 
-      : response.output_text;
+    let answer = response.choices[0]?.message?.content;
 
     if (!answer) return null;
 
