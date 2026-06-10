@@ -108,6 +108,34 @@
       <section class="settings-card">
         <div class="settings-card-head">
           <div>
+            <h2>IA del chatbot</h2>
+            <p>Elige proveedor, modelo y token. Si no activas IA, el chatbot usa reglas locales mejoradas.</p>
+          </div>
+          <span class="status-pill <%= settings.chatbotAiEnabled ? 'success' : 'muted' %>"><%= settings.chatbotAiEnabled ? 'IA activa' : 'Local' %></span>
+        </div>
+        <label class="checkbox-line"><input type="checkbox" name="chatbotAiEnabled" <%= settings.chatbotAiEnabled ? 'checked' : '' %>> Usar API de IA para responder</label>
+        <div class="settings-two">
+          <label>
+            <span>Proveedor</span>
+            <select name="chatbotAiProvider">
+              <% [
+                ['local','Solo local'],
+                ['deepseek','DeepSeek'],
+                ['openai','OpenAI']
+              ].forEach(([value,label])=>{ %>
+                <option value="<%= value %>" <%= (settings.chatbotAiProvider || 'local')===value?'selected':'' %>><%= label %></option>
+              <% }) %>
+            </select>
+          </label>
+          <label><span>Modelo</span><input name="chatbotAiModel" value="<%= settings.chatbotAiModel || '' %>" placeholder="deepseek-chat o gpt-4o-mini"></label>
+        </div>
+        <label><span>Token / API key</span><input name="chatbotAiApiKey" type="password" placeholder="<%= settings.chatbotAiApiKey ? 'Guardado; deja vacío para mantener' : 'Pega aquí tu API key' %>"><small>Se guarda en la base de datos. No se muestra nuevamente por seguridad.</small></label>
+        <label><span>URL base opcional</span><input name="chatbotAiBaseUrl" value="<%= settings.chatbotAiBaseUrl || '' %>" placeholder="https://api.deepseek.com"></label>
+      </section>
+
+      <section class="settings-card">
+        <div class="settings-card-head">
+          <div>
             <h2>Portada</h2>
             <p>Texto principal de la primera sección del sitio.</p>
           </div>

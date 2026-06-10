@@ -50,6 +50,44 @@
   </article>
 </section>
 
+<% const blueprint = productBlueprint(product); %>
+<section class="section solution-fit reveal">
+  <div class="section-head compact">
+    <div>
+      <span class="eyebrow">Ficha ejecutiva</span>
+      <h2>Cuándo conviene implementar <%= product.name %></h2>
+      <p>Una lectura rápida para entender si esta solución calza con tu operación y cómo partir sin sobredimensionar el proyecto.</p>
+    </div>
+  </div>
+  <div class="fit-layout">
+    <article class="fit-main">
+      <span class="eyebrow">Para quién</span>
+      <h3><%= blueprint.audience %></h3>
+      <p><%= blueprint.fit %></p>
+    </article>
+    <div class="fit-lists">
+      <article>
+        <span>Primer MVP</span>
+        <ul>
+          <% blueprint.mvp.forEach(item => { %><li><%= item %></li><% }) %>
+        </ul>
+      </article>
+      <article>
+        <span>Integraciones habituales</span>
+        <ul>
+          <% blueprint.integrations.forEach(item => { %><li><%= item %></li><% }) %>
+        </ul>
+      </article>
+      <article>
+        <span>Indicadores útiles</span>
+        <ul>
+          <% blueprint.metrics.forEach(item => { %><li><%= item %></li><% }) %>
+        </ul>
+      </article>
+    </div>
+  </div>
+</section>
+
 <section class="section reveal">
   <div class="section-head">
     <div>

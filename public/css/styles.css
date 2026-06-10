@@ -1376,6 +1376,84 @@ nav a.active,nav a:hover{color:var(--primary)}
 .summary-card.accent {
   background: linear-gradient(135deg, var(--soft), var(--surface));
 }
+.solution-fit {
+  background: var(--bg);
+  border-top: 1px solid var(--line);
+}
+.section-head.compact {
+  margin-bottom: 26px;
+}
+.fit-layout {
+  display: grid;
+  grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
+  gap: 18px;
+  align-items: stretch;
+}
+.fit-main {
+  border: 1px solid var(--line);
+  background: linear-gradient(135deg, var(--ink), color-mix(in srgb, var(--ink) 84%, var(--primary)));
+  color: var(--bg);
+  border-radius: 20px;
+  padding: 28px;
+  min-height: 100%;
+  box-shadow: var(--shadow);
+}
+.fit-main h3 {
+  color: white;
+  font-size: clamp(22px, 3vw, 32px);
+  line-height: 1.22;
+  margin: 10px 0 16px;
+}
+.fit-main p {
+  color: rgba(255,255,255,.76);
+  font-size: 16px;
+  line-height: 1.65;
+}
+.fit-lists {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+.fit-lists article {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: var(--shadow);
+}
+.fit-lists span {
+  display: block;
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: 950;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+.fit-lists ul {
+  display: grid;
+  gap: 10px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.fit-lists li {
+  position: relative;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 750;
+  line-height: 1.42;
+  padding-left: 18px;
+}
+.fit-lists li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: .58em;
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--primary);
+}
 .solution-benefits {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -1873,10 +1951,10 @@ nav a.active,nav a:hover{color:var(--primary)}
 @media (max-width:1100px){
   nav{display:none}
   .hero-container{grid-template-columns:1fr;gap:40px}
-  .service-grid,.product-feature,.rated-section,.app-split,.contact,.detail-hero,.product-overview,.two-col,.settings-grid,.modern-leads,.ai-dark-band,.ai-split,.human-intro,.about-studio,.solution-hero,.solution-summary,.usecase-layout,.solution-implementation{grid-template-columns:1fr}
+  .service-grid,.product-feature,.rated-section,.app-split,.contact,.detail-hero,.product-overview,.two-col,.settings-grid,.modern-leads,.ai-dark-band,.ai-split,.human-intro,.about-studio,.solution-hero,.solution-summary,.fit-layout,.usecase-layout,.solution-implementation{grid-template-columns:1fr}
   .settings-card.wide{grid-row:auto}
   .product-grid{grid-template-columns:repeat(2,1fr)}
-  .process-grid,.benefit-grid,.module-grid,.ai-usecase-grid,.impact-grid,.solution-benefits,.implementation-steps,.proof-strip{grid-template-columns:1fr 1fr}
+  .process-grid,.benefit-grid,.module-grid,.ai-usecase-grid,.impact-grid,.solution-benefits,.fit-lists,.implementation-steps,.proof-strip{grid-template-columns:1fr 1fr}
   .about-board{max-width:760px;margin:auto;width:100%}
   .solution-module-grid{grid-template-columns:repeat(3,1fr)}
   .concept-flow{position:relative;top:auto}
@@ -1910,7 +1988,7 @@ nav a.active,nav a:hover{color:var(--primary)}
   .counter-band div:last-child{border-bottom:0}
   .section{padding:58px 18px}
   .section-head,.admin-page-head{display:block}
-  .service-grid,.product-grid,.process-grid,.stats,.benefit-grid,.module-grid,.settings-two,.lead-meta,.lead-form,.ai-proof,.ai-usecase-grid,.ai-roadmap,.impact-grid,.solution-benefits,.solution-module-grid,.implementation-steps,.proof-strip{grid-template-columns:1fr}
+  .service-grid,.product-grid,.process-grid,.stats,.benefit-grid,.module-grid,.settings-two,.lead-meta,.lead-form,.ai-proof,.ai-usecase-grid,.ai-roadmap,.impact-grid,.solution-benefits,.fit-lists,.solution-module-grid,.implementation-steps,.proof-strip{grid-template-columns:1fr}
   .about-copy p{font-size:17px}
   .about-actions{flex-direction:column}
   .about-actions .btn{width:100%}

@@ -12,29 +12,44 @@ const multer = require('multer');
 
 const prisma = new PrismaClient();
 
-function createChatbotAiRuntime() {
-  const explicitProvider = process.env.CHATBOT_AI_PROVIDER;
+function createChatbotAiRuntime(settings = null) {
+  const adminProvider = String(settings?.chatbotAiProvider || '').trim().toLowerCase();
+  const adminEnabled = !!settings?.chatbotAiEnabled && adminProvider && adminProvider !== 'local';
+  const envProvider = String(process.env.CHATBOT_AI_PROVIDER || '').trim().toLowerCase();
   const hasDeepseekKey = !!process.env.DEEPSEEK_API_KEY;
   const baseUrlHasDeepseek = String(process.env.OPENAI_BASE_URL || '').toLowerCase().includes('deepseek');
-  const provider = String(explicitProvider || (hasDeepseekKey || baseUrlHasDeepseek ? 'deepseek' : 'openai')).toLowerCase();
+  const provider = adminEnabled
+    ? adminProvider
+    : String(envProvider || (hasDeepseekKey || baseUrlHasDeepseek ? 'deepseek' : 'openai')).toLowerCase();
   const isDeepseek = provider === 'deepseek';
-  const apiKey = isDeepseek
-    ? (process.env.DEEPSEEK_API_KEY || process.env.OPENAI_API_KEY)
-    : process.env.OPENAI_API_KEY;
+  const enabled = adminEnabled || String(process.env.CHATBOT_AI_ENABLED || 'true').toLowerCase() !== 'false';
+  if (!enabled || provider === 'local' || provider === 'none') return null;
+
+  const apiKey = adminEnabled && settings?.chatbotAiApiKey
+    ? settings.chatbotAiApiKey
+    : isDeepseek
+      ? (process.env.DEEPSEEK_API_KEY || process.env.OPENAI_API_KEY)
+      : process.env.OPENAI_API_KEY;
   if (!apiKey) return null;
 
+  const baseURL = adminEnabled && settings?.chatbotAiBaseUrl
+    ? settings.chatbotAiBaseUrl
+    : isDeepseek
+      ? (process.env.DEEPSEEK_BASE_URL || process.env.OPENAI_BASE_URL || 'https://api.deepseek.com')
+      : (process.env.OPENAI_BASE_URL || undefined);
+  const model = adminEnabled && settings?.chatbotAiModel
+    ? settings.chatbotAiModel
+    : isDeepseek
+      ? (process.env.DEEPSEEK_MODEL || 'deepseek-chat')
+      : (process.env.OPENAI_MODEL || 'gpt-4o-mini');
+
   return {
-    client: new OpenAI({
-      apiKey,
-      baseURL: isDeepseek ? (process.env.DEEPSEEK_BASE_URL || process.env.OPENAI_BASE_URL || 'https://api.deepseek.com') : (process.env.OPENAI_BASE_URL || undefined)
-    }),
-    model: isDeepseek ? (process.env.DEEPSEEK_MODEL || 'deepseek-chat') : (process.env.OPENAI_MODEL || 'gpt-4o-mini'),
+    client: new OpenAI({ apiKey, baseURL }),
+    model,
     provider,
     isDeepseek
   };
 }
-
-const chatbotAi = createChatbotAiRuntime();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -79,6 +94,7 @@ app.use(async (req, res, next) => {
   res.locals.productImage = productImage;
   res.locals.productUseCases = productUseCases;
   res.locals.productConceptFlow = productConceptFlow;
+  res.locals.productBlueprint = productBlueprint;
   res.locals.primaryContactEmail = primaryContactEmail;
   res.locals.whatsappUrl = whatsappUrl;
   res.locals.chatbotQuickReplies = chatbotQuickReplies;
@@ -128,6 +144,95 @@ function productImage(product, variant = '') {
   if (!image) return product.image || '/images/img-opms-caitan.svg';
   if (image.startsWith('/images/')) return image;
   return `/images/${image}${variant ? `-${variant}` : ''}.png`;
+}
+
+function productBlueprint(product = {}) {
+  const blueprints = {
+    'perseus-erp': {
+      audience: 'Plantas productivas, empresas madereras, manufactureras, bodegas y operaciones con stock, producción y despacho.',
+      fit: 'Conviene cuando la empresa necesita trazabilidad por lote, controlar bodegas, conectar producción con ventas/despacho y dejar reportes confiables.',
+      mvp: ['Productos, bodegas y usuarios', 'Órdenes de producción', 'Movimientos de stock', 'Despacho y etiquetas', 'Reporte operacional base'],
+      integrations: ['DTE/facturación', 'Bases SQL', 'Etiquetas/impresoras', 'Power BI', 'APIs internas'],
+      metrics: ['Stock valorizado', 'Producción por período', 'Trazabilidad por lote', 'Diferencias de inventario', 'Cumplimiento de despacho']
+    },
+    'sistema-calibraciones': {
+      audience: 'Áreas de instrumentación, mantenimiento, calidad, minería, energía e industria con programas de calibración recurrentes.',
+      fit: 'Conviene cuando se necesita controlar instrumentos, programación mensual, evidencias, revisión final, auditoría y envíos a PI.',
+      mvp: ['Instrumentos y divisiones', 'Programa mensual', 'Validación técnica', 'Ejecución con evidencias', 'Auditoría y estados'],
+      integrations: ['PI Web API', 'SQL Server', 'Correo/notificaciones', 'Repositorio de evidencias'],
+      metrics: ['Calibraciones vencidas', 'Ejecución mensual', 'Pendientes por división', 'Evidencias observadas', 'Errores de envío PI']
+    },
+    forms: {
+      audience: 'Equipos de terreno, operaciones, administración y calidad que aún usan papel, correos o planillas para capturar datos.',
+      fit: 'Conviene cuando hay formularios repetidos, aprobaciones, adjuntos y necesidad de historial auditable.',
+      mvp: ['Formulario crítico', 'Campos y validaciones', 'Adjuntos', 'Estados/aprobaciones', 'Exportación o reporte'],
+      integrations: ['Power BI', 'Correo', 'APIs internas', 'Base de datos', 'Gestor documental'],
+      metrics: ['Formularios ingresados', 'Pendientes de aprobación', 'Tiempo de cierre', 'Errores de captura', 'Registros por área']
+    },
+    'portal-balances': {
+      audience: 'Gerencias, operaciones y áreas técnicas que revisan balances, KPIs, calidad de información y vistas PI Vision.',
+      fit: 'Conviene cuando los indicadores críticos están dispersos y se necesita una vista común para seguimiento operacional.',
+      mvp: ['Fuentes de datos', 'KPIs principales', 'Calidad de información', 'Vista divisional', 'Biblioteca/documentos'],
+      integrations: ['PI Vision', 'SQL Server', 'Power BI', 'Documentos internos'],
+      metrics: ['KPI balance', 'Calidad de proceso', 'Consistencia de resultados', 'Recuperaciones', 'Alertas por división']
+    },
+    bitacoras: {
+      audience: 'Operaciones con turnos, novedades, eventos, incidentes y compromisos que hoy se registran en cuadernos o planillas.',
+      fit: 'Conviene cuando se pierde información entre turnos o no existe historial claro para seguimiento.',
+      mvp: ['Turnos', 'Categorías de evento', 'Responsables', 'Adjuntos/evidencias', 'Seguimiento y cierre'],
+      integrations: ['Correo', 'Power BI', 'APIs internas', 'Notificaciones'],
+      metrics: ['Eventos por turno', 'Pendientes abiertos', 'Tiempo de cierre', 'Eventos repetidos', 'Responsables con carga']
+    },
+    'plataforma-zebbra': {
+      audience: 'Áreas ambientales, gestión hídrica, operaciones y cumplimiento que reportan continuidad de datos SMA/DGA.',
+      fit: 'Conviene cuando hay datos faltantes, errores de recepción/envío o necesidad de reportabilidad regulatoria trazable.',
+      mvp: ['Fuentes y señales', 'Cobertura de datos', 'Datos faltantes', 'Errores/retransmisiones', 'Reportes SMA/DGA'],
+      integrations: ['SQL Server', 'Servicios externos', 'APIs SMA/DGA', 'Notificaciones'],
+      metrics: ['Cobertura por período', 'Datos faltantes', 'Errores de recepción', 'Retransmisiones', 'Cumplimiento de reporte']
+    },
+    'venta-pasajes-buses': {
+      audience: 'Empresas de transporte de pasajeros, terminales y puntos de venta que necesitan controlar viajes, asientos y caja.',
+      fit: 'Conviene cuando se requiere vender pasajes con asiento, emitir tickets, administrar tarifas, anular y controlar caja.',
+      mvp: ['Servicios y buses', 'Tarifas', 'Mapa de asientos', 'Venta y ticket', 'Caja y anulaciones'],
+      integrations: ['Impresoras de ticket', 'Webservice', 'Pasarela de pago', 'Reportes comerciales'],
+      metrics: ['Ventas por servicio', 'Ocupación de asientos', 'Anulaciones', 'Caja por punto', 'Ingresos por ruta']
+    },
+    'perseus-ofa': {
+      audience: 'Áreas productivas que gestionan OFA/OFP, productos principales, planificación y avance operacional.',
+      fit: 'Conviene cuando hay procesos OFA/OFP que requieren apertura, cierre, edición, exportación y control de avance.',
+      mvp: ['OFA/OFP', 'Productos principales', 'Planificación', 'Apertura/cierre', 'Exportación Excel'],
+      integrations: ['Ecosistema Perseus', 'Excel', 'Token/acceso', 'Reportes internos'],
+      metrics: ['OFA abiertas', 'Avance por período', 'Cierres pendientes', 'Productos procesados', 'Exportaciones realizadas']
+    },
+    'opms-caitan': {
+      audience: 'Empresas con procesos internos de nominaciones, proformas, documentos, roles y reportes operacionales.',
+      fit: 'Conviene cuando se necesita ordenar permisos, flujos internos y documentación operacional por período.',
+      mvp: ['Usuarios y roles', 'Nominaciones', 'Proformas', 'Gestor documental', 'Reportes'],
+      integrations: ['Gestor de archivos', 'Notificaciones', 'Bases internas', 'Reportería'],
+      metrics: ['Nominaciones por período', 'Proformas emitidas', 'Documentos pendientes', 'Accesos por rol', 'Reportes generados']
+    },
+    'bi-powerbi': {
+      audience: 'Gerencias, operaciones, ventas, logística y áreas que necesitan indicadores confiables sin armar reportes manuales.',
+      fit: 'Conviene cuando hay datos en Excel, SQL, ERP o APIs y se necesita una vista ejecutiva actualizada.',
+      mvp: ['Fuentes de datos', 'ETL', 'Modelo semántico', 'Dashboard ejecutivo', 'Publicación y capacitación'],
+      integrations: ['Excel', 'SQL Server', 'APIs', 'ERP', 'Power BI Service'],
+      metrics: ['KPIs críticos', 'Actualización automática', 'Uso del dashboard', 'Alertas', 'Comparativos históricos']
+    },
+    'consultoria-ia': {
+      audience: 'Empresas que quieren aplicar IA en documentos, atención, reportes, procesos repetitivos o asistentes internos.',
+      fit: 'Conviene cuando existe un proceso concreto, datos/documentos disponibles y una oportunidad clara de reducir trabajo manual.',
+      mvp: ['Diagnóstico de proceso', 'Base de conocimiento/datos', 'Prototipo IA', 'Validación humana', 'Integración y métricas'],
+      integrations: ['OpenAI/DeepSeek', 'Documentos', 'APIs internas', 'WhatsApp', 'Bases de datos'],
+      metrics: ['Tiempo ahorrado', 'Precisión de respuesta', 'Derivaciones humanas', 'Casos resueltos', 'Costo por interacción']
+    }
+  };
+  return blueprints[product.slug] || {
+    audience: (product.industries || []).length ? 'Equipos de ' + product.industries.join(', ') + ' que necesitan ordenar procesos y datos.' : 'Equipos que necesitan digitalizar y controlar un proceso crítico.',
+    fit: product.problem || 'Conviene cuando hay registros dispersos, baja trazabilidad y reportes manuales.',
+    mvp: (product.modules || []).slice(0, 5),
+    integrations: ['Base de datos', 'APIs', 'Reportes', 'Correo/notificaciones'],
+    metrics: (product.benefits || []).slice(0, 5)
+  };
 }
 
 function productUseCases(product = {}) {
@@ -502,6 +607,245 @@ function productContextText(product, { detailed = false } = {}) {
   ].filter(Boolean).join('\n');
 }
 
+const LOCAL_BUSINESS_SCENARIOS = [
+  {
+    id: 'flota_materiales_regulados',
+    productSlug: null,
+    title: 'Control de flota y despachos regulados',
+    keywords: ['flota', 'camion', 'camiones', 'despacho', 'ruta', 'chofer', 'conductor', 'gps', 'tracking', 'radiactivo', 'radioactivo', 'materiales peligrosos', 'carga peligrosa', 'sustancias peligrosas'],
+    diagnosis: 'Necesitas trazabilidad de punta a punta: qué material sale, en qué vehículo, con qué conductor, por qué ruta, con qué evidencia y en qué estado queda cada despacho.',
+    recommendation: 'software a medida para control operacional de flota, despachos y cumplimiento',
+    modules: ['Vehículos y conductores', 'Órdenes de despacho', 'Rutas y estados', 'Documentos del material', 'Evidencias de entrega', 'Alertas y permisos', 'Reportes de cumplimiento'],
+    flow: ['Solicitud', 'Asignación', 'Ruta', 'Evidencia', 'Cierre', 'Reporte'],
+    firstStep: 'levantar el flujo real de despacho, tipos de carga, documentos exigidos, estados del viaje y responsables de aprobación',
+    suggestions: ['Módulos de flota', 'Reportes de cumplimiento', 'Cómo partir', 'Hablar con humano']
+  },
+  {
+    id: 'inventario_bodega',
+    productSlug: 'perseus-erp',
+    title: 'Inventario, bodegas y stock crítico',
+    keywords: ['inventario', 'stock', 'bodega', 'bodegas', 'almacen', 'existencias', 'entrada', 'salida', 'stock critico', 'quiebre de stock', 'materiales'],
+    diagnosis: 'El problema no es solo contar stock: hay que controlar entradas, salidas, responsables, bodegas, lotes y diferencias para que el dato sea confiable.',
+    recommendation: 'PERSEUS ERP con módulos de stock, bodegas, compras, producción y reportabilidad',
+    modules: ['Productos y bodegas', 'Entradas y salidas', 'Stock mínimo', 'Trazabilidad por lote', 'Compras/abastecimiento', 'Inventarios físicos', 'Reportes de diferencias'],
+    flow: ['Producto', 'Movimiento', 'Bodega', 'Stock', 'Alerta', 'Reporte'],
+    firstStep: 'definir productos, bodegas, tipos de movimiento y quién autoriza entradas/salidas',
+    suggestions: ['Control por bodega', 'Stock crítico', 'Trazabilidad por lote', 'Ver PERSEUS ERP']
+  },
+  {
+    id: 'produccion_maderera_exportacion',
+    productSlug: 'perseus-erp',
+    title: 'Producción maderera y exportación',
+    keywords: ['madera', 'maderera', 'pino', 'tablero', 'tableros', 'aserradero', 'tornea', 'tornear', 'secado', 'produccion', 'planta', 'exporta', 'exportacion', 'contenedor', 'lote', 'lotes'],
+    diagnosis: 'Aquí manda la trazabilidad: desde materia prima y proceso productivo hasta stock terminado, embalaje, contenedor y despacho/exportación.',
+    recommendation: 'PERSEUS ERP por etapas, partiendo por producción, stock, lotes y despacho',
+    modules: ['Recepción de materia prima', 'Órdenes de producción', 'Etapas de proceso', 'Stock terminado', 'Embalaje y etiquetas', 'Contenedores/despacho', 'Reportes de rendimiento'],
+    flow: ['Materia prima', 'Producción', 'Lote', 'Bodega', 'Embalaje', 'Despacho'],
+    firstStep: 'modelar las etapas productivas y la trazabilidad mínima requerida por lote o producto terminado',
+    suggestions: ['Trazabilidad de lotes', 'Módulos de producción', 'Despacho/exportación', 'Ver PERSEUS ERP']
+  },
+  {
+    id: 'sma_dga_zebbra',
+    productSlug: 'plataforma-zebbra',
+    title: 'Continuidad de datos SMA/DGA',
+    keywords: ['sma', 'dga', 'ambiental', 'datos faltantes', 'cobertura', 'retransmision', 'recepcion', 'envio', 'monitoreo ambiental', 'gestion hidrica'],
+    diagnosis: 'El punto crítico es demostrar continuidad y detectar brechas antes de que el reporte quede incompleto o tarde.',
+    recommendation: 'Plataforma Zebbra para monitoreo, datos faltantes, errores, retransmisiones y reportabilidad SMA/DGA',
+    modules: ['Recepción de datos', 'Cobertura', 'Datos faltantes', 'Errores de envío', 'Retransmisiones', 'Reportes SMA/DGA', 'Notificaciones'],
+    flow: ['Recepción', 'Validación', 'Brecha', 'Corrección', 'Reporte', 'Cumplimiento'],
+    firstStep: 'identificar fuentes de datos, frecuencia, reglas de cobertura y formato de reportes exigidos',
+    suggestions: ['Datos faltantes', 'Reportes SMA', 'Reportes DGA', 'Ver Zebbra']
+  },
+  {
+    id: 'calibraciones_auditoria',
+    productSlug: 'sistema-calibraciones',
+    title: 'Calibraciones, evidencias y auditoría',
+    keywords: ['calibracion', 'calibraciones', 'instrumento', 'instrumentos', 'equipo calibrar', 'programa mensual', 'evidencia', 'revision final', 'pi web api'],
+    diagnosis: 'El valor está en controlar el ciclo completo: programa mensual, validación, ejecución, evidencia, revisión y auditoría.',
+    recommendation: 'Sistema de Calibraciones con trazabilidad por instrumento, división, período y responsable',
+    modules: ['Instrumentos', 'Programa mensual', 'Validación', 'Ejecución', 'Evidencias', 'Revisión final', 'Auditoría', 'Monitor PI'],
+    flow: ['Instrumento', 'Programa', 'Validación', 'Ejecución', 'Evidencia', 'Auditoría'],
+    firstStep: 'cargar instrumentos, responsables, divisiones y reglas del programa mensual',
+    suggestions: ['Programa mensual', 'Evidencias', 'Auditoría', 'Ver calibraciones']
+  },
+  {
+    id: 'formularios_aprobaciones',
+    productSlug: 'forms',
+    title: 'Formularios digitales y aprobaciones',
+    keywords: ['formulario', 'formularios', 'checklist', 'papel', 'aprobacion', 'aprobaciones', 'adjunto', 'terreno', 'digitalizar', 'respuestas'],
+    diagnosis: 'Conviene transformar el formulario en un flujo: captura, validación, adjuntos, revisión, estado y reporte.',
+    recommendation: 'FORMS para capturar datos estructurados y activar aprobaciones o reportabilidad',
+    modules: ['Constructor de formularios', 'Validaciones', 'Adjuntos', 'Estados', 'Aprobaciones', 'Historial', 'Exportación/BI'],
+    flow: ['Captura', 'Validación', 'Adjunto', 'Aprobación', 'Historial', 'Reporte'],
+    firstStep: 'elegir un formulario crítico y definir campos obligatorios, responsables y estados',
+    suggestions: ['Digitalizar checklist', 'Flujo de aprobación', 'Reportes', 'Ver FORMS']
+  },
+  {
+    id: 'bi_reportes_datos',
+    productSlug: 'bi-powerbi',
+    title: 'Dashboards, KPIs y reportes automáticos',
+    keywords: ['power bi', 'dashboard', 'kpi', 'indicador', 'indicadores', 'reporte', 'reportes', 'datos', 'excel', 'metricas', 'grafico', 'gerencia'],
+    diagnosis: 'Si hoy el reporte se arma a mano, el foco debe ser limpiar fuentes, modelar indicadores y automatizar actualización.',
+    recommendation: 'BI / Power BI con ETL, modelo semántico, dashboards y alertas',
+    modules: ['Conexión de fuentes', 'ETL', 'Modelo de datos', 'KPIs', 'Dashboards', 'Alertas', 'Publicación'],
+    flow: ['Fuente', 'Limpieza', 'Modelo', 'KPI', 'Dashboard', 'Decisión'],
+    firstStep: 'definir los 5 indicadores que más importan y de dónde sale cada dato',
+    suggestions: ['Dashboard ejecutivo', 'Automatizar Excel', 'Conectar SQL/API', 'Ver Power BI']
+  },
+  {
+    id: 'chatbot_contexto_empresa',
+    productSlug: 'consultoria-ia',
+    title: 'Chatbot con contexto real de empresa',
+    keywords: ['chatbot', 'bot', 'asistente', 'asistente virtual', 'whatsapp bot', 'faq', 'preguntas frecuentes', 'atencion automatica', 'contexto', 'documentos'],
+    diagnosis: 'Un chatbot útil necesita contenido confiable, límites claros, derivación humana y memoria de conversación. Si no, responde genérico.',
+    recommendation: 'Consultoría IA para diseñar un asistente con RAG/documentos, reglas de derivación y medición de calidad',
+    modules: ['Base de conocimiento', 'RAG/documentos', 'Intenciones', 'Derivación a humano', 'Leads', 'Historial', 'Mejora continua'],
+    flow: ['Pregunta', 'Contexto', 'Respuesta', 'Derivación', 'Lead', 'Aprendizaje'],
+    firstStep: 'ordenar FAQs, productos, documentos y límites de respuesta antes de conectarlo a una API IA',
+    suggestions: ['Contexto del chatbot', 'Conectar documentos', 'Derivar a WhatsApp', 'Ver consultoría IA']
+  },
+  {
+    id: 'documentos_ia',
+    productSlug: 'consultoria-ia',
+    title: 'IA para documentos y trabajo repetitivo',
+    keywords: ['documento', 'documentos', 'pdf', 'contrato', 'contratos', 'informe', 'informes', 'correo', 'correos', 'clasificar', 'resumir', 'extraer datos'],
+    diagnosis: 'La IA sirve cuando hay entradas repetidas: documentos, correos, informes o solicitudes que hoy alguien lee y clasifica manualmente.',
+    recommendation: 'Consultoría IA con extracción, clasificación, resumen y flujo de aprobación',
+    modules: ['Carga de documentos', 'Extracción de datos', 'Clasificación', 'Resumen', 'Validación humana', 'Integración', 'Reporte'],
+    flow: ['Entrada', 'Lectura IA', 'Extracción', 'Validación', 'Acción', 'Reporte'],
+    firstStep: 'seleccionar 20 a 50 documentos reales y definir qué datos debe extraer o decidir la IA',
+    suggestions: ['IA para documentos', 'Clasificar correos', 'RAG interno', 'Ver consultoría IA']
+  },
+  {
+    id: 'turnos_bitacoras',
+    productSlug: 'bitacoras',
+    title: 'Bitácoras, turnos y seguimiento operacional',
+    keywords: ['bitacora', 'bitacoras', 'turno', 'turnos', 'novedad', 'novedades', 'incidente', 'evento', 'seguimiento', 'historial operativo'],
+    diagnosis: 'Cuando se pierde información entre turnos, hay que registrar evento, responsable, estado, evidencia y cierre.',
+    recommendation: 'Bitácoras digitales para registrar eventos, buscar historial y dar seguimiento a compromisos',
+    modules: ['Turnos', 'Eventos', 'Categorías', 'Responsables', 'Adjuntos', 'Estados', 'Búsqueda', 'Reportes'],
+    flow: ['Turno', 'Evento', 'Responsable', 'Seguimiento', 'Cierre', 'Historial'],
+    firstStep: 'definir categorías de eventos, responsables y qué se considera cerrado',
+    suggestions: ['Registro por turno', 'Seguimiento', 'Historial', 'Ver bitácoras']
+  },
+  {
+    id: 'venta_pasajes',
+    productSlug: 'venta-pasajes-buses',
+    title: 'Venta de pasajes y caja para buses',
+    keywords: ['pasaje', 'pasajes', 'bus', 'buses', 'asiento', 'asientos', 'boleto', 'boleteria', 'terminal', 'tarifa', 'caja'],
+    diagnosis: 'La prioridad es controlar disponibilidad de viajes/asientos, emisión de tickets, anulaciones y caja por punto de venta.',
+    recommendation: 'Sistema de Venta de Pasajes de Buses',
+    modules: ['Viajes', 'Asientos', 'Pasajeros', 'Tarifas', 'Puntos de venta', 'Anulaciones', 'Caja', 'Tickets'],
+    flow: ['Viaje', 'Asiento', 'Pasajero', 'Pago', 'Ticket', 'Caja'],
+    firstStep: 'definir rutas, servicios, tipos de bus, tarifas y reglas de anulación',
+    suggestions: ['Selección de asientos', 'Control de caja', 'Anulaciones', 'Ver sistema buses']
+  },
+  {
+    id: 'web_leads',
+    productSlug: null,
+    title: 'Web corporativa orientada a leads',
+    keywords: ['pagina web', 'sitio web', 'landing', 'web corporativa', 'ecommerce', 'tienda online', 'seo', 'blog', 'contacto web'],
+    diagnosis: 'Una web útil debe mostrar servicios con claridad, convertir visitas en contacto y permitir administrar contenido sin depender de un desarrollador.',
+    recommendation: 'sitio web administrable con formulario, WhatsApp, blog, productos y medición de leads',
+    modules: ['Home clara', 'Productos/servicios', 'Formulario', 'WhatsApp', 'Blog/SEO', 'Admin', 'Analítica'],
+    flow: ['Visita', 'Servicio', 'Confianza', 'CTA', 'Lead', 'Seguimiento'],
+    firstStep: 'definir oferta, servicios principales, mensajes de contacto y contenido inicial',
+    suggestions: ['Web para leads', 'Blog administrable', 'WhatsApp', 'Cotizar web']
+  }
+];
+
+function localScenarioScore(text, scenario) {
+  return scenario.keywords.reduce((score, keyword) => score + (anyIncludes(text, [keyword]) ? (keyword.includes(' ') ? 3 : 1) : 0), 0);
+}
+
+function detectLocalScenario(text, products = []) {
+  const ranked = LOCAL_BUSINESS_SCENARIOS
+    .map(scenario => ({ ...scenario, score: localScenarioScore(text, scenario) }))
+    .filter(scenario => scenario.score > 0)
+    .sort((a, b) => b.score - a.score);
+  const scenario = ranked[0] || null;
+  if (!scenario) return null;
+  return {
+    ...scenario,
+    product: scenario.productSlug ? products.find(product => product.slug === scenario.productSlug) : null
+  };
+}
+
+function localScenarioById(id, products = []) {
+  const scenario = LOCAL_BUSINESS_SCENARIOS.find(item => item.id === id);
+  if (!scenario) return null;
+  return {
+    ...scenario,
+    product: scenario.productSlug ? products.find(product => product.slug === scenario.productSlug) : null
+  };
+}
+
+function localScenarioActions(scenario, baseActions = []) {
+  const productAction = scenario?.product
+    ? { type: 'link', label: 'Ver ' + scenario.product.name, url: '/productos/' + scenario.product.slug }
+    : null;
+  return [productAction, ...baseActions].filter(Boolean);
+}
+
+function buildLocalScenarioAnswer({ scenario, painText = '', sizeLabel = '', mode = 'full' }) {
+  const productLine = scenario.product
+    ? 'Producto relacionado: **' + scenario.product.name + '** (' + scenario.product.category + ').'
+    : 'Solución relacionada: **software a medida** diseñado para ese flujo.';
+  const useCase = scenario.product ? productUseCases(scenario.product)[0] : null;
+  const sections = [];
+
+  if (mode === 'modules') {
+    sections.push('Para **' + scenario.title + '**, partiría con estos módulos:');
+    sections.push(scenario.modules.map((module, index) => (index + 1) + '. ' + module).join('\n'));
+    sections.push('Flujo recomendado: ' + scenario.flow.join(' → ') + '.');
+    return sections.join('\n\n');
+  }
+
+  if (mode === 'timeline') {
+    sections.push('Para **' + scenario.title + '**, lo ordenaría en etapas:');
+    sections.push([
+      '1. Levantamiento: ' + scenario.firstStep + '.',
+      '2. MVP: configurar módulos críticos y usuarios reales.',
+      '3. Piloto: probar con casos diarios y ajustar reglas.',
+      '4. Escalamiento: reportes, integraciones y automatizaciones.'
+    ].join('\n'));
+    sections.push(sizeLabel ? 'Por el tamaño indicado (' + sizeLabel + '), conviene evitar partir con demasiados módulos a la vez.' : 'La duración exacta depende de usuarios, integraciones y cantidad de datos históricos.');
+    return sections.join('\n\n');
+  }
+
+  sections.push('Diagnóstico: ' + (painText || scenario.diagnosis));
+  sections.push('Recomendación: partir con **' + scenario.recommendation + '**. ' + productLine);
+  sections.push('Módulos iniciales: ' + scenario.modules.slice(0, 6).join(', ') + '.');
+  sections.push('Flujo sugerido: ' + scenario.flow.join(' → ') + '.');
+  if (useCase) sections.push('Caso de uso cercano: ' + useCase.title + '. ' + useCase.result);
+  sections.push('Primer paso: ' + scenario.firstStep + '.');
+  sections.push('Para afinarlo bien necesito saber: ¿quién registra la información hoy, quién la aprueba y qué reporte necesita jefatura?');
+  return sections.join('\n\n');
+}
+
+function buildLocalScenarioFollowUp({ text, state, products, actions, sizeLabel }) {
+  const scenario = localScenarioById(state.localScenarioId, products);
+  if (!scenario) return null;
+  const wantsModules = anyIncludes(text, ['modulo', 'modulos', 'capacidades', 'funcionalidades', 'que incluiria', 'que incluye', 'armar modulos']);
+  const wantsTimeline = anyIncludes(text, ['cuanto demora', 'duracion', 'etapas', 'como partir', 'primer paso', 'implementacion', 'mvp']);
+  const wantsFlow = anyIncludes(text, ['flujo', 'mapa', 'proceso', 'como funciona', 'paso a paso']);
+  if (!wantsModules && !wantsTimeline && !wantsFlow) return null;
+
+  const mode = wantsModules ? 'modules' : 'timeline';
+  const answer = wantsFlow
+    ? 'El flujo para **' + scenario.title + '** sería:\n\n' + scenario.flow.map((step, index) => (index + 1) + '. ' + step).join('\n') + '\n\nLo importante es que cada cambio de estado deje responsable, fecha y evidencia cuando corresponda.'
+    : buildLocalScenarioAnswer({ scenario, sizeLabel, mode });
+  return {
+    ok: true,
+    intent: 'caso_negocio_local',
+    lead: false,
+    answer,
+    suggestions: scenario.suggestions,
+    actions: localScenarioActions(scenario, actions),
+    state: { intent: 'caso_negocio_local', leadHint: state.leadHint || text, localScenarioId: scenario.id, lastProductSlug: scenario.product?.slug }
+  };
+}
+
 function buildChatbotWhatsApp(settings, text = '') {
   return whatsappUrl(settings.whatsappNumber, `${settings.whatsappMessage}\n\nConsulta desde chatbot: ${text || 'Quiero conversar con el equipo.'}`);
 }
@@ -529,6 +873,7 @@ function chatbotKnowledgeBase(products = [], posts = []) {
       `Areas/industrias: ${(product.industries || []).join('; ')}`,
       `Casos de uso:\n${useCases}`,
       `Mapa conceptual: ${conceptFlow}`,
+      `Ficha ejecutiva: ${Object.entries(productBlueprint(product)).map(([key, value]) => `${key}: ${Array.isArray(value) ? value.join('; ') : value}`).join(' | ')}`,
       faqs
     ].filter(Boolean).join('\n');
   }).join('\n\n---\n\n');
@@ -552,12 +897,13 @@ function safeJsonFromText(value) {
   try { return JSON.parse(match[0]); } catch (_) { return null; }
 }
 
-function openAiConfigured() {
-  return !!chatbotAi && String(process.env.CHATBOT_AI_ENABLED || 'true').toLowerCase() !== 'false';
+function openAiConfigured(settings = null) {
+  return !!createChatbotAiRuntime(settings);
 }
 
 async function chatbotAnswerWithAI({ message, state, settings, products, posts }) {
-  if (!openAiConfigured()) return null;
+  const chatbotAi = createChatbotAiRuntime(settings);
+  if (!chatbotAi) return null;
 
   try {
     const isDeepseek = chatbotAi.isDeepseek;
@@ -683,8 +1029,10 @@ async function chatbotAnswer(message, state = {}) {
     { keywords: ['chatbot', 'bot', 'asistente virtual', 'ia conversacional', 'whatsapp bot'],  slug: 'chatbot-ia',            boost: 10 },
     { keywords: ['flota', 'camion', 'despacho', 'ruta', 'chofer', 'conductor', 'gps'],         slug: 'control-flota',         boost: 10 },
     { keywords: ['web', 'landing', 'sitio web', 'pagina web', 'ecommerce', 'tienda online'],   slug: 'sitio-web',             boost: 8  },
-    { keywords: ['calibracion', 'instrumento', 'equipo calibrar', 'mantenimiento'],             slug: 'perseus-erp',           boost: 8  },
-    { keywords: ['formulario', 'checklist', 'digitalizacion', 'digitalizar'],                  slug: 'perseus-erp',           boost: 7  },
+    { keywords: ['calibracion', 'calibraciones', 'instrumento', 'equipo calibrar', 'mantenimiento'], slug: 'sistema-calibraciones', boost: 12 },
+    { keywords: ['formulario', 'formularios', 'checklist', 'digitalizacion', 'digitalizar'],   slug: 'forms',                 boost: 10 },
+    { keywords: ['bitacora', 'bitacoras', 'turno', 'novedad', 'evento'],                       slug: 'bitacoras',             boost: 10 },
+    { keywords: ['balances', 'balance', 'recuperaciones', 'pi vision'],                        slug: 'portal-balances',       boost: 8  },
     { keywords: ['reporte', 'reportes', 'informe', 'analitica'],                               slug: 'bi-powerbi',            boost: 7  },
   ];
 
@@ -778,6 +1126,7 @@ async function chatbotAnswer(message, state = {}) {
   const wantsSupport  = anyIncludes(text, ['soporte', 'mantencion', 'error', 'problema', 'bug', 'no funciona', 'caido', 'lento', 'falla', 'fallo']);
   const wantsFleetDispatch = anyIncludes(text, ['flota', 'camion', 'camiones', 'despacho', 'despachos', 'ruta', 'rutas', 'conductores', 'choferes', 'gps', 'tracking', 'seguimiento vehicular', 'materiales radioactivos', 'materiales radiactivos', 'carga peligrosa', 'mercancia peligrosa', 'sustancias peligrosas']);
   const asksCapability= anyIncludes(text, ['que haces', 'que pueden hacer', 'servicios', 'como me ayudas', 'que ofrecen', 'que venden', 'para que sirves', 'en que ayudas']);
+  const asksChatbotInternals = anyIncludes(text, ['como estas hecho', 'como estas construido', 'como funcionas', 'como respondes', 'que motor usas', 'usas ia', 'eres ia', 'como esta hecho tu chatbot', 'como hicieron el chatbot', 'como te hicieron']);
   const asksSecurity  = anyIncludes(text, ['seguridad', 'permisos', 'roles', 'usuarios', 'auditoria', 'accesos', 'acceso por rol', 'control de acceso']);
   const asksProductDetail = anyIncludes(text, ['modulo', 'modulos', 'area', 'areas', 'que hace', 'para que sirve', 'funcionalidad', 'funcionalidades', 'beneficio', 'beneficios', 'industria', 'industrias', 'como funciona', 'me explicas']);
   const asksDate      = anyIncludes(text, ['que dia es', 'que fecha es', 'dia es hoy', 'fecha de hoy', 'hoy que dia']);
@@ -803,13 +1152,44 @@ async function chatbotAnswer(message, state = {}) {
   actions.push({ type: 'lead', label: 'Dejar mis datos' });
 
 
-  if (openAiConfigured()) {
+  if (openAiConfigured(settings)) {
     try {
       const aiAnswer = await chatbotAnswerWithAI({ message: text, state, settings, products, posts });
       if (aiAnswer) return aiAnswer;
     } catch (error) {
       console.error('Chatbot IA no disponible, usando reglas locales:', error.message);
     }
+  }
+
+  const localFollowUp = buildLocalScenarioFollowUp({ text, state, products, actions, sizeLabel });
+  if (localFollowUp) return localFollowUp;
+
+  const localScenario = detectLocalScenario(text, products);
+  const shouldUseLocalScenario = localScenario
+    && !isGreeting
+    && !asksDate
+    && !asksTime
+    && !saysThanks
+    && !wantsHuman
+    && !wantsQuote
+    && (!asksProductDetail || !productExactMatches.length)
+    && (userAlreadyGaveContext || localScenario.score >= 4 || clean.length > 35);
+  if (shouldUseLocalScenario) {
+    const painText = describePains() || localScenario.diagnosis;
+    return {
+      ok: true,
+      intent: 'caso_negocio_local',
+      lead: false,
+      answer: buildLocalScenarioAnswer({ scenario: localScenario, painText, sizeLabel }),
+      suggestions: localScenario.suggestions,
+      actions: localScenarioActions(localScenario, actions),
+      state: {
+        intent: 'caso_negocio_local',
+        leadHint: text,
+        localScenarioId: localScenario.id,
+        lastProductSlug: localScenario.product?.slug
+      }
+    };
   }
 
   // ── FAQ direct match: answer from real product FAQs ─────────────────────
@@ -928,6 +1308,26 @@ async function chatbotAnswer(message, state = {}) {
       suggestions: ['PERSEUS módulos', 'Zebbra reportes', 'Power BI datos', 'Hablar con humano'],
       actions,
       state: { intent: previousIntent || 'clarificacion', leadHint }
+    };
+  }
+
+  if (asksChatbotInternals) {
+    const runtime = createChatbotAiRuntime(settings);
+    const providerLabel = runtime
+      ? runtime.provider === 'deepseek' ? 'DeepSeek' : runtime.provider === 'openai' ? 'OpenAI' : runtime.provider
+      : 'reglas locales';
+    return {
+      ok: true,
+      intent: 'chatbot_tecnico',
+      lead: false,
+      answer: [
+        'Este chatbot funciona con una capa local y, si está configurado en el admin, con IA por API. Ahora mismo usaría: **' + providerLabel + '**.',
+        'La capa local entiende saludos, contacto, productos, inventario, ERP, Power BI, IA, flota, soporte y casos de negocio. Además usa el contexto real de productos: módulos, beneficios, FAQs, casos de uso y mapa conceptual.',
+        'La capa IA sirve para responder más natural y con continuidad de conversación, pero siempre recibe instrucciones para no inventar precios, no mandar al blog si el usuario tiene un problema de negocio y derivar a humano cuando corresponde.'
+      ].join('\n\n'),
+      suggestions: ['Configurar IA', 'Ver productos', 'Qué contexto usa', 'Hablar con humano'],
+      actions,
+      state: { intent: 'chatbot_tecnico', leadHint: text }
     };
   }
 
@@ -1987,6 +2387,7 @@ app.post('/admin/leads/:id/delete', requireAuth, async (req, res) => {
 app.get('/admin/settings', requireAuth, async (req, res) => res.render('admin/settings', { settings: await getSettings() }));
 app.post('/admin/settings', requireAuth, async (req, res) => {
   const smtpPass = req.body.smtpPass ? req.body.smtpPass : undefined;
+  const chatbotAiApiKey = req.body.chatbotAiApiKey ? String(req.body.chatbotAiApiKey).trim() : undefined;
   await prisma.siteSetting.update({ where: { id: 'main' }, data: {
     contactEmail: req.body.contactEmail,
     whatsappNumber: req.body.whatsappNumber,
@@ -2004,7 +2405,12 @@ app.post('/admin/settings', requireAuth, async (req, res) => {
     chatbotTitle: req.body.chatbotTitle || 'Asistente ITESICWS',
     chatbotWelcome: req.body.chatbotWelcome || 'Hola, soy el asistente de ITESICWS. ¿En qué te puedo ayudar?',
     chatbotQuickReplies: req.body.chatbotQuickReplies || '',
-    chatbotFallback: req.body.chatbotFallback || ''
+    chatbotFallback: req.body.chatbotFallback || '',
+    chatbotAiEnabled: !!req.body.chatbotAiEnabled,
+    chatbotAiProvider: req.body.chatbotAiProvider || 'local',
+    ...(chatbotAiApiKey !== undefined ? { chatbotAiApiKey } : {}),
+    chatbotAiBaseUrl: req.body.chatbotAiBaseUrl || null,
+    chatbotAiModel: req.body.chatbotAiModel || null
   }});
   res.redirect('/admin/settings?saved=1');
 });

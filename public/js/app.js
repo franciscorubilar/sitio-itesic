@@ -334,6 +334,7 @@ function initSiteChatbot() {
       if (!response.ok || !data.ok) throw new Error(data.error || 'No pude responder ahora.');
       typing.remove();
       setStatus(data.intent === 'lead' ? 'Listo para derivar' : 'En línea');
+      Object.assign(state, data.state || {});
       state.intent = data.state?.intent || data.intent || state.intent;
       state.leadHint = data.state?.leadHint || state.leadHint || value;
       if (data.state?.lastProductSlug) state.lastProductSlug = data.state.lastProductSlug;
